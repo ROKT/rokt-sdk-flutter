@@ -1,5 +1,6 @@
 import Flutter
 import UIKit
+import Rokt_Widget
 
 public class SwiftRoktSdkPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
