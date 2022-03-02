@@ -18,6 +18,9 @@ rootProject.allprojects {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url  "https://rokt-eng-us-west-2-mobile-sdk-artefacts.s3.amazonaws.com"
+        }
     }
 }
 
@@ -41,10 +44,12 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 19 // using Hybrid composition
+        multiDexEnabled true
     }
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "com.rokt:roktsdk:3.6.2"
 }
