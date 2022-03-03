@@ -1,4 +1,7 @@
 # IntelliJ related
 .idea/
 .packages
+.DS_Store
 
+# Dart tools related
+.dart_tool/
