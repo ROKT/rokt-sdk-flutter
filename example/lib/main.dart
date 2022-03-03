@@ -46,17 +46,41 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  Map getAttributes() {
+    return {"email": "j.smithasd123@example.com",
+      "firstname": "Jenny",
+      "lastname": "Smith",
+      "mobile": "(555)867-5309",
+      "postcode": "90210",
+      "sandbox": "true",
+      "country": "US"};
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
-        ),
+        home: Scaffold(
+      appBar: AppBar(
+        title: const Text('Plugin example app'),
       ),
-    );
+      body: Center(
+        child: Column(children: [
+          TextButton(
+            child: const Text('initial'),
+            onPressed: () {
+              print("initial before");
+              RoktSdk.initialize('2754655826098840951', appVersion: '1.0.0');
+            },
+          ),
+          TextButton(
+            child: const Text('execute'),
+            onPressed: () {
+              print("execute before");
+              RoktSdk.execute("iOSOverlay", getAttributes(), placeholders: Map());
+            },
+          ),
+        ]),
+      ),
+    ));
   }
 }
