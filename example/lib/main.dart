@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> {
             child: const Text('execute'),
             onPressed: () {
               print("execute before");
-              RoktSdk.execute("iOSOverlay", getAttributes(), placeholders: Map());
+              RoktSdk.execute("iOSOverlay", getAttributes(), (dynamic msg) { print("rokt_sdk $msg"); }, placeholders: {});
             },
           ),
         ]),
