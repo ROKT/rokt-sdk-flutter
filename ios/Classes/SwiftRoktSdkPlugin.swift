@@ -15,18 +15,25 @@ import Flutter
 import UIKit
 
 public class SwiftRoktSdkPlugin: NSObject, FlutterPlugin {
+    let channel: FlutterMethodChannel
+    
+    public init(channel: FlutterMethodChannel) {
+        self.channel = channel
+    }
+    
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "rokt_sdk", binaryMessenger: registrar.messenger())
-        let instance = SwiftRoktSdkPlugin()
+        let instance = SwiftRoktSdkPlugin(channel: channel)
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let handler = RoktMethodCallHandler(channel: channel)
         if call.method == "initialize" {
-            RoktMethodCallHandler.initialize(call, result: result)
+            handler.initialize(call, result: result)
             
         } else if call.method == "execute" {
-            RoktMethodCallHandler.execute(call, result: result)
+            handler.execute(call, result: result)
         }else {
             result("iOS " + UIDevice.current.systemVersion)
         }
