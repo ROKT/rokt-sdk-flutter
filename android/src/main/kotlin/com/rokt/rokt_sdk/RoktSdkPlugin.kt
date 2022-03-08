@@ -9,36 +9,43 @@ import io.flutter.plugin.common.BinaryMessenger
 
 /** RoktSdkPlugin */
 class RoktSdkPlugin: FlutterPlugin, ActivityAware {
-  private var methodCallHandler: MethodCallHandlerImpl? = null
+    private var methodCallHandler: MethodCallHandlerImpl? = null
 
-  override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    setupMethodChannel(flutterPluginBinding.binaryMessenger)
-  }
+    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        setupMethodChannel(flutterPluginBinding.binaryMessenger)
+        flutterPluginBinding.platformViewRegistry.registerViewFactory(
+            VIEW_TYPE, RoktWidgetFactory()
+        )
+    }
 
-  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    teardownMethodChannel()
-  }
+    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+        teardownMethodChannel()
+    }
 
-  override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-    methodCallHandler?.startListening(binding.activity)
-  }
+    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+        methodCallHandler?.startListening(binding.activity)
+    }
 
-  override fun onDetachedFromActivityForConfigChanges() {
-  }
+    override fun onDetachedFromActivityForConfigChanges() {
+    }
 
-  override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-  }
+    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+    }
 
-  override fun onDetachedFromActivity() {
-  }
+    override fun onDetachedFromActivity() {
+    }
 
-  private fun setupMethodChannel(messenger: BinaryMessenger) {
-    methodCallHandler = MethodCallHandlerImpl(messenger)
-  }
+    private fun setupMethodChannel(messenger: BinaryMessenger) {
+        methodCallHandler = MethodCallHandlerImpl(messenger)
+    }
 
-  private fun teardownMethodChannel() {
-    methodCallHandler?.stopListening()
-    methodCallHandler = null
-  }
+    private fun teardownMethodChannel() {
+        methodCallHandler?.stopListening()
+        methodCallHandler = null
+    }
+
+    companion object {
+        private const val VIEW_TYPE = "rokt_sdk.rokt.com/rokt_widget"
+    }
 
 }
