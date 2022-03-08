@@ -1,6 +1,15 @@
+
+library rokt_sdk;
+
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/rendering.dart';
+
+part 'src/rokt_widget.dart';
 
 typedef RoktCallback = void Function(dynamic msg);
 

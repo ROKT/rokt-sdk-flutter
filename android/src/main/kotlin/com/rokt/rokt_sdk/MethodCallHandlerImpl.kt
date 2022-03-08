@@ -51,7 +51,8 @@ class MethodCallHandlerImpl(private val messenger: BinaryMessenger) :
         } ?: result.error(
             "No_TAG_ID",
             "you must provide tag id.",
-            null)
+            null
+        )
     }
 
     private fun execute(call: MethodCall, result: MethodChannel.Result) {
@@ -79,12 +80,13 @@ class MethodCallHandlerImpl(private val messenger: BinaryMessenger) :
                 channel?.invokeMethod("callListener", map)
                 Log.d(TAG, "onShouldHideLoadingIndicator")
             }
+
             override fun onShouldShowLoadingIndicator() {
                 map["args"] = "onShouldShowLoadingIndicator"
                 channel?.invokeMethod("callListener", map)
                 Log.d(TAG, "onShouldShowLoadingIndicator")
             }
-        }  , mapOf())
+        }, mapOf())
         result.success("Executed")
     }
 
