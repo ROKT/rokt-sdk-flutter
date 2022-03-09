@@ -5,9 +5,9 @@ typedef RoktWidgetCreatedCallback = void Function(
 
 class RoktWidget extends StatelessWidget {
 
-  final RoktWidgetCreatedCallback onRoktWidgetCreated;
+  final String placeholderName;
 
-  const RoktWidget({Key? key, required this.onRoktWidgetCreated}) : super(key: key);
+  const RoktWidget({Key? key, required this.placeholderName}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +63,6 @@ class RoktWidget extends StatelessWidget {
   }
 
   void _onPlatformViewCreated(int id) {
-    onRoktWidgetCreated(id);
-    MethodChannelRoktSdkFlutter.instance.setWidgetId(id: id);
+    MethodChannelRoktSdkFlutter.instance.attachPlaceholder(id: id, name: placeholderName);
   }
 }

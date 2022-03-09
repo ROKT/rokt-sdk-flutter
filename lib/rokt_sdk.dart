@@ -21,12 +21,10 @@ class RoktSdk {
   }
 
   static Future<void> execute(
-      String viewName, Map attributes, RoktCallback callback,
-      {Map placeholders = const {}}) async {
+      String viewName, Map attributes, RoktCallback callback) async {
     await MethodChannelRoktSdkFlutter.instance.execute(
         viewName: viewName,
         attributes: attributes,
-        callback: callback,
-        placeholders: placeholders);
+        callback: callback);
   }
 }

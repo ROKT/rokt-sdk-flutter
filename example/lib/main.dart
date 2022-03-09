@@ -17,6 +17,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
+  Map<int, String> placeholders = Map();
 
   @override
   void initState() {
@@ -45,17 +46,23 @@ class _MyAppState extends State<MyApp> {
           TextButton(
             child: const Text('initial'),
             onPressed: () {
-              print("initial before");
-              RoktSdk.initialize('2754655826098840951', appVersion: '1.0.0');
+              RoktSdk.initialize('2570597781472571104', appVersion: '1.0.0');
             },
           ),
           TextButton(
             child: const Text('execute'),
             onPressed: () {
-              print("execute before");
-              RoktSdk.execute("iOSOverlay", getAttributes(), (dynamic msg) { print("rokt_sdk $msg"); }, placeholders: {});
+              RoktSdk.execute("test", getAttributes(), (dynamic msg) { print("rokt_sdk $msg"); });
             },
           ),
+          Flexible(
+              child:
+                  RoktWidget(placeholderName: "Location1")
+          ),
+          Flexible(
+              child:
+                  RoktWidget(placeholderName: "Location2")
+          )
         ]),
       ),
     ));
