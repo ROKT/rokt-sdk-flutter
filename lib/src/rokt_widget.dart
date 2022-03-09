@@ -43,9 +43,8 @@ class RoktWidget extends StatelessWidget {
             params.onPlatformViewCreated,
           );
           controller.addOnPlatformViewCreatedListener(
-            onRoktWidgetCreated,
+            _onPlatformViewCreated,
           );
-
           controller.create();
           return controller;
         },
@@ -53,7 +52,7 @@ class RoktWidget extends StatelessWidget {
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       return UiKitView(
         viewType: viewType,
-        onPlatformViewCreated: onRoktWidgetCreated,
+        onPlatformViewCreated: _onPlatformViewCreated,
         layoutDirection: TextDirection.ltr,
         creationParams: creationParams,
         creationParamsCodec: const StandardMessageCodec(),
@@ -61,5 +60,10 @@ class RoktWidget extends StatelessWidget {
     }
     return Text(
         '$defaultTargetPlatform is not yet supported by the rokt sdk plugin');
+  }
+
+  void _onPlatformViewCreated(int id) {
+    onRoktWidgetCreated(id);
+    MethodChannelRoktSdkFlutter.instance.setWidgetId(id: id);
   }
 }
