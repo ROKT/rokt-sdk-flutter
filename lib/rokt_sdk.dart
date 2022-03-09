@@ -26,7 +26,6 @@ class RoktSdk {
     await MethodChannelRoktSdkFlutter.instance.execute(
         viewName: viewName,
         attributes: attributes,
-        callback: callback,
-        placeholders: placeholders);
+        callback: callback);
   }
 }

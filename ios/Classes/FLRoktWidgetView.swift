@@ -18,13 +18,14 @@ import Rokt_Widget
 class FLRoktWidgetView: NSObject, FlutterPlatformView {
     private var _view: UIView
     private var roktEmbeddedView: RoktEmbeddedView?
-    var nativeLabel: UITextView?
+    let id: Int64
     init(
         frame: CGRect,
         viewIdentifier viewId: Int64,
         arguments args: Any?,
         binaryMessenger messenger: FlutterBinaryMessenger?
     ) {
+        self.id = viewId
         _view = UIView()
         super.init()
         createNativeView(view: _view)

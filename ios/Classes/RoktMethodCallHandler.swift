@@ -17,9 +17,10 @@ import Rokt_Widget
 
 struct RoktMethodCallHandler {
     let channel: FlutterMethodChannel
+    let factory: RoktWidgetFactory
     
     public func initialize(_ call: FlutterMethodCall,
-                                  result: @escaping FlutterResult) {
+                           result: @escaping FlutterResult) {
         
         if let args = call.arguments as? Dictionary<String, Any>,
            let roktTagId = args["roktTagId"] as? String {
@@ -32,16 +33,28 @@ struct RoktMethodCallHandler {
     }
     
     public func execute(_ call: FlutterMethodCall,
-                                  result: @escaping FlutterResult) {
+                        result: @escaping FlutterResult) {
         
         if let args = call.arguments as? Dictionary<String, Any>,
            let viewName = args["viewName"] as? String,
-           let attributes = args["attributes"] as? [String: String]{
+           let attributes = args["attributes"] as? [String: String] {
+            
+            var placements = [String: RoktEmbeddedView]()
+            if let placeholders = args["placeholders"] as? [Int: String] {
+                for (placeholderId, placeholderName) in placeholders {
+                    for flutterView in factory.platformViews {
+                        if flutterView.id == placeholderId {
+                            let embedded = flutterView.getRoktEmbeddedPlacement()
+                            placements[placeholderName] = embedded
+                        }
+                    }
+                }
+            }
             
             let callBackId = args["callbackId"] as? Int ?? 0
             var callbackMap = [String: Any] ()
             callbackMap["id"] = callBackId
-            Rokt.execute(viewName: viewName, attributes: attributes, onLoad: {
+            Rokt.execute(viewName: viewName, attributes: attributes, placements: placements, onLoad: {
                 // Optional callback for when the Rokt placement loads
                 print("loaded")
                 callbackMap["args"] = "load"

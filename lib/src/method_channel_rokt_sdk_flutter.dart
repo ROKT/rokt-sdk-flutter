@@ -6,7 +6,7 @@ import '../rokt_sdk.dart';
 class MethodChannelRoktSdkFlutter {
   final MethodChannel _channel;
   final Map<int, RoktCallback> _callbacksById;
-  final Set _viewIds;
+  Map<int, String> _placeholders;
   int _nextCallbackId = 0;
 
   static final MethodChannelRoktSdkFlutter _instance =
@@ -17,13 +17,13 @@ class MethodChannelRoktSdkFlutter {
   MethodChannelRoktSdkFlutter._()
       : _channel = const MethodChannel('rokt_sdk'),
         _callbacksById = {},
-        _viewIds = {} {
+        _placeholders = {} {
     _channel.setMethodCallHandler(_methodCallHandler);
   }
 
   Future<void> initialize({required String roktTagId, appVersion = ''}) async {
     // remove all the existing id's during initialization
-    _viewIds.clear();
+    // _placeholders.clear();
     await _channel.invokeMethod(
         'initialize', {'roktTagId': roktTagId, 'appVersion': appVersion});
   }
@@ -31,20 +31,20 @@ class MethodChannelRoktSdkFlutter {
   Future<void> execute(
       {required String viewName,
       required Map attributes,
-      required RoktCallback callback,
-      Map placeholders = const {}}) async {
+      required RoktCallback callback}) async {
     int currentCallbackId = _nextCallbackId++;
     _callbacksById[currentCallbackId] = callback;
-    // will use _viewIds here
     await _channel.invokeMethod('execute', {
       'viewName': viewName,
       'attributes': attributes,
-      'placeholders': placeholders,
+      'placeholders': instance._placeholders,
       'callbackId': currentCallbackId
     });
   }
 
-  void setWidgetId({required int id}) => _viewIds.add(id);
+  void setWidgetId({required int id, required String name}) {
+    instance._placeholders[id] = name;
+  }
 
   Future<void> _methodCallHandler(MethodCall call) async {
     print("_methodCallHandler $call");

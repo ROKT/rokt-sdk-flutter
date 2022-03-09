@@ -16,19 +16,23 @@ import UIKit
 
 public class SwiftRoktSdkPlugin: NSObject, FlutterPlugin {
     let channel: FlutterMethodChannel
+    let factory: RoktWidgetFactory
     
-    public init(channel: FlutterMethodChannel) {
+    init(channel: FlutterMethodChannel, factory: RoktWidgetFactory) {
         self.channel = channel
+        self.factory = factory
     }
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "rokt_sdk", binaryMessenger: registrar.messenger())
-        let instance = SwiftRoktSdkPlugin(channel: channel)
+        let factory = RoktWidgetFactory(messenger: registrar.messenger())
+        let instance = SwiftRoktSdkPlugin(channel: channel, factory: factory)
         registrar.addMethodCallDelegate(instance, channel: channel)
+        registrar.register(factory, withId: "rokt_sdk.rokt.com/rokt_widget")
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        let handler = RoktMethodCallHandler(channel: channel)
+        let handler = RoktMethodCallHandler(channel: channel, factory: factory)
         if call.method == "initialize" {
             handler.initialize(call, result: result)
             
