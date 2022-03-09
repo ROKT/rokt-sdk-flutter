@@ -42,7 +42,7 @@ class MethodChannelRoktSdkFlutter {
     });
   }
 
-  void setWidgetId({required int id, required String name}) {
+  void attachPlaceholder({required int id, required String name}) {
     instance._placeholders[id] = name;
   }
 

@@ -46,24 +46,22 @@ class _MyAppState extends State<MyApp> {
           TextButton(
             child: const Text('initial'),
             onPressed: () {
-              print("initial before");
               RoktSdk.initialize('2570597781472571104', appVersion: '1.0.0');
             },
           ),
           TextButton(
             child: const Text('execute'),
             onPressed: () {
-              print("execute before");
-              RoktSdk.execute("test", getAttributes(), (dynamic msg) { print("rokt_sdk $msg"); }, placeholders: placeholders);
+              RoktSdk.execute("test", getAttributes(), (dynamic msg) { print("rokt_sdk $msg"); });
             },
           ),
           Flexible(
               child:
-                  RoktWidget(viewName: "Location1")
+                  RoktWidget(placeholderName: "Location1")
           ),
           Flexible(
               child:
-                  RoktWidget(viewName: "Location2")
+                  RoktWidget(placeholderName: "Location2")
           )
         ]),
       ),
