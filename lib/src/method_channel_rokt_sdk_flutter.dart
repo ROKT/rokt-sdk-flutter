@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../rokt_sdk.dart';
@@ -6,7 +5,7 @@ import '../rokt_sdk.dart';
 class MethodChannelRoktSdkFlutter {
   final MethodChannel _channel;
   final Map<int, RoktCallback> _callbacksById;
-  Map<int, String> _placeholders;
+  final Map<int, String> _placeholders;
   int _nextCallbackId = 0;
 
   static final MethodChannelRoktSdkFlutter _instance =

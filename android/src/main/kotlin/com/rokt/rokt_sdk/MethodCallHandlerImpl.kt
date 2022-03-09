@@ -3,11 +3,16 @@ package com.rokt.rokt_sdk
 import android.app.Activity
 import android.util.Log
 import com.rokt.roktsdk.Rokt
+import com.rokt.roktsdk.Widget
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import java.lang.ref.WeakReference
 
-class MethodCallHandlerImpl(private val messenger: BinaryMessenger) :
+class MethodCallHandlerImpl(
+    private val messenger: BinaryMessenger,
+    private val widgetFactory: RoktWidgetFactory
+) :
     MethodChannel.MethodCallHandler {
     private var channel: MethodChannel? = null
     private lateinit var activity: Activity
@@ -59,9 +64,15 @@ class MethodCallHandlerImpl(private val messenger: BinaryMessenger) :
         val viewName = call.argument<String>("viewName").orEmpty()
         val attributes = call.argument<HashMap<String, String>>("attributes").orEmpty()
         val callBackId = call.argument<Int>("callbackId") ?: 0
+        val placeHolders: MutableMap<String, WeakReference<Widget>> = mutableMapOf()
+        call.argument<HashMap<Int, String>>("placeholders")?.entries?.forEach {
+            if (widgetFactory.nativeViews[it.key] != null) {
+                placeHolders[it.value] = WeakReference(widgetFactory.nativeViews[it.key]?.view)
+            }
+        }
         val map: MutableMap<String, Any> = mutableMapOf()
         map["id"] = callBackId
-        Log.d(TAG, "execute $viewName $attributes ${map["id"]}")
+        Log.d(TAG, "execute $viewName $attributes $placeHolders ${map["id"]}")
         Rokt.execute(viewName, attributes, object : Rokt.RoktCallback {
             override fun onUnload(reason: Rokt.UnloadReasons) {
                 map["args"] = "unload"
@@ -86,7 +97,7 @@ class MethodCallHandlerImpl(private val messenger: BinaryMessenger) :
                 channel?.invokeMethod("callListener", map)
                 Log.d(TAG, "onShouldShowLoadingIndicator")
             }
-        }, mapOf())
+        }, placeHolders)
         result.success("Executed")
     }
 

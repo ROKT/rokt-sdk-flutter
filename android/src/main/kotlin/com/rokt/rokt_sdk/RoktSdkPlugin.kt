@@ -12,10 +12,11 @@ class RoktSdkPlugin: FlutterPlugin, ActivityAware {
     private var methodCallHandler: MethodCallHandlerImpl? = null
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        setupMethodChannel(flutterPluginBinding.binaryMessenger)
+        val widgetFactory = RoktWidgetFactory()
         flutterPluginBinding.platformViewRegistry.registerViewFactory(
-            VIEW_TYPE, RoktWidgetFactory()
+            VIEW_TYPE, widgetFactory
         )
+        setupMethodChannel(flutterPluginBinding.binaryMessenger, widgetFactory)
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
@@ -35,8 +36,8 @@ class RoktSdkPlugin: FlutterPlugin, ActivityAware {
     override fun onDetachedFromActivity() {
     }
 
-    private fun setupMethodChannel(messenger: BinaryMessenger) {
-        methodCallHandler = MethodCallHandlerImpl(messenger)
+    private fun setupMethodChannel(messenger: BinaryMessenger, widgetFactory: RoktWidgetFactory) {
+        methodCallHandler = MethodCallHandlerImpl(messenger, widgetFactory)
     }
 
     private fun teardownMethodChannel() {
