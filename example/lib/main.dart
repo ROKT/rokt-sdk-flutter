@@ -65,21 +65,15 @@ class _MyAppState extends State<MyApp> {
                     },
                   ),
                   const Text("Location 1"),
-                  // Flexible(
-                  //     child:
                   Container(
                       height: 50,
                       color: Colors.amber,
                       child: RoktWidget(placeholderName: "Location1")),
-                  // ),
                   const Text("Location 2"),
-                  // Flexible(
-                  //     child:
                   Container(
                       height: 50,
-                      color: Colors.amber,
+                      color: Colors.blue,
                       child: RoktWidget(placeholderName: "Location2")),
-                  // ),
                   const Text("The end")
                 ],
               ),
