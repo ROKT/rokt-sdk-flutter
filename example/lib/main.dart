@@ -25,13 +25,15 @@ class _MyAppState extends State<MyApp> {
   }
 
   Map getAttributes() {
-    return {"email": "j.smithasd123@example.com",
+    return {
+      "email": "j.smithasd123@example.com",
       "firstname": "Jenny",
       "lastname": "Smith",
       "mobile": "(555)867-5309",
       "postcode": "90210",
       "sandbox": "true",
-      "country": "US"};
+      "country": "US"
+    };
   }
 
   @override
@@ -41,30 +43,43 @@ class _MyAppState extends State<MyApp> {
       appBar: AppBar(
         title: const Text('Plugin example app'),
       ),
-      body: Center(
-        child: Column(children: [
-          TextButton(
-            child: const Text('initial'),
-            onPressed: () {
-              RoktSdk.initialize('2570597781472571104', appVersion: '1.0.0');
-            },
+      body: CustomScrollView(shrinkWrap: true, slivers: <Widget>[
+          SliverPadding(
+            padding: const EdgeInsets.all(20.0),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate(
+                <Widget>[
+                  TextButton(
+                    child: const Text('initial'),
+                    onPressed: () {
+                      RoktSdk.initialize('2570597781472571104',
+                          appVersion: '1.0.0');
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('execute'),
+                    onPressed: () {
+                      RoktSdk.execute("test", getAttributes(), (dynamic msg) {
+                        print("rokt_sdk $msg");
+                      });
+                    },
+                  ),
+                  const Text("Location 1"),
+                  Container(
+                      height: 50,
+                      color: Colors.amber,
+                      child: RoktWidget(placeholderName: "Location1")),
+                  const Text("Location 2"),
+                  Container(
+                      height: 50,
+                      color: Colors.blue,
+                      child: RoktWidget(placeholderName: "Location2")),
+                  const Text("The end")
+                ],
+              ),
+            ),
           ),
-          TextButton(
-            child: const Text('execute'),
-            onPressed: () {
-              RoktSdk.execute("test", getAttributes(), (dynamic msg) { print("rokt_sdk $msg"); });
-            },
-          ),
-          Flexible(
-              child:
-                  RoktWidget(placeholderName: "Location1")
-          ),
-          Flexible(
-              child:
-                  RoktWidget(placeholderName: "Location2")
-          )
         ]),
-      ),
     ));
   }
 }
