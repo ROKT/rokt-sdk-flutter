@@ -72,6 +72,12 @@ struct RoktMethodCallHandler {
                 // Optional callback to hide a loading indicator
                 callbackMap["args"] = "onShouldHideLoadingIndicator"
                 channel.invokeMethod("callListener", arguments: callbackMap)
+            },
+             onEmbeddedSizeChange: { selectedPlacement, widgetHeight in
+                // Optional callback to get selectedPlacement and height required by the placement every time the height of the placement changes
+                callbackMap["selectedPlacement"] = selectedPlacement
+                callbackMap["widgetHeight"] = widgetHeight
+                channel.invokeMethod("viewHeightListener", arguments: callbackMap)
             })
             
             result("success")

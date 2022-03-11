@@ -62,20 +62,14 @@ class _MyAppState extends State<MyApp> {
                       RoktSdk.execute("test", getAttributes(), (dynamic msg) {
                         print("rokt_sdk $msg");
                       });
-                    },
-                  ),
-                  const Text("Location 1"),
-                  Container(
-                      height: 50,
-                      color: Colors.amber,
-                      child: RoktWidget(placeholderName: "Location1")),
-                  const Text("Location 2"),
-                  Container(
-                      height: 50,
-                      color: Colors.blue,
-                      child: RoktWidget(placeholderName: "Location2")),
-                  const Text("The end")
-                ],
+                  },
+                ),
+                const Text("Location 1"),
+                RoktWidget(placeholderName: "Location1"),
+                const Text("Location 2"),
+                RoktWidget(placeholderName: "Location2"),
+                const Text("The end")
+              ],
               ),
             ),
           ),
