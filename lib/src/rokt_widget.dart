@@ -1,7 +1,6 @@
 part of rokt_sdk;
 
-typedef RoktWidgetCreatedCallback = void Function(int widgetId);
-typedef RoktRegisterCallback = void Function({required int id});
+typedef RoktWidgetCreatedCallback = void Function({required int widgetId});
 
 class RoktWidget extends StatefulWidget {
   final String placeholderName;
@@ -14,9 +13,9 @@ class RoktWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => roktWidget;
 
-  void registerWidget({required int id}) {
+  void registerWidget({required int widgetId}) {
     MethodChannelRoktSdkFlutter.instance
-        .attachPlaceholder(id: id, container: roktWidget);
+        .attachPlaceholder(id: widgetId, container: roktWidget);
   }
 
   void changeHeight(double newHeight) {
@@ -48,16 +47,16 @@ class RoktContainerState extends State<RoktWidget> {
         height: _height,
         child: _RoktStatelessWidget(
             placeholderName: placeholderName,
-            registerCallback: widget.registerWidget));
+            widgetCreatedCallback: widget.registerWidget));
   }
 }
 
 class _RoktStatelessWidget extends StatelessWidget {
   final String placeholderName;
-  final RoktRegisterCallback registerCallback;
+  final RoktWidgetCreatedCallback widgetCreatedCallback;
 
   const _RoktStatelessWidget(
-      {Key? key, required this.placeholderName, required this.registerCallback})
+      {Key? key, required this.placeholderName, required this.widgetCreatedCallback})
       : super(key: key);
 
   @override
@@ -113,6 +112,6 @@ class _RoktStatelessWidget extends StatelessWidget {
   }
 
   void _onPlatformViewCreated(int id) {
-    registerCallback(id: id);
+    widgetCreatedCallback(widgetId: id);
   }
 }
