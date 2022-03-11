@@ -1,13 +1,78 @@
 part of rokt_sdk;
 
-typedef RoktWidgetCreatedCallback = void Function(
-    int widgetId);
+typedef RoktWidgetCreatedCallback = void Function({required int widgetId});
 
-class RoktWidget extends StatelessWidget {
-
+class RoktWidget extends StatefulWidget {
   final String placeholderName;
+  final RoktContainerState roktWidget;
 
-  const RoktWidget({Key? key, required this.placeholderName}) : super(key: key);
+  RoktWidget({Key? key, required this.placeholderName})
+      : roktWidget = RoktContainerState(placeholderName: placeholderName),
+        super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => roktWidget;
+
+  void registerWidget({required int widgetId}) {
+    MethodChannelRoktSdkFlutter.instance
+        .attachPlaceholder(id: widgetId, container: roktWidget);
+  }
+
+  void changeHeight(double newHeight) {
+    roktWidget.changeHeight(newHeight);
+  }
+}
+
+class RoktContainerState extends State<RoktWidget> {
+  double _height = 0;
+  String placeholderName;
+  int widgetId = -1;
+
+  RoktContainerState({required this.placeholderName});
+
+  @override
+  void initState() {
+    _height = 0;
+    super.initState();
+  }
+
+  void changeHeight(double newHeight) {
+    setState(() {
+      _height = newHeight;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        height: _height,
+        child: _RoktStatelessWidget(
+            placeholderName: placeholderName,
+            widgetCreatedCallback: registerWidget));
+  }
+
+  void registerWidget({required int widgetId}) {
+    this.widgetId = widgetId;
+    MethodChannelRoktSdkFlutter.instance
+        .attachPlaceholder(id: widgetId, container: this);
+  }
+
+  @override
+  void dispose() {
+    if(widgetId != -1) {
+      MethodChannelRoktSdkFlutter.instance.detachPlaceholder(id: widgetId);
+    }
+    super.dispose();
+  }
+}
+
+class _RoktStatelessWidget extends StatelessWidget {
+  final String placeholderName;
+  final RoktWidgetCreatedCallback widgetCreatedCallback;
+
+  const _RoktStatelessWidget(
+      {Key? key, required this.placeholderName, required this.widgetCreatedCallback})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,19 +84,18 @@ class RoktWidget extends StatelessWidget {
       return PlatformViewLink(
         viewType: viewType,
         surfaceFactory: (
-            BuildContext context,
-            PlatformViewController controller,
-            ) {
+          BuildContext context,
+          PlatformViewController controller,
+        ) {
           return AndroidViewSurface(
             controller: controller as AndroidViewController,
-            gestureRecognizers:
-                const <Factory<OneSequenceGestureRecognizer>>{},
+            gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
             hitTestBehavior: PlatformViewHitTestBehavior.opaque,
           );
         },
         onCreatePlatformView: (PlatformViewCreationParams params) {
           final SurfaceAndroidViewController controller =
-          PlatformViewsService.initSurfaceAndroidView(
+              PlatformViewsService.initSurfaceAndroidView(
             id: params.id,
             viewType: viewType,
             layoutDirection: TextDirection.ltr,
@@ -63,6 +127,6 @@ class RoktWidget extends StatelessWidget {
   }
 
   void _onPlatformViewCreated(int id) {
-    MethodChannelRoktSdkFlutter.instance.attachPlaceholder(id: id, name: placeholderName);
+    widgetCreatedCallback(widgetId: id);
   }
 }
