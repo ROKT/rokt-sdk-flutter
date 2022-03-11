@@ -45,6 +45,12 @@ class MethodChannelRoktSdkFlutter {
     instance._placeholders[id] = container;
   }
 
+  void detachPlaceholder({required int id}) {
+    if (instance._placeholders.containsKey(id)) {
+      instance._placeholders.remove(id);
+    }
+  }
+
   Future<void> _methodCallHandler(MethodCall call) async {
     print("_methodCallHandler $call");
     switch (call.method) {

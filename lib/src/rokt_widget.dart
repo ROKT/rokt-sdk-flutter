@@ -26,6 +26,7 @@ class RoktWidget extends StatefulWidget {
 class RoktContainerState extends State<RoktWidget> {
   double _height = 0;
   String placeholderName;
+  int widgetId = -1;
 
   RoktContainerState({required this.placeholderName});
 
@@ -47,7 +48,21 @@ class RoktContainerState extends State<RoktWidget> {
         height: _height,
         child: _RoktStatelessWidget(
             placeholderName: placeholderName,
-            widgetCreatedCallback: widget.registerWidget));
+            widgetCreatedCallback: registerWidget));
+  }
+
+  void registerWidget({required int widgetId}) {
+    this.widgetId = widgetId;
+    MethodChannelRoktSdkFlutter.instance
+        .attachPlaceholder(id: widgetId, container: this);
+  }
+
+  @override
+  void dispose() {
+    if(widgetId != -1) {
+      MethodChannelRoktSdkFlutter.instance.detachPlaceholder(id: widgetId);
+    }
+    super.dispose();
   }
 }
 
