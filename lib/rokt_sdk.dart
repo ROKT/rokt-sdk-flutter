@@ -7,7 +7,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
-import 'package:rokt_sdk/src/method_channel_rokt_sdk_flutter.dart';
+import 'package:rokt_sdk/src/rokt_sdk_controller.dart';
+import 'package:rokt_sdk/src/widget_controller.dart';
 
 part 'src/rokt_widget.dart';
 
@@ -16,13 +17,13 @@ typedef RoktCallback = void Function(dynamic msg);
 class RoktSdk {
 
   static Future<void> initialize(String roktTagId, {appVersion = ''}) async {
-    await MethodChannelRoktSdkFlutter.instance
+    await RoktSdkController.instance
         .initialize(roktTagId: roktTagId, appVersion: appVersion);
   }
 
   static Future<void> execute(
       String viewName, Map attributes, RoktCallback callback) async {
-    await MethodChannelRoktSdkFlutter.instance.execute(
+    await RoktSdkController.instance.execute(
         viewName: viewName,
         attributes: attributes,
         callback: callback);

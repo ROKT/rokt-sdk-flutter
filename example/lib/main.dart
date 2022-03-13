@@ -40,40 +40,40 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
-      appBar: AppBar(
-        title: const Text('Plugin example app'),
-      ),
-      body: CustomScrollView(shrinkWrap: true, slivers: <Widget>[
-          SliverPadding(
-            padding: const EdgeInsets.all(20.0),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate(
-                <Widget>[
-                  TextButton(
-                    child: const Text('initial'),
-                    onPressed: () {
-                      RoktSdk.initialize('2570597781472571104',
-                          appVersion: '1.0.0');
-                    },
-                  ),
-                  TextButton(
-                    child: const Text('execute'),
-                    onPressed: () {
-                      RoktSdk.execute("test", getAttributes(), (dynamic msg) {
-                        print("rokt_sdk $msg");
-                      });
-                  },
+          appBar: AppBar(
+            title: const Text('Plugin example app'),
+          ),
+          body: CustomScrollView(shrinkWrap: true, slivers: <Widget>[
+            SliverPadding(
+              padding: const EdgeInsets.all(20.0),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate(
+                  <Widget>[
+                    TextButton(
+                      child: const Text('initial'),
+                      onPressed: () {
+                        RoktSdk.initialize('2570597781472571104',
+                            appVersion: '1.0.0');
+                      },
+                    ),
+                    TextButton(
+                      child: const Text('execute'),
+                      onPressed: () {
+                        RoktSdk.execute("test", getAttributes(), (dynamic msg) {
+                          print("rokt_sdk $msg");
+                        });
+                      },
+                    ),
+                    const Text("Location 1"),
+                    RoktWidget(placeholderName: "Location1"),
+                    const Text("Location 2"),
+                    RoktWidget(placeholderName: "Location2"),
+                    const Text("The end")
+                  ],
                 ),
-                const Text("Location 1"),
-                RoktWidget(placeholderName: "Location1"),
-                const Text("Location 2"),
-                RoktWidget(placeholderName: "Location2"),
-                const Text("The end")
-              ],
               ),
             ),
-          ),
-        ]),
-    ));
+          ]),
+        ));
   }
 }
