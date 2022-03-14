@@ -42,10 +42,9 @@ struct RoktMethodCallHandler {
             var placements = [String: RoktEmbeddedView]()
             if let placeholders = args["placeholders"] as? [Int: String] {
                 for (placeholderId, placeholderName) in placeholders {
-                    for flutterView in factory.platformViews {
-                        if flutterView.id == placeholderId {
-                            let embedded = flutterView.getRoktEmbeddedPlacement()
-                            placements[placeholderName] = embedded
+                    for (id, flutterView) in factory.platformViews {
+                        if id == placeholderId {
+                            placements[placeholderName] = flutterView.roktEmbeddedView
                         }
                     }
                 }
@@ -75,9 +74,15 @@ struct RoktMethodCallHandler {
             },
              onEmbeddedSizeChange: { selectedPlacement, widgetHeight in
                 // Optional callback to get selectedPlacement and height required by the placement every time the height of the placement changes
-                callbackMap["selectedPlacement"] = selectedPlacement
-                callbackMap["widgetHeight"] = widgetHeight
-                channel.invokeMethod("viewHeightListener", arguments: callbackMap)
+                if let placeholders = args["placeholders"] as? [Int: String] {
+                    for (placeholderId, placeholderName) in placeholders {
+                        for (id, flutterView) in factory.platformViews {
+                            if id == placeholderId && placeholderName == selectedPlacement {
+                                flutterView.sendUpdatedHeight(height: widgetHeight)
+                            }
+                        }
+                    }
+                }
             })
             
             result("success")
