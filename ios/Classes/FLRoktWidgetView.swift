@@ -16,36 +16,35 @@ import UIKit
 import Rokt_Widget
 
 class FLRoktWidgetView: NSObject, FlutterPlatformView {
-    private var _view: UIView
-    private var roktEmbeddedView: RoktEmbeddedView?
+    let roktEmbeddedView: RoktEmbeddedView
     let id: Int64
+    let channel: FlutterMethodChannel
     init(
         frame: CGRect,
         viewIdentifier viewId: Int64,
         arguments args: Any?,
-        binaryMessenger messenger: FlutterBinaryMessenger?
+        binaryMessenger messenger: FlutterBinaryMessenger
     ) {
         self.id = viewId
-        _view = UIView()
+        channel = FlutterMethodChannel(name: "rokt_widget_\(id)", binaryMessenger: messenger)
+        roktEmbeddedView = RoktEmbeddedView()
         super.init()
-        createNativeView(view: _view)
     }
     
     func view() -> UIView {
-        return _view
-    }
-    
-    func getRoktEmbeddedPlacement() -> RoktEmbeddedView? {
-        // set the width to match parent
-        if roktEmbeddedView?.frame.width == 0 {
-            roktEmbeddedView?.frame = CGRect(x: 0, y: 0, width: _view.frame.width, height: 0)
-        }
         return roktEmbeddedView
+
     }
     
-    func createNativeView(view _view: UIView){
-        roktEmbeddedView = RoktEmbeddedView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-         _view.addSubview(roktEmbeddedView!)
+    private func resizeFrame(_ newHeight: Double = 0) {
+        roktEmbeddedView.frame = CGRect(x: 0, y: 0, width: roktEmbeddedView.frame.width, height: newHeight)
+    }
+    
+    func sendUpdatedHeight(height: Double){
+        var callbackMap = [String: Any] ()
+        resizeFrame(height)
+        callbackMap["size"] = height
+        channel.invokeMethod("viewHeightListener", arguments: callbackMap)
     }
 }
 

@@ -17,7 +17,7 @@ import Rokt_Widget
 
 class RoktWidgetFactory: NSObject, FlutterPlatformViewFactory {
     private var messenger: FlutterBinaryMessenger
-    var platformViews: [FLRoktWidgetView] = []
+    var platformViews: [Int64: FLRoktWidgetView] = [:]
     
     init(messenger: FlutterBinaryMessenger) {
         self.messenger = messenger
@@ -34,7 +34,7 @@ class RoktWidgetFactory: NSObject, FlutterPlatformViewFactory {
             viewIdentifier: viewId,
             arguments: args,
             binaryMessenger: messenger)
-        platformViews.append(platformView)
+        platformViews[viewId] = platformView
         return platformView
     }
 }
