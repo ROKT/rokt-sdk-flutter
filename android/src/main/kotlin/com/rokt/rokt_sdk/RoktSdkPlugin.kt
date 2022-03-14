@@ -12,7 +12,7 @@ class RoktSdkPlugin: FlutterPlugin, ActivityAware {
     private var methodCallHandler: MethodCallHandlerImpl? = null
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        val widgetFactory = RoktWidgetFactory()
+        val widgetFactory = RoktWidgetFactory(flutterPluginBinding.binaryMessenger)
         flutterPluginBinding.platformViewRegistry.registerViewFactory(
             VIEW_TYPE, widgetFactory
         )

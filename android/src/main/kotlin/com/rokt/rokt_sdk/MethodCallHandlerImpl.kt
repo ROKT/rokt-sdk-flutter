@@ -49,9 +49,9 @@ class MethodCallHandlerImpl(
         val roktTagId = call.argument<String>("roktTagId")
         val appVersion = call.argument<String>("appVersion").orEmpty()
         Log.d(TAG, "init $roktTagId $appVersion")
-        roktTagId?.let { roktTagId ->
+        roktTagId?.let { tagId ->
             Rokt.setLoggingEnabled(true)
-            Rokt.init(roktTagId, appVersion, activity)
+            Rokt.init(tagId, appVersion, activity)
             result.success("Initialized")
         } ?: result.error(
             "No_TAG_ID",
@@ -67,7 +67,7 @@ class MethodCallHandlerImpl(
         val placeHolders: MutableMap<String, WeakReference<Widget>> = mutableMapOf()
         call.argument<HashMap<Int, String>>("placeholders")?.entries?.forEach {
             if (widgetFactory.nativeViews[it.key] != null) {
-                placeHolders[it.value] = WeakReference(widgetFactory.nativeViews[it.key]?.view)
+                placeHolders[it.value] = WeakReference(widgetFactory.nativeViews[it.key])
             }
         }
         val map: MutableMap<String, Any> = mutableMapOf()
