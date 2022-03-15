@@ -16,6 +16,7 @@ class MethodCallHandlerImpl(
     MethodChannel.MethodCallHandler {
     private var channel: MethodChannel? = null
     private lateinit var activity: Activity
+    private val roktCallbacks: MutableSet<Rokt.RoktCallback> = mutableSetOf()
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
@@ -39,6 +40,7 @@ class MethodCallHandlerImpl(
     }
 
     fun stopListening() {
+        roktCallbacks.clear()
         channel?.let { methodChannel ->
             methodChannel.setMethodCallHandler(null)
             channel = null
@@ -70,34 +72,13 @@ class MethodCallHandlerImpl(
                 placeHolders[it.value] = WeakReference(widgetFactory.nativeViews[it.key])
             }
         }
+        val roktCallback = RoktCallbackImpl(channel, callBackId).also { callback ->
+            roktCallbacks.add(callback)
+        }
         val map: MutableMap<String, Any> = mutableMapOf()
         map["id"] = callBackId
-        Log.d(TAG, "execute $viewName $attributes $placeHolders ${map["id"]}")
-        Rokt.execute(viewName, attributes, object : Rokt.RoktCallback {
-            override fun onUnload(reason: Rokt.UnloadReasons) {
-                map["args"] = "unload"
-                channel?.invokeMethod("callListener", map)
-                Log.d(TAG, "onUnLoad")
-            }
-
-            override fun onLoad() {
-                map["args"] = "load"
-                channel?.invokeMethod("callListener", map)
-                Log.d(TAG, "loaded")
-            }
-
-            override fun onShouldHideLoadingIndicator() {
-                map["args"] = "onShouldHideLoadingIndicator"
-                channel?.invokeMethod("callListener", map)
-                Log.d(TAG, "onShouldHideLoadingIndicator")
-            }
-
-            override fun onShouldShowLoadingIndicator() {
-                map["args"] = "onShouldShowLoadingIndicator"
-                channel?.invokeMethod("callListener", map)
-                Log.d(TAG, "onShouldShowLoadingIndicator")
-            }
-        }, placeHolders)
+        Log.d(TAG, "execute $viewName $attributes $placeHolders}")
+        Rokt.execute(viewName, attributes, roktCallback, placeHolders)
         result.success("Executed")
     }
 
