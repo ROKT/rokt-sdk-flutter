@@ -10,7 +10,6 @@ import com.rokt.roktsdk.Widget
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
-import kotlin.math.abs
 
 class RoktWidget(context: Context, messenger: BinaryMessenger, viewId: Int) : PlatformView {
 
@@ -61,13 +60,17 @@ class RoktWidget(context: Context, messenger: BinaryMessenger, viewId: Int) : Pl
                         sendUpdatedHeight(INITIAL_VIRTUAL_HEIGHT)
                         isWidgetLoaded = true
                     }
-                } else if (abs(widget.height - (bottomWas - topWas)) >= MINIMUM_HEIGHT_CHANGE) {
-                    Log.d(
-                        TAG, "widget height has changed !! " +
-                                "${widget.height.toDp} ${widget.marginBottom.toDp} ${widget.marginTop.toDp}}"
-                    )
-                    Log.d(TAG, "send updated height")
-                    sendUpdatedHeight((widget.height.toDp + widget.marginBottom.toDp + widget.marginTop.toDp).toDouble())
+                } else {
+                    widget.addOnLayoutChangeListener { widgetView, _, _, _, _, _, topWas, _, bottomWas ->
+                        if (widgetView.height != (bottomWas - topWas) && (view.height.toDp - widgetView.height.toDp) > ORIENTATION_DIFF) {
+                            Log.d(
+                                TAG,
+                                "change in widget container height, total height ${view.height.toDp} " +
+                                        "${widgetView.height.toDp} prev ${((bottomWas - topWas).toDp)}"
+                            )
+                            sendUpdatedHeight((widgetView.height.toDp + widgetView.marginBottom.toDp + widgetView.marginTop.toDp).toDouble())
+                        }
+                    }
                 }
             }
     }
@@ -76,7 +79,10 @@ class RoktWidget(context: Context, messenger: BinaryMessenger, viewId: Int) : Pl
         offersContainer = view
         offersContainer.addOnLayoutChangeListener { view, _, _, _, _, _, topWas, _, bottomWas ->
             if (view.height != (bottomWas - topWas)) {
-                Log.d(TAG, "change in offer container height ${view.height}")
+                Log.d(
+                    TAG,
+                    "change in offer container height ${view.height.toDp} prev ${((bottomWas - topWas).toDp)}"
+                )
                 syncHeight()
             }
         }
@@ -84,10 +90,25 @@ class RoktWidget(context: Context, messenger: BinaryMessenger, viewId: Int) : Pl
 
     private fun syncHeight() {
         if (::parentLayout.isInitialized && ::offersContainer.isInitialized && ::footerLayout.isInitialized) {
-            if (abs(parentLayout.height - (offersContainer.height + footerLayout.height)) > OUT_OF_SYNC_HEIGHT_DIFF) {
-                Log.d(TAG, "send virtual updated height ${parentLayout.height} ${offersContainer.height} ${footerLayout.height}")
+            if ((offersContainer.height + footerLayout.height) - parentLayout.height > OUT_OF_SYNC_HEIGHT_DIFF) {
+                Log.d(
+                    TAG,
+                    "send virtual updated height ${parentLayout.height.toDp} ${offersContainer.height.toDp} ${footerLayout.height.toDp}"
+                )
                 sendUpdatedHeight(INITIAL_VIRTUAL_HEIGHT)
+            } else {
+                Log.d(
+                    TAG,
+                    "send real updated height ** ${parentLayout.height.toDp} ${offersContainer.height.toDp} ${footerLayout.height.toDp}"
+                )
+                sendUpdatedHeight((widget.height.toDp + widget.marginBottom.toDp + widget.marginTop.toDp).toDouble())
             }
+        } else {
+            Log.d(
+                TAG,
+                "send real updated height ${parentLayout.height.toDp} ${offersContainer.height.toDp} ${footerLayout.height.toDp}"
+            )
+            sendUpdatedHeight((widget.height.toDp + widget.marginBottom.toDp + widget.marginTop.toDp).toDouble())
         }
     }
 
@@ -103,11 +124,11 @@ class RoktWidget(context: Context, messenger: BinaryMessenger, viewId: Int) : Pl
     }
 
     companion object {
-        private const val INITIAL_VIRTUAL_HEIGHT = 450.0
+        private const val INITIAL_VIRTUAL_HEIGHT = 550.0
         private const val VIEW_HEIGHT_LISTENER = "viewHeightListener"
         private const val VIEW_HEIGHT_LISTENER_PARAM = "size"
-        private const val MINIMUM_HEIGHT_CHANGE = 8
-        private const val OUT_OF_SYNC_HEIGHT_DIFF = 40
+        private const val OUT_OF_SYNC_HEIGHT_DIFF = 8
+        private const val ORIENTATION_DIFF = 50
         private const val TAG = "RoktWidget"
     }
 }
