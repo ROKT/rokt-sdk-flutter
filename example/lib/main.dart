@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:rokt_sdk/rokt_sdk.dart';
+import 'assets/constants.dart' as constants;
 
 void main() {
   runApp(const MyApp());
@@ -17,8 +19,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
-  final tagIdController = TextEditingController(text: "2754655826098840951");
-  final viewNameController = TextEditingController(text: "testTwoEmbedded");
+  final tagIdController = TextEditingController(text: constants.defaultTagId);
+  final viewNameController = TextEditingController(text: constants.defaultViewName);
+  final attributesController = TextEditingController(text: constants.defaultAttributes);
   Map<int, String> placeholders = Map();
 
   @override
@@ -27,15 +30,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   Map getAttributes() {
-    return {
-      "email": "j.smithasd12343234433323@example.com",
-      "firstname": "Jenny",
-      "lastname": "Smith",
-      "mobile": "(555)867-5309",
-      "postcode": "90210",
-      "sandbox": "true",
-      "country": "US"
-    };
+    final Map attributes = json.decode(attributesController.text);
+    return attributes;
   }
 
   @override
@@ -68,6 +64,9 @@ class _MyAppState extends State<MyApp> {
                         });
                       },
                     ),
+                    TextField(controller: attributesController,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null),
                     const Text("Location 1"),
                     RoktWidget(placeholderName: "Location1"),
                     const Text("Location 2"),
