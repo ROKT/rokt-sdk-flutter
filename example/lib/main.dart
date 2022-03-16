@@ -17,6 +17,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
+  final tagIdController = TextEditingController(text: "2754655826098840951");
+  final viewNameController = TextEditingController(text: "testTwoEmbedded");
   Map<int, String> placeholders = Map();
 
   @override
@@ -26,7 +28,7 @@ class _MyAppState extends State<MyApp> {
 
   Map getAttributes() {
     return {
-      "email": "j.smithasd123@example.com",
+      "email": "j.smithasd12343234433323@example.com",
       "firstname": "Jenny",
       "lastname": "Smith",
       "mobile": "(555)867-5309",
@@ -49,17 +51,19 @@ class _MyAppState extends State<MyApp> {
               sliver: SliverList(
                 delegate: SliverChildListDelegate(
                   <Widget>[
+                    TextField(controller: tagIdController, textAlign: TextAlign.center),
                     TextButton(
                       child: const Text('initial'),
                       onPressed: () {
-                        RoktSdk.initialize('2570597781472571104',
+                        RoktSdk.initialize(tagIdController.text,
                             appVersion: '1.0.0');
                       },
                     ),
+                    TextField(controller: viewNameController, textAlign: TextAlign.center),
                     TextButton(
                       child: const Text('execute'),
                       onPressed: () {
-                        RoktSdk.execute("test", getAttributes(), (dynamic msg) {
+                        RoktSdk.execute(viewNameController.text, getAttributes(), (dynamic msg) {
                           print("rokt_sdk $msg");
                         });
                       },
