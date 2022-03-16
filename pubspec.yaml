@@ -1,5 +1,5 @@
 name: rokt_sdk
-description: A new flutter plugin project.
+description: Rokt Mobile SDK to integrate ROKT Api into flutter applications.
 version: 0.0.1
 homepage:
 
