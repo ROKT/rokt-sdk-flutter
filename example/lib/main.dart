@@ -20,8 +20,10 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
   final tagIdController = TextEditingController(text: constants.defaultTagId);
-  final viewNameController = TextEditingController(text: constants.defaultViewName);
-  final attributesController = TextEditingController(text: constants.defaultAttributes);
+  final viewNameController =
+      TextEditingController(text: constants.defaultViewName);
+  final attributesController =
+      TextEditingController(text: constants.defaultAttributes);
   Map<int, String> placeholders = Map();
 
   @override
@@ -38,45 +40,63 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Plugin example app'),
-          ),
-          body: CustomScrollView(shrinkWrap: true, slivers: <Widget>[
-            SliverPadding(
-              padding: const EdgeInsets.all(20.0),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate(
-                  <Widget>[
-                    TextField(controller: tagIdController, textAlign: TextAlign.center),
-                    TextButton(
-                      child: const Text('initial'),
-                      onPressed: () {
-                        RoktSdk.initialize(tagIdController.text,
-                            appVersion: '1.0.0');
-                      },
-                    ),
-                    TextField(controller: viewNameController, textAlign: TextAlign.center),
-                    TextButton(
-                      child: const Text('execute'),
-                      onPressed: () {
-                        RoktSdk.execute(viewNameController.text, getAttributes(), (dynamic msg) {
-                          print("rokt_sdk $msg");
-                        });
-                      },
-                    ),
-                    TextField(controller: attributesController,
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null),
-                    const Text("Location 1"),
-                    RoktWidget(placeholderName: "Location1"),
-                    const Text("Location 2"),
-                    RoktWidget(placeholderName: "Location2"),
-                    const Text("The end")
-                  ],
-                ),
-              ),
+            appBar: AppBar(
+              title: const Text('Plugin example app'),
             ),
-          ]),
-        ));
+            body: GestureDetector(
+              onTap: () {
+                FocusScope.of(context).requestFocus(new FocusNode());
+              },
+              child: CustomScrollView(shrinkWrap: true, slivers: <Widget>[
+                SliverPadding(
+                  padding: const EdgeInsets.all(20.0),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate(
+                      <Widget>[
+                        Row(crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                    Expanded(
+                    child:TextField(
+                                  controller: tagIdController,
+                                  textAlign: TextAlign.center)),
+                              TextButton(
+                                child: const Text('Initial'),
+                                onPressed: () {
+                                  RoktSdk.initialize(tagIdController.text,
+                                      appVersion: '1.0.0');
+                                },
+                              )
+                            ]),
+                        Row(crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                  child:
+                              TextField(
+                                  controller: viewNameController,
+                                  textAlign: TextAlign.center)),
+                              TextButton(
+                                  child: const Text('Execute'),
+                                  onPressed: () {
+                                    RoktSdk.execute(viewNameController.text,
+                                        getAttributes(), (dynamic msg) {
+                                      print("rokt_sdk $msg");
+                                    });
+                                  })
+                            ]),
+                        TextField(
+                            controller: attributesController,
+                            keyboardType: TextInputType.multiline,
+                            maxLines: null),
+                        const Text("Location 1"),
+                        RoktWidget(placeholderName: "Location1"),
+                        const Text("Location 2"),
+                        RoktWidget(placeholderName: "Location2"),
+                        const Text("The end")
+                      ],
+                    ),
+                  ),
+                ),
+              ]),
+            )));
   }
 }
