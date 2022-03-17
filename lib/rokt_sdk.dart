@@ -12,35 +12,33 @@ import 'package:rokt_sdk/src/widget_controller.dart';
 
 part 'src/rokt_widget.dart';
 
-
 typedef RoktCallbackInternal = void Function(dynamic msg);
 typedef RoktCallback = void Function();
 
 class RoktSdk {
+  static const _load = "load";
+  static const _unload = "unload";
+  static const _shouldShowLoadingIndicator = "onShouldShowLoadingIndicator";
+  static const _shouldHideLoadingIndicator = "onShouldHideLoadingIndicator";
 
-  static const load = "load";
-  static const unload = "unload";
-  static const shouldShowLoadingIndicator = "onShouldShowLoadingIndicator";
-  static const shouldHideLoadingIndicator = "onShouldHideLoadingIndicator";
-
-  static void defaultRoktCallBackInternal(dynamic msg) {
+  static void _defaultRoktCallBackInternal(dynamic msg) {
     switch (msg) {
-      case load:
+      case _load:
         {
           _onLoad?.call();
           break;
         }
-      case unload:
+      case _unload:
         {
           _onUnLoad?.call();
           break;
         }
-      case shouldShowLoadingIndicator:
+      case _shouldShowLoadingIndicator:
         {
           _onShouldShowLoadingIndicator?.call();
           break;
         }
-      case shouldHideLoadingIndicator:
+      case _shouldHideLoadingIndicator:
         {
           _onShouldHideLoadingIndicator?.call();
           break;
@@ -48,7 +46,7 @@ class RoktSdk {
     }
   }
 
-  static void defaultRoktCallBack() {}
+  static void _defaultRoktCallBack() {}
 
   static RoktCallback? _onLoad;
 
@@ -63,23 +61,22 @@ class RoktSdk {
         .initialize(roktTagId: roktTagId, appVersion: appVersion);
   }
 
-  static Future<void> execute(
-      String viewName,
-      Map attributes, {
-        RoktCallback onLoad = defaultRoktCallBack,
-        RoktCallback onUnLoad = defaultRoktCallBack,
-        RoktCallback onShouldShowLoadingIndicator = defaultRoktCallBack,
-        RoktCallback onShouldHideLoadingIndicator = defaultRoktCallBack,
-      }) async {
+  static Future<void> execute({
+    required String viewName,
+    Map attributes = const { },
+    RoktCallback onLoad = _defaultRoktCallBack,
+    RoktCallback onUnLoad = _defaultRoktCallBack,
+    RoktCallback onShouldShowLoadingIndicator = _defaultRoktCallBack,
+    RoktCallback onShouldHideLoadingIndicator = _defaultRoktCallBack,
+  }) async {
     _onLoad = onLoad;
     _onUnLoad = onUnLoad;
     _onShouldShowLoadingIndicator = onShouldShowLoadingIndicator;
     _onShouldHideLoadingIndicator = onShouldHideLoadingIndicator;
 
-
     await RoktSdkController.instance.execute(
         viewName: viewName,
         attributes: attributes,
-        callback: defaultRoktCallBackInternal);
+        callback: _defaultRoktCallBackInternal);
   }
 }
