@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
@@ -18,7 +17,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
   final tagIdController = TextEditingController(text: constants.defaultTagId);
   final viewNameController =
       TextEditingController(text: constants.defaultViewName);
@@ -45,7 +43,7 @@ class _MyAppState extends State<MyApp> {
             ),
             body: GestureDetector(
               onTap: () {
-                FocusScope.of(context).requestFocus(new FocusNode());
+                FocusScope.of(context).requestFocus(FocusNode());
               },
               child: CustomScrollView(shrinkWrap: true, slivers: <Widget>[
                 SliverPadding(
@@ -53,12 +51,13 @@ class _MyAppState extends State<MyApp> {
                   sliver: SliverList(
                     delegate: SliverChildListDelegate(
                       <Widget>[
-                        Row(crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                    Expanded(
-                    child:TextField(
-                                  controller: tagIdController,
-                                  textAlign: TextAlign.center)),
+                              Expanded(
+                                  child: TextField(
+                                      controller: tagIdController,
+                                      textAlign: TextAlign.center)),
                               TextButton(
                                 child: const Text('Initial'),
                                 onPressed: () {
@@ -67,19 +66,27 @@ class _MyAppState extends State<MyApp> {
                                 },
                               )
                             ]),
-                        Row(crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Expanded(
-                                  child:
-                              TextField(
-                                  controller: viewNameController,
-                                  textAlign: TextAlign.center)),
+                                  child: TextField(
+                                      controller: viewNameController,
+                                      textAlign: TextAlign.center)),
                               TextButton(
                                   child: const Text('Execute'),
                                   onPressed: () {
                                     RoktSdk.execute(viewNameController.text,
-                                        getAttributes(), (dynamic msg) {
-                                      print("rokt_sdk $msg");
+                                        getAttributes(), onLoad: () {
+                                      print("rokt_sdk loaded");
+                                    }, onUnLoad: () {
+                                      print("rokt_sdk unloaded");
+                                    }, onShouldShowLoadingIndicator: () {
+                                      print(
+                                          "rokt_sdk onShouldShowLoadingIndicator");
+                                    }, onShouldHideLoadingIndicator: () {
+                                      print(
+                                          "rokt_sdk onShouldHideLoadingIndicator");
                                     });
                                   })
                             ]),
@@ -88,9 +95,9 @@ class _MyAppState extends State<MyApp> {
                             keyboardType: TextInputType.multiline,
                             maxLines: null),
                         const Text("Location 1"),
-                        RoktWidget(placeholderName: "Location1"),
+                        const RoktWidget(placeholderName: "Location1"),
                         const Text("Location 2"),
-                        RoktWidget(placeholderName: "Location2"),
+                        const RoktWidget(placeholderName: "Location2"),
                         const Text("The end")
                       ],
                     ),
