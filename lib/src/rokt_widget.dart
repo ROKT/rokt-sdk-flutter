@@ -8,10 +8,10 @@ class RoktWidget extends StatefulWidget {
   const RoktWidget({Key? key, required this.placeholderName}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => RoktContainerState();
+  State<StatefulWidget> createState() => _RoktContainerState();
 }
 
-class RoktContainerState extends State<RoktWidget> {
+class _RoktContainerState extends State<RoktWidget> {
   double _height = 0;
 
   @override

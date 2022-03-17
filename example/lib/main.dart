@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
-import 'package:flutter/services.dart';
 import 'package:rokt_sdk/rokt_sdk.dart';
 import 'assets/constants.dart' as constants;
 
@@ -76,18 +75,23 @@ class _MyAppState extends State<MyApp> {
                               TextButton(
                                   child: const Text('Execute'),
                                   onPressed: () {
-                                    RoktSdk.execute(viewNameController.text,
-                                        getAttributes(), onLoad: () {
-                                      print("rokt_sdk loaded");
-                                    }, onUnLoad: () {
-                                      print("rokt_sdk unloaded");
-                                    }, onShouldShowLoadingIndicator: () {
-                                      print(
-                                          "rokt_sdk onShouldShowLoadingIndicator");
-                                    }, onShouldHideLoadingIndicator: () {
-                                      print(
-                                          "rokt_sdk onShouldHideLoadingIndicator");
-                                    });
+                                    RoktSdk.execute(
+                                        viewName: viewNameController.text,
+                                        attributes: getAttributes(),
+                                        onLoad: () {
+                                          print("rokt_sdk loaded");
+                                        },
+                                        onUnLoad: () {
+                                          print("rokt_sdk unloaded");
+                                        },
+                                        onShouldShowLoadingIndicator: () {
+                                          print(
+                                              "rokt_sdk onShouldShowLoadingIndicator");
+                                        },
+                                        onShouldHideLoadingIndicator: () {
+                                          print(
+                                              "rokt_sdk onShouldHideLoadingIndicator");
+                                        });
                                   })
                             ]),
                         TextField(
