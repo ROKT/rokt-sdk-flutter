@@ -4,7 +4,7 @@ import '../rokt_sdk.dart';
 
 class RoktSdkController {
   final MethodChannel _channel;
-  final Map<int, RoktCallback> _callbacksById;
+  final Map<int, RoktCallbackInternal> _callbacksById;
   final Map<int, String> _placeholders;
   int _nextCallbackId = 0;
 
@@ -30,7 +30,7 @@ class RoktSdkController {
   Future<void> execute(
       {required String viewName,
         required Map attributes,
-        required RoktCallback callback}) async {
+        required RoktCallbackInternal callback}) async {
     int currentCallbackId = _nextCallbackId++;
     _callbacksById[currentCallbackId] = callback;
     await _channel.invokeMethod('execute', {
