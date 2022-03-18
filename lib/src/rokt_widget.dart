@@ -2,6 +2,7 @@ part of rokt_sdk;
 
 typedef RoktWidgetCreatedCallback = void Function(int widgetId);
 
+/// Rokt embedded widget custom view
 class RoktWidget extends StatefulWidget {
   final String placeholderName;
 
@@ -20,7 +21,7 @@ class _RoktContainerState extends State<RoktWidget> {
     super.initState();
   }
 
-  void changeHeight(double newHeight) {
+  void _changeHeight(double newHeight) {
     setState(() {
       _height = newHeight;
     });
@@ -38,7 +39,7 @@ class _RoktContainerState extends State<RoktWidget> {
     print("_onPlatformViewCreated $id ");
     RoktSdkController.instance
         .attachPlaceholder(id: id, name: widget.placeholderName);
-    WidgetController(id: id, sizeChangeCallback: changeHeight);
+    WidgetController(id: id, sizeChangeCallback: _changeHeight);
   }
 }
 

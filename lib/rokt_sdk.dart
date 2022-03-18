@@ -15,6 +15,9 @@ part 'src/rokt_widget.dart';
 typedef RoktCallbackInternal = void Function(dynamic msg);
 typedef RoktCallback = void Function();
 
+/// The main interface to Rokt SDK
+///
+/// Use the member methods to interact with the Rokt SDK
 class RoktSdk {
   static const _load = "load";
   static const _unload = "unload";
@@ -56,10 +59,30 @@ class RoktSdk {
 
   static RoktCallback? _onShouldHideLoadingIndicator;
 
+  /// Initializes Rokt SDK
+  ///
+  /// Initialize the Rokt SDK prior to using it.
+  /// The recommended way of calling the initialize method is early in the application.
+  /// - Parameters:
+  ///   - roktTagId: The tag id provided by Rokt, associated with your account.
   static Future<void> initialize(String roktTagId, {appVersion = ''}) async {
     await RoktSdkController.instance
         .initialize(roktTagId: roktTagId, appVersion: appVersion);
   }
+
+  /// Execute Rokt widget
+  ///
+  /// This is the entry point to display a widget to the consumer.
+  /// The Rokt widget view displays after a short delay, configurable via the Rokt platform.
+  /// The SDK provides optional callback events for when the view loads and unloads.
+  /// Your app dictates which consumer attributes are passed through to Rokt
+  /// - Parameters:
+  ///   - viewName: The name that should be displayed in the widget
+  ///   - attributes: A string map containing the parameters that should be displayed in the widget
+  ///   - onLoad: Function to execute right after the widget is successfully loaded and displayed
+  ///   - onUnLoad: Function to execute right after widget is unloaded, there is no widget or there is an exception
+  ///   - onShouldShowLoadingIndicator: Function to execute when the loading indicator should be shown
+  ///   - onShouldHideLoadingIndicator: Function to execute when the loading indicator should be hidden
 
   static Future<void> execute({
     required String viewName,

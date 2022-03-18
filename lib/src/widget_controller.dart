@@ -2,11 +2,14 @@ import 'package:flutter/services.dart';
 
 typedef RoktWidgetSizeChangeCallback = void Function(double size);
 
+/// Widget Controller to handle callbacks and Method channels of view
 class WidgetController {
+  /// Id of the Rokt widget view
   final int id;
   final MethodChannel _channel;
   final RoktWidgetSizeChangeCallback sizeChangeCallback;
 
+  /// Initialize WidgetController with a specific method channel
   WidgetController({required this.id, required this.sizeChangeCallback})
       : _channel = MethodChannel('rokt_widget_$id') {
     _channel.setMethodCallHandler(_methodCallHandler);
