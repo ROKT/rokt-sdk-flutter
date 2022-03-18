@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 
 import '../rokt_sdk.dart';
 
+/// Rokt SDK Controller to handle callbacks and Method channels
 class RoktSdkController {
   final MethodChannel _channel;
   final Map<int, RoktCallbackInternal> _callbacksById;
@@ -11,6 +12,7 @@ class RoktSdkController {
   static final RoktSdkController _instance =
   RoktSdkController._();
 
+  /// Singleton RoktSdkController instance
   static RoktSdkController get instance => _instance;
 
   RoktSdkController._()
@@ -20,13 +22,13 @@ class RoktSdkController {
     _channel.setMethodCallHandler(_methodCallHandler);
   }
 
+  /// Call Rokt Initialize method in Native SDK
   Future<void> initialize({required String roktTagId, appVersion = ''}) async {
-    // remove all the existing id's during initialization
-    // _placeholders.clear();
     await _channel.invokeMethod(
         'initialize', {'roktTagId': roktTagId, 'appVersion': appVersion});
   }
 
+  /// Call Rokt Execute method in Native SDK
   Future<void> execute(
       {required String viewName,
         required Map attributes,
@@ -41,6 +43,7 @@ class RoktSdkController {
     });
   }
 
+  /// Placeholders are attached to be passed to Rokt Execute
   void attachPlaceholder({required int id, required String name}) {
     instance._placeholders[id] = name;
   }
