@@ -29,14 +29,14 @@ class _RoktContainerState extends State<RoktWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
         height: _height,
         child:
             _RoktStatelessWidget(widgetCreatedCallback: _onWidgetViewCreated));
   }
 
   void _onWidgetViewCreated(int id) {
-    print("_onPlatformViewCreated $id ");
+    debugPrint('_onPlatformViewCreated $id ');
     RoktSdkController.instance
         .attachPlaceholder(id: id, name: widget.placeholderName);
     WidgetController(id: id, sizeChangeCallback: _changeHeight);
