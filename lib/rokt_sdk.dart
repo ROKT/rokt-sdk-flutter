@@ -83,7 +83,6 @@ class RoktSdk {
   ///   - onUnLoad: Function to execute right after widget is unloaded, there is no widget or there is an exception
   ///   - onShouldShowLoadingIndicator: Function to execute when the loading indicator should be shown
   ///   - onShouldHideLoadingIndicator: Function to execute when the loading indicator should be hidden
-
   static Future<void> execute({
     required String viewName,
     Map attributes = const { },
@@ -101,5 +100,12 @@ class RoktSdk {
         viewName: viewName,
         attributes: attributes,
         callback: _defaultRoktCallBackInternal);
+  }
+
+  /// Enable or disable debug logging from the library
+  /// - Parameters:
+  ///   - enable: enables or disables debug logging
+  static Future<void> setLoggingEnabled({required bool enable}) async {
+    await RoktSdkController.instance.setLoggingEnabled(enable: enable);
   }
 }

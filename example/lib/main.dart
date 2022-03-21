@@ -21,7 +21,7 @@ class _MyAppState extends State<MyApp> {
       TextEditingController(text: constants.defaultViewName);
   final attributesController =
       TextEditingController(text: constants.defaultAttributes);
-  Map<int, String> placeholders = Map();
+  Map<int, String> placeholders = {};
 
   @override
   void initState() {
@@ -60,6 +60,7 @@ class _MyAppState extends State<MyApp> {
                               TextButton(
                                 child: const Text('Initial'),
                                 onPressed: () {
+                                  RoktSdk.setLoggingEnabled(enable: true);
                                   RoktSdk.initialize(tagIdController.text,
                                       appVersion: '1.0.0');
                                 },
@@ -79,17 +80,17 @@ class _MyAppState extends State<MyApp> {
                                         viewName: viewNameController.text,
                                         attributes: getAttributes(),
                                         onLoad: () {
-                                          print("rokt_sdk loaded");
+                                          debugPrint("rokt_sdk loaded");
                                         },
                                         onUnLoad: () {
-                                          print("rokt_sdk unloaded");
+                                          debugPrint("rokt_sdk unloaded");
                                         },
                                         onShouldShowLoadingIndicator: () {
-                                          print(
+                                          debugPrint(
                                               "rokt_sdk onShouldShowLoadingIndicator");
                                         },
                                         onShouldHideLoadingIndicator: () {
-                                          print(
+                                          debugPrint(
                                               "rokt_sdk onShouldHideLoadingIndicator");
                                         });
                                   })

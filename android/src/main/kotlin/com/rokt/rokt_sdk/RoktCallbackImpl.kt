@@ -1,6 +1,6 @@
 package com.rokt.rokt_sdk
 
-import android.util.Log
+import com.rokt.rokt_sdk.MethodCallHandlerImpl.Companion.TAG
 import com.rokt.roktsdk.Rokt
 import io.flutter.plugin.common.MethodChannel
 
@@ -16,28 +16,24 @@ class RoktCallbackImpl(
     override fun onLoad() {
         argumentMap["args"] = "load"
         channel?.invokeMethod("callListener", argumentMap)
-        Log.d(TAG, "loaded")
+        Logger.log(TAG, "loaded")
     }
 
     override fun onShouldHideLoadingIndicator() {
         argumentMap["args"] = "onShouldHideLoadingIndicator"
         channel?.invokeMethod("callListener", argumentMap)
-        Log.d(TAG, "onShouldHideLoadingIndicator")
+        Logger.log(TAG, "onShouldHideLoadingIndicator")
     }
 
     override fun onShouldShowLoadingIndicator() {
         argumentMap["args"] = "onShouldShowLoadingIndicator"
         channel?.invokeMethod("callListener", argumentMap)
-        Log.d(TAG, "onShouldShowLoadingIndicator")
+        Logger.log(TAG, "onShouldShowLoadingIndicator")
     }
 
     override fun onUnload(reason: Rokt.UnloadReasons) {
         argumentMap["args"] = "unload"
         channel?.invokeMethod("callListener", argumentMap)
-        Log.d(TAG, "onUnLoad")
-    }
-
-    companion object {
-        private const val TAG = "Rokt_RoktCallback"
+        Logger.log(TAG, "onUnload")
     }
 }

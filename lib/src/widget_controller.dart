@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 typedef RoktWidgetSizeChangeCallback = void Function(double size);
@@ -16,13 +17,14 @@ class WidgetController {
   }
 
   Future<void> _methodCallHandler(MethodCall call) async {
-    print("_methodCallHandler in widget controller $call");
     switch (call.method) {
       case 'viewHeightListener':
         sizeChangeCallback.call(call.arguments["size"]);
         break;
       default:
-        print('No method matching !!');
+        if (kDebugMode) {
+          print('No method matching !!');
+        }
     }
   }
 }

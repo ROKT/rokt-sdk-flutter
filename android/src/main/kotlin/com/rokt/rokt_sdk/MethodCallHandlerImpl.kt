@@ -1,7 +1,6 @@
 package com.rokt.rokt_sdk
 
 import android.app.Activity
-import android.util.Log
 import com.rokt.roktsdk.Rokt
 import com.rokt.roktsdk.Widget
 import io.flutter.plugin.common.BinaryMessenger
@@ -26,6 +25,9 @@ class MethodCallHandlerImpl(
             EXECUTE_METHOD -> {
                 execute(call, result)
             }
+            LOGGING_METHOD -> {
+                logging(call, result)
+            }
             else -> result.notImplemented()
         }
     }
@@ -47,12 +49,17 @@ class MethodCallHandlerImpl(
         }
     }
 
+    private fun logging(call: MethodCall, result: MethodChannel.Result) {
+        val enable: Boolean = call.argument<Boolean?>("enable") ?: false
+        Rokt.setLoggingEnabled(enable)
+        Logger.debugLogsEnabled = enable
+        result.success("enable")
+    }
+
     private fun init(call: MethodCall, result: MethodChannel.Result) {
         val roktTagId = call.argument<String>("roktTagId")
         val appVersion = call.argument<String>("appVersion").orEmpty()
-        Log.d(TAG, "init $roktTagId $appVersion")
         roktTagId?.let { tagId ->
-            Rokt.setLoggingEnabled(true)
             Rokt.init(tagId, appVersion, activity)
             result.success("Initialized")
         } ?: result.error(
@@ -77,7 +84,7 @@ class MethodCallHandlerImpl(
         }
         val map: MutableMap<String, Any> = mutableMapOf()
         map["id"] = callBackId
-        Log.d(TAG, "execute $viewName $attributes $placeHolders}")
+        Logger.log(TAG, "execute $viewName $attributes $placeHolders}")
         Rokt.execute(viewName, attributes, roktCallback, placeHolders)
         result.success("Executed")
     }
@@ -86,6 +93,7 @@ class MethodCallHandlerImpl(
         private const val CHANNEL_NAME = "rokt_sdk"
         private const val INIT_METHOD = "initialize"
         private const val EXECUTE_METHOD = "execute"
-        private const val TAG = "Rokt_MethodCallHandler"
+        private const val LOGGING_METHOD = "logging"
+        const val TAG = "ROKTSDK_FLUTTER"
     }
 }

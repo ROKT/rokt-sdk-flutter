@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../rokt_sdk.dart';
@@ -43,19 +44,25 @@ class RoktSdkController {
     });
   }
 
+  /// Call Rokt logging method in Native SDK
+  Future<void> setLoggingEnabled({required bool enable}) async {
+    await _channel.invokeMethod('logging', {'enable': enable});
+  }
+
   /// Placeholders are attached to be passed to Rokt Execute
   void attachPlaceholder({required int id, required String name}) {
     instance._placeholders[id] = name;
   }
 
   Future<void> _methodCallHandler(MethodCall call) async {
-    print("_methodCallHandler $call");
     switch (call.method) {
       case 'callListener':
         _callbacksById[call.arguments["id"]]?.call(call.arguments["args"]);
         break;
       default:
-        print('No method matching !!');
+        if (kDebugMode) {
+          print('No method matching !!');
+        }
     }
   }
 }
