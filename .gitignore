@@ -1,7 +1,39 @@
-# IntelliJ related
-.idea/
-.packages
 .DS_Store
+.atom/
+.idea/
+.vscode/
 
-# Dart tools related
+.packages
+.pub/
 .dart_tool/
+pubspec.lock
+
+
+example/pubspec.lock
+
+Podfile.lock
+Pods/
+.symlinks/
+
+ServiceDefinitions.json
+xcuserdata/
+**/DerivedData/
+
+local.properties
+keystore.properties
+.gradle/
+gradlew
+gradlew.bat
+gradle-wrapper.jar
+.flutter-plugins-dependencies
+*.iml
+
+generated_plugin_registrant.dart
+GeneratedPluginRegistrant.java
+GeneratedPluginRegistrant.swift
+build/
+.flutter-plugins
+
+.project
+.classpath
+.settings
