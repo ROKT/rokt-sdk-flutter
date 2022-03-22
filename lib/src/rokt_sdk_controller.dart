@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../rokt_sdk.dart';
 
+
 /// Rokt SDK Controller to handle callbacks and Method channels
 class RoktSdkController {
   final MethodChannel _channel;
@@ -10,8 +11,7 @@ class RoktSdkController {
   final Map<int, String> _placeholders;
   int _nextCallbackId = 0;
 
-  static final RoktSdkController _instance =
-  RoktSdkController._();
+  static final RoktSdkController _instance = RoktSdkController._();
 
   /// Singleton RoktSdkController instance
   static RoktSdkController get instance => _instance;
@@ -24,7 +24,7 @@ class RoktSdkController {
   }
 
   /// Call Rokt Initialize method in Native SDK
-  Future<void> initialize({required String roktTagId, appVersion = ''}) async {
+  Future<void> initialize({required String roktTagId, String appVersion = ''}) async {
     await _channel.invokeMethod(
         'initialize', {'roktTagId': roktTagId, 'appVersion': appVersion});
   }
@@ -32,9 +32,9 @@ class RoktSdkController {
   /// Call Rokt Execute method in Native SDK
   Future<void> execute(
       {required String viewName,
-        required Map attributes,
-        required RoktCallbackInternal callback}) async {
-    int currentCallbackId = _nextCallbackId++;
+      required Map attributes,
+      required RoktCallbackInternal callback}) async {
+    final int currentCallbackId = _nextCallbackId++;
     _callbacksById[currentCallbackId] = callback;
     await _channel.invokeMethod('execute', {
       'viewName': viewName,
@@ -57,7 +57,7 @@ class RoktSdkController {
   Future<void> _methodCallHandler(MethodCall call) async {
     switch (call.method) {
       case 'callListener':
-        _callbacksById[call.arguments["id"]]?.call(call.arguments["args"]);
+        _callbacksById[call.arguments['id']]?.call(call.arguments['args']);
         break;
       default:
         if (kDebugMode) {
