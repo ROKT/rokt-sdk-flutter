@@ -16,6 +16,11 @@ import UIKit
 import Rokt_Widget
 
 struct RoktMethodCallHandler {
+    fileprivate let SUCCESS = "success"
+    fileprivate let FAIL = "fail"
+    fileprivate let ARGS = "args"
+    fileprivate let CALL_LISTENER = "callListener"
+    
     let channel: FlutterMethodChannel
     let factory: RoktWidgetFactory
     
@@ -25,10 +30,9 @@ struct RoktMethodCallHandler {
         if let args = call.arguments as? Dictionary<String, Any>,
            let roktTagId = args["roktTagId"] as? String {
             Rokt.initWith(roktTagId: roktTagId)
-            print(roktTagId)
-            result("success")
+            result(SUCCESS)
         } else {
-            result("fail")
+            result(FAIL)
         }
     }
     
@@ -55,22 +59,20 @@ struct RoktMethodCallHandler {
             callbackMap["id"] = callBackId
             Rokt.execute(viewName: viewName, attributes: attributes, placements: placements, onLoad: {
                 // Optional callback for when the Rokt placement loads
-                print("loaded")
-                callbackMap["args"] = "load"
-                channel.invokeMethod("callListener", arguments: callbackMap)
+                callbackMap[ARGS] = "load"
+                channel.invokeMethod(CALL_LISTENER, arguments: callbackMap)
             }, onUnLoad: {
                 // Optional callback for when the Rokt placement unloads
-                print("unloaded")
-                callbackMap["args"] = "unload"
-                channel.invokeMethod("callListener", arguments: callbackMap)
+                callbackMap[ARGS] = "unload"
+                channel.invokeMethod(CALL_LISTENER, arguments: callbackMap)
             }, onShouldShowLoadingIndicator: {
                 // Optional callback to show a loading indicator
-                callbackMap["args"] = "onShouldShowLoadingIndicator"
-                channel.invokeMethod("callListener", arguments: callbackMap)
+                callbackMap[ARGS] = "onShouldShowLoadingIndicator"
+                channel.invokeMethod(CALL_LISTENER, arguments: callbackMap)
             }, onShouldHideLoadingIndicator: {
                 // Optional callback to hide a loading indicator
-                callbackMap["args"] = "onShouldHideLoadingIndicator"
-                channel.invokeMethod("callListener", arguments: callbackMap)
+                callbackMap[ARGS] = "onShouldHideLoadingIndicator"
+                channel.invokeMethod(CALL_LISTENER, arguments: callbackMap)
             },
              onEmbeddedSizeChange: { selectedPlacement, widgetHeight in
                 // Optional callback to get selectedPlacement and height required by the placement every time the height of the placement changes
@@ -85,9 +87,21 @@ struct RoktMethodCallHandler {
                 }
             })
             
-            result("success")
+            result(SUCCESS)
         } else {
-            result("fail")
+            result(FAIL)
+        }
+    }
+    
+    public func logging(_ call: FlutterMethodCall,
+                           result: @escaping FlutterResult) {
+        
+        if let args = call.arguments as? Dictionary<String, Any>{
+            let enable = args["enable"] as? Bool ?? false
+            Rokt.setLoggingEnabled(enable: enable)
+            result(SUCCESS)
+        } else {
+            result(FAIL)
         }
     }
     
