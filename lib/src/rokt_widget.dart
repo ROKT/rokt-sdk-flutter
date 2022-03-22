@@ -12,8 +12,12 @@ class RoktWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _RoktContainerState();
 }
 
-class _RoktContainerState extends State<RoktWidget> {
+class _RoktContainerState extends State<RoktWidget>
+    with AutomaticKeepAliveClientMixin<RoktWidget> {
   double _height = 0;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
