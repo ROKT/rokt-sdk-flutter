@@ -52,7 +52,6 @@ class MethodCallHandlerImpl(
     private fun logging(call: MethodCall, result: MethodChannel.Result) {
         val enable: Boolean = call.argument<Boolean?>("enable") ?: false
         Rokt.setLoggingEnabled(enable)
-        Logger.debugLogsEnabled = enable
         result.success("enable")
     }
 
@@ -84,7 +83,6 @@ class MethodCallHandlerImpl(
         }
         val map: MutableMap<String, Any> = mutableMapOf()
         map["id"] = callBackId
-        Logger.log(TAG, "execute $viewName $attributes $placeHolders}")
         Rokt.execute(viewName, attributes, roktCallback, placeHolders)
         result.success("Executed")
     }

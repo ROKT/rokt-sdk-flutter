@@ -61,11 +61,6 @@ class RoktWidget(context: Context, messenger: BinaryMessenger, viewId: Int) : Pl
                     }
                 } else {
                     if (widget.height != (bottomWas - topWas) && (view.height.toDp - widget.height.toDp) > ORIENTATION_DIFF) {
-                        Logger.log(
-                            TAG,
-                            "change in widget container height, total height ${view.height.toDp} " +
-                                    "${widget.height.toDp} prev ${((bottomWas - topWas).toDp)}"
-                        )
                         sendUpdatedHeight((widget.height.toDp + widget.marginBottom.toDp + widget.marginTop.toDp).toDouble())
                     }
                 }
@@ -76,10 +71,6 @@ class RoktWidget(context: Context, messenger: BinaryMessenger, viewId: Int) : Pl
         offersContainer = view
         offersContainer.addOnLayoutChangeListener { offerView, _, _, _, _, _, topWas, _, bottomWas ->
             if (offerView.height != (bottomWas - topWas)) {
-                Logger.log(
-                    TAG,
-                    "change in offer container height ${offerView.height.toDp} prev ${((bottomWas - topWas).toDp)}"
-                )
                 syncHeight()
             }
         }
@@ -87,16 +78,8 @@ class RoktWidget(context: Context, messenger: BinaryMessenger, viewId: Int) : Pl
 
     private fun syncHeight() {
         if (isHeightOutOfSync()) {
-            Logger.log(
-                TAG,
-                "send virtual updated height ${parentLayout.height.toDp} ${offersContainer.height.toDp} ${footerLayout.height.toDp}"
-            )
             sendUpdatedHeight(INITIAL_VIRTUAL_HEIGHT)
         } else {
-            Logger.log(
-                TAG,
-                "send real updated height ${parentLayout.height.toDp} ${offersContainer.height.toDp} ${footerLayout.height.toDp}"
-            )
             sendUpdatedHeight((widget.height.toDp + widget.marginBottom.toDp + widget.marginTop.toDp).toDouble())
         }
     }
