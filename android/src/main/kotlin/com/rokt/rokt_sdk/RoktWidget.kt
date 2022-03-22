@@ -16,7 +16,7 @@ class RoktWidget(context: Context, messenger: BinaryMessenger, viewId: Int) : Pl
     private val view =
         LayoutInflater.from(context).inflate(R.layout.layout_rokt_widget, null)
 
-    val widget = view.findViewById<Widget>(R.id.widget1)
+    val widget = view.findViewById<Widget>(R.id.rokt_widget)
     lateinit var parentLayout: View
     lateinit var offersContainer: View
     lateinit var footerLayout: View
@@ -29,7 +29,7 @@ class RoktWidget(context: Context, messenger: BinaryMessenger, viewId: Int) : Pl
     }
 
     private fun setupListener() {
-        view.findViewById<Widget>(R.id.widget1)
+        view.findViewById<Widget>(R.id.rokt_widget)
             .addOnLayoutChangeListener { widget, _, _, _, _, _, topWas, _, bottomWas ->
                 if (!::parentLayout.isInitialized) {
                     view.findViewById<View?>(R.id.parentLayout)?.let {
@@ -51,7 +51,7 @@ class RoktWidget(context: Context, messenger: BinaryMessenger, viewId: Int) : Pl
 
                 if (!isWidgetLoaded) {
                     val view: View? =
-                        view.findViewById<Widget>(R.id.widget1).findViewById(R.id.parentLayout)
+                        view.findViewById<Widget>(R.id.rokt_widget).findViewById(R.id.parentLayout)
                     if (view != null) {
                         /* send good amount of virtual height for the android view to lay out which has wrap content height,
                            Once we have a android view height, change the flutter view height to the same value
@@ -101,7 +101,7 @@ class RoktWidget(context: Context, messenger: BinaryMessenger, viewId: Int) : Pl
     }
 
     companion object {
-        private const val INITIAL_VIRTUAL_HEIGHT = 450.0
+        private const val INITIAL_VIRTUAL_HEIGHT = 550.0
         private const val VIEW_HEIGHT_LISTENER = "viewHeightListener"
         private const val VIEW_HEIGHT_LISTENER_PARAM = "size"
         private const val OUT_OF_SYNC_HEIGHT_DIFF = 8
