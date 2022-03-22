@@ -50,8 +50,9 @@ class RoktSdkController {
   }
 
   /// Placeholders are attached to be passed to Rokt Execute
-  void attachPlaceholder({required int id, required String name}) {
+  Future<void> attachPlaceholder({required int id, required String name}) async {
     instance._placeholders[id] = name;
+    await _channel.invokeMethod('widgetAdded', {'targetName': name, 'viewId': id});
   }
 
   Future<void> _methodCallHandler(MethodCall call) async {

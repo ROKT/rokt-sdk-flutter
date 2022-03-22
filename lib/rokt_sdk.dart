@@ -1,6 +1,7 @@
 library rokt_sdk;
 
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';

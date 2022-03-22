@@ -4,21 +4,47 @@ typedef RoktWidgetCreatedCallback = void Function(int widgetId);
 
 /// Rokt embedded widget custom view
 class RoktWidget extends StatefulWidget {
+  static final Map<int, _RoktContainerState> _states = {};
   final String placeholderName;
 
   const RoktWidget({Key? key, required this.placeholderName}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _RoktContainerState();
+  State<StatefulWidget> createState() {
+    debugPrint('_Sahil createState RoktWidget $placeholderName $hashCode');
+    return _RoktContainerState();
+    /*_RoktContainerState? state = _states[hashCode];
+    if (state == null) {
+      state = _RoktContainerState();
+      _states[hashCode] = state;
+    }
+    return state;*/
+  }
 }
 
-class _RoktContainerState extends State<RoktWidget> {
+class _RoktContainerState extends State<RoktWidget> with
+    AutomaticKeepAliveClientMixin<RoktWidget> {
+  @override
+  bool get wantKeepAlive => true;
   double _height = 0;
 
   @override
   void initState() {
+    debugPrint('_Sahil _RoktContainerState initState ${widget.hashCode}');
     _height = 0;
     super.initState();
+  }
+
+  @override
+  void deactivate() {
+    debugPrint('_Sahil _RoktContainerState deactivate ${widget.hashCode}');
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    debugPrint('_Sahil _RoktContainerState dispose ${widget.hashCode}');
+    super.dispose();
   }
 
   void _changeHeight(double newHeight) {
@@ -32,11 +58,11 @@ class _RoktContainerState extends State<RoktWidget> {
     return SizedBox(
         height: _height,
         child:
-            _RoktStatelessWidget(widgetCreatedCallback: _onWidgetViewCreated));
+        _RoktStatelessWidget(placeHolder: widget.placeholderName, widgetCreatedCallback: _onWidgetViewCreated));
   }
 
   void _onWidgetViewCreated(int id) {
-    debugPrint('_onPlatformViewCreated $id ');
+    debugPrint('_onPlatformViewCreated $id ${widget.placeholderName}');
     RoktSdkController.instance
         .attachPlaceholder(id: id, name: widget.placeholderName);
     WidgetController(id: id, sizeChangeCallback: _changeHeight);
@@ -45,9 +71,11 @@ class _RoktContainerState extends State<RoktWidget> {
 
 class _RoktStatelessWidget extends StatelessWidget {
   final RoktWidgetCreatedCallback widgetCreatedCallback;
+  static final Map<String, PlatformViewLink> _views = {};
+  final String placeHolder;
 
-  const _RoktStatelessWidget({Key? key, required this.widgetCreatedCallback})
-      : super(key: key);
+  _RoktStatelessWidget({Key? key, required this.placeHolder, required this.widgetCreatedCallback})
+      :  super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,12 +84,27 @@ class _RoktStatelessWidget extends StatelessWidget {
     const String viewType = "rokt_sdk.rokt.com/rokt_widget";
 
     if (defaultTargetPlatform == TargetPlatform.android) {
-      return PlatformViewLink(
+      return getAndroidView();
+    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return UiKitView(
         viewType: viewType,
+        onPlatformViewCreated: widgetCreatedCallback,
+        layoutDirection: TextDirection.ltr,
+        creationParams: creationParams,
+        creationParamsCodec: const StandardMessageCodec(),
+      );
+    }
+    return Text(
+        '$defaultTargetPlatform is not yet supported by the rokt sdk plugin');
+  }
+
+  PlatformViewLink getAndroidView() {
+    var view = /*_views[placeHolder] ??*/ PlatformViewLink(
+        viewType: "rokt_sdk.rokt.com/rokt_widget",
         surfaceFactory: (
-          BuildContext context,
-          PlatformViewController controller,
-        ) {
+            BuildContext context,
+            PlatformViewController controller,
+            ) {
           return AndroidViewSurface(
             controller: controller as AndroidViewController,
             gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
@@ -69,12 +112,13 @@ class _RoktStatelessWidget extends StatelessWidget {
           );
         },
         onCreatePlatformView: (PlatformViewCreationParams params) {
+          debugPrint('onCreatePlatformView ${params.id}');
           final SurfaceAndroidViewController controller =
-              PlatformViewsService.initSurfaceAndroidView(
+          PlatformViewsService.initSurfaceAndroidView(
             id: params.id,
-            viewType: viewType,
+            viewType: "rokt_sdk.rokt.com/rokt_widget",
             layoutDirection: TextDirection.ltr,
-            creationParams: creationParams,
+            creationParams: {},
             creationParamsCodec: const StandardMessageCodec(),
             onFocus: () => params.onFocusChanged(true),
           );
@@ -88,16 +132,8 @@ class _RoktStatelessWidget extends StatelessWidget {
           return controller;
         },
       );
-    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return UiKitView(
-        viewType: viewType,
-        onPlatformViewCreated: widgetCreatedCallback,
-        layoutDirection: TextDirection.ltr,
-        creationParams: creationParams,
-        creationParamsCodec: const StandardMessageCodec(),
-      );
-    }
-    return Text(
-        '$defaultTargetPlatform is not yet supported by the rokt sdk plugin');
+    _views[placeHolder] = view;
+    return view;
   }
+
 }

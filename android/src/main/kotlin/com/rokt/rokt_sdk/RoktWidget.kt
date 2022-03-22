@@ -5,15 +5,17 @@ import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.appcompat.widget.LinearLayoutCompat
 import com.rokt.rokt_sdk.MethodCallHandlerImpl.Companion.TAG
 import com.rokt.roktsdk.Widget
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
 
-class RoktWidget(context: Context, messenger: BinaryMessenger, viewId: Int) : PlatformView {
+class RoktWidget(context: Context, messenger: BinaryMessenger, private val viewId: Int) : PlatformView {
 
-    private val view =
+    private val view: View =
         LayoutInflater.from(context).inflate(R.layout.layout_rokt_widget, null)
 
     val widget = view.findViewById<Widget>(R.id.widget1)
@@ -56,6 +58,7 @@ class RoktWidget(context: Context, messenger: BinaryMessenger, viewId: Int) : Pl
                         /* send good amount of virtual height for the android view to lay out which has wrap content height,
                            Once we have a android view height, change the flutter view height to the same value
                          */
+                        Logger.log(TAG, "sending initial virtaul height for $viewId")
                         sendUpdatedHeight(INITIAL_VIRTUAL_HEIGHT)
                         isWidgetLoaded = true
                     }
@@ -112,9 +115,12 @@ class RoktWidget(context: Context, messenger: BinaryMessenger, viewId: Int) : Pl
         channel.invokeMethod(VIEW_HEIGHT_LISTENER, map)
     }
 
-    override fun getView() = view
+    override fun getView(): View {
+        return view
+    }
 
     override fun dispose() {
+        Logger.log(TAG, "widget dispose **")
     }
 
     companion object {
