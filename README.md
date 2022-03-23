@@ -40,13 +40,16 @@ This means that app will only be available for users that run Android SDK 19 or 
 
    `<style name="NormalTheme" parent="Theme.AppCompat.DayNight.DarkActionBar"/>`
 
+### iOS
+Rokt iOS SDK supports iOS version 10 and above
+
 ## Initializing the Rokt SDK
 Initialize the Rokt SDK prior to using it. We recommend calling the initi method in the beginning of the applications.
 ```
 // The following will reveal a demo integration. To view your integration:
 // 1) Replace the integration test tag ID (222) with your unique Rokt Tag ID
 // 2) Replace 1.0.0 with the application version
-RoktSdk.initialize(roktTagId, appVersion: '1.0.0');
+RoktSdk.initialize('222', appVersion: '1.0.0');
 ```
 
 ## Overlay placements
