@@ -15,7 +15,7 @@ dependencies:
   rokt_sdk:
     git:
       url: git@github.com:ROKT/rokt-sdk-flutter.git
-      ref: master
+      ref: release-0.0.x
 ```
 
 ## Getting Started
