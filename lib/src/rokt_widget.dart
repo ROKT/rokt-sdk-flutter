@@ -1,11 +1,14 @@
 part of rokt_sdk;
 
+/// Callback when Rokt widget gets created and returns platform view id
 typedef RoktWidgetCreatedCallback = void Function(int widgetId);
 
 /// Rokt embedded widget custom view
 class RoktWidget extends StatefulWidget {
+  /// name for the Rokt widget
   final String placeholderName;
 
+  /// Initializes [key] for subclasses, [placeholderName] is the location name
   const RoktWidget({Key? key, required this.placeholderName}) : super(key: key);
 
   @override
@@ -33,6 +36,7 @@ class _RoktContainerState extends State<RoktWidget>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return SizedBox(
         height: _height,
         child:
@@ -57,7 +61,7 @@ class _RoktStatelessWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     // Pass parameters to the platform side.
     final Map<String, dynamic> creationParams = <String, dynamic>{};
-    const String viewType = "rokt_sdk.rokt.com/rokt_widget";
+    const String viewType = 'rokt_sdk.rokt.com/rokt_widget';
 
     if (defaultTargetPlatform == TargetPlatform.android) {
       return PlatformViewLink(
@@ -81,14 +85,14 @@ class _RoktStatelessWidget extends StatelessWidget {
             creationParams: creationParams,
             creationParamsCodec: const StandardMessageCodec(),
             onFocus: () => params.onFocusChanged(true),
-          );
-          controller.addOnPlatformViewCreatedListener(
+          )
+          ..addOnPlatformViewCreatedListener(
             params.onPlatformViewCreated,
-          );
-          controller.addOnPlatformViewCreatedListener(
+          )
+          ..addOnPlatformViewCreatedListener(
             widgetCreatedCallback,
-          );
-          controller.create();
+          )
+          ..create();
           return controller;
         },
       );

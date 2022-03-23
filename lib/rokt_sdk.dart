@@ -2,27 +2,30 @@ library rokt_sdk;
 
 import 'dart:async';
 
-import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:rokt_sdk/src/rokt_sdk_controller.dart';
 import 'package:rokt_sdk/src/widget_controller.dart';
 
 part 'src/rokt_widget.dart';
 
+/// Internal callBack for Rokt Sdk
 typedef RoktCallbackInternal = void Function(dynamic msg);
+
+/// callback for the rokt sdk
 typedef RoktCallback = void Function();
 
 /// The main interface to Rokt SDK
 ///
 /// Use the member methods to interact with the Rokt SDK
 class RoktSdk {
-  static const _load = "load";
-  static const _unload = "unload";
-  static const _shouldShowLoadingIndicator = "onShouldShowLoadingIndicator";
-  static const _shouldHideLoadingIndicator = "onShouldHideLoadingIndicator";
+  static const _load = 'load';
+  static const _unload = 'unload';
+  static const _shouldShowLoadingIndicator = 'onShouldShowLoadingIndicator';
+  static const _shouldHideLoadingIndicator = 'onShouldHideLoadingIndicator';
 
   static void _defaultRoktCallBackInternal(dynamic msg) {
     switch (msg) {
@@ -65,7 +68,7 @@ class RoktSdk {
   /// The recommended way of calling the initialize method is early in the application.
   /// - Parameters:
   ///   - roktTagId: The tag id provided by Rokt, associated with your account.
-  static Future<void> initialize(String roktTagId, {appVersion = ''}) async {
+  static Future<void> initialize(String roktTagId, {String appVersion = ''}) async {
     await RoktSdkController.instance
         .initialize(roktTagId: roktTagId, appVersion: appVersion);
   }
@@ -85,7 +88,7 @@ class RoktSdk {
   ///   - onShouldHideLoadingIndicator: Function to execute when the loading indicator should be hidden
   static Future<void> execute({
     required String viewName,
-    Map attributes = const { },
+    Map attributes = const {},
     RoktCallback onLoad = _defaultRoktCallBack,
     RoktCallback onUnLoad = _defaultRoktCallBack,
     RoktCallback onShouldShowLoadingIndicator = _defaultRoktCallBack,
