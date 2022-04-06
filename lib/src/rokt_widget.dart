@@ -1,15 +1,24 @@
 part of rokt_sdk;
 
-/// Callback when Rokt widget gets created and returns platform view id
-typedef RoktWidgetCreatedCallback = void Function(int widgetId);
+/// Callback when Rokt platform view gets created and returns platform view id
+typedef RoktPlatformViewCreatedCallback = void Function(int widgetId);
+
+/// Callback when Rokt widget is created
+typedef WidgetCreatedCallback = void Function();
 
 /// Rokt embedded widget custom view
 class RoktWidget extends StatefulWidget {
   /// name for the Rokt widget
   final String placeholderName;
+  /// callback when widget is created
+  final WidgetCreatedCallback onWidgetCreated;
 
   /// Initializes [key] for subclasses, [placeholderName] is the location name
-  const RoktWidget({Key? key, required this.placeholderName}) : super(key: key);
+  const RoktWidget({Key? key,
+    required this.placeholderName,
+    this.onWidgetCreated = _defaultWidgetCreatedCallback }) : super(key: key);
+
+  static void _defaultWidgetCreatedCallback(){}
 
   @override
   State<StatefulWidget> createState() => _RoktContainerState();
@@ -40,21 +49,21 @@ class _RoktContainerState extends State<RoktWidget>
     return SizedBox(
         height: _height,
         child:
-            _RoktStatelessWidget(widgetCreatedCallback: _onWidgetViewCreated));
+            _RoktStatelessWidget(platformViewCreatedCallback: _onPlatformViewCreated));
   }
 
-  void _onWidgetViewCreated(int id) {
-    debugPrint('_onPlatformViewCreated $id ');
+  void _onPlatformViewCreated(int id) {
     RoktSdkController.instance
         .attachPlaceholder(id: id, name: widget.placeholderName);
     WidgetController(id: id, sizeChangeCallback: _changeHeight);
+    widget.onWidgetCreated();
   }
 }
 
 class _RoktStatelessWidget extends StatelessWidget {
-  final RoktWidgetCreatedCallback widgetCreatedCallback;
+  final RoktPlatformViewCreatedCallback platformViewCreatedCallback;
 
-  const _RoktStatelessWidget({Key? key, required this.widgetCreatedCallback})
+  const _RoktStatelessWidget({Key? key, required this.platformViewCreatedCallback})
       : super(key: key);
 
   @override
@@ -90,7 +99,7 @@ class _RoktStatelessWidget extends StatelessWidget {
             params.onPlatformViewCreated,
           )
           ..addOnPlatformViewCreatedListener(
-            widgetCreatedCallback,
+            platformViewCreatedCallback,
           )
           ..create();
           return controller;
@@ -99,7 +108,7 @@ class _RoktStatelessWidget extends StatelessWidget {
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       return UiKitView(
         viewType: viewType,
-        onPlatformViewCreated: widgetCreatedCallback,
+        onPlatformViewCreated: platformViewCreatedCallback,
         layoutDirection: TextDirection.ltr,
         creationParams: creationParams,
         creationParamsCodec: const StandardMessageCodec(),
