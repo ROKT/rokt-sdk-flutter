@@ -89,7 +89,10 @@ To run an placement in the sandbox environment, the list of attributes passed to
 ### add Rokt Widget
 
 add `const RoktWidget(placeholderName: "RoktEmbedded1")` in your view.
-please make sure that the view is created on visible area of the screen and then call showWidget
+please make sure that the view is created on the visible area of the screen and then call showWidget.
+RoktWidget has a callback to notify when widget is created which could be utilized.
+`RoktWidget(placeholderName: "RoktEmbedded1", onWidgetCreated: () { showWidget() })`
+
 ### Execute Rokt
 ```
 import 'package:rokt_sdk/rokt_sdk.dart';
