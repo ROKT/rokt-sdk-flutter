@@ -1,3 +1,3 @@
-## 0.0.1
+## 3.6.0
 
 * Introducing Rokt flutter SDK
