@@ -12,10 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  rokt_sdk:
-    git:
-      url: git@github.com:ROKT/rokt-sdk-flutter.git
-      ref: release-0.0.x
+  rokt_sdk: ^3.6.0
 ```
 
 ## Getting Started
