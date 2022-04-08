@@ -89,7 +89,10 @@ To run an placement in the sandbox environment, the list of attributes passed to
 ### add Rokt Widget
 
 add `const RoktWidget(placeholderName: "RoktEmbedded1")` in your view.
-please make sure that the view is created on visible area of the screen and then call showWidget
+please make sure that the view is created on the visible area of the screen and then call showWidget.
+RoktWidget has a callback to notify when widget is created which could be utilized.
+`RoktWidget(placeholderName: "RoktEmbedded1", onWidgetCreated: () { showWidget() })`
+
 ### Execute Rokt
 ```
 import 'package:rokt_sdk/rokt_sdk.dart';
@@ -120,3 +123,19 @@ void showWidget() {
 ```
 
 To run an placement in the sandbox environment, the list of attributes passed to Rokt needs to be updated to include `"sandbox": "true"`
+
+## How to run the example app locally
+- Open project in Android Studio for changing the code
+- run following commands in terminal or equalivant in Android Studio
+- run `flutter clean`
+- run `flutter pub get`
+- run `flutter run`
+
+## License
+```
+Copyright 2020 Rokt Pte Ltd
+
+Licensed under the Rokt Software Development Kit (SDK) Terms of Use
+Version 2.0 (the "License");
+
+You may not use this file except in compliance with the License.

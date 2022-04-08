@@ -1,16 +1,19 @@
 # rokt_sdk_example
 
-Demonstrates how to use the rokt_sdk plugin.
+Rokt SDK Example application is a sample app built to showcase Rokt SDK functionality.
 
-## Getting Started
+## How to run locally
+- Open project in Android Studio for changing the code
+- run following commands in terminal or equalivant in Android Studio
+- run `flutter clean`
+- run `flutter pub get`
+- run `flutter run`
 
-This project is a starting point for a Flutter application.
+## License
+```
+Copyright 2020 Rokt Pte Ltd
 
-A few resources to get you started if this is your first Flutter project:
+Licensed under the Rokt Software Development Kit (SDK) Terms of Use
+Version 2.0 (the "License");
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+You may not use this file except in compliance with the License.
