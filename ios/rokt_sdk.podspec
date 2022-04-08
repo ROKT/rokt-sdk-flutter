@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   s.version          = '3.6.0'
   s.summary          = 'Rokt Mobile SDK to integrate ROKT Api into Flutter application'
   s.description      = <<-DESC
-A new flutter plugin project.
+Rokt Mobile SDK to integrate ROKT Api into Flutter application.
                        DESC
   s.homepage         = 'https://docs.rokt.com/docs/developers/integration-guides/flutter/overview'
   s.license          = { :file => '../LICENSE' }
