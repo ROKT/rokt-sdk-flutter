@@ -30,6 +30,10 @@ class RoktWidget extends StatefulWidget {
 class _RoktContainerState extends State<RoktWidget>
     with AutomaticKeepAliveClientMixin<RoktWidget> {
   double _height = 0;
+  double _left = 0;
+  double _top = 0;
+  double _right = 0;
+  double _bottom = 0;
 
   @override
   bool get wantKeepAlive => true;
@@ -37,6 +41,10 @@ class _RoktContainerState extends State<RoktWidget>
   @override
   void initState() {
     _height = 0;
+    _left = 0;
+    _top = 0;
+    _right = 0;
+    _bottom = 0;
     super.initState();
   }
 
@@ -46,19 +54,31 @@ class _RoktContainerState extends State<RoktWidget>
     });
   }
 
+  void _changePadding(BoundingBox box) {
+    setState(() {
+      _left = box.left;
+      _top = box.top;
+      _right = box.right;
+      _bottom = box.bottom;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return SizedBox(
-        height: _height,
-        child: _RoktStatelessWidget(
-            platformViewCreatedCallback: _onPlatformViewCreated));
+    return Padding(
+      padding: EdgeInsets.fromLTRB(_left, _top, _right, _bottom),
+      child: SizedBox(
+          height: _height,
+          child:
+              _RoktStatelessWidget(platformViewCreatedCallback: _onPlatformViewCreated)),
+    );
   }
 
   void _onPlatformViewCreated(int id) {
     RoktSdkController.instance
         .attachPlaceholder(id: id, name: widget.placeholderName);
-    WidgetController(id: id, sizeChangeCallback: _changeHeight);
+    WidgetController(id: id, sizeChangeCallback: _changeHeight, paddingChangeCallback: _changePadding);
     widget.onWidgetCreated();
   }
 }
