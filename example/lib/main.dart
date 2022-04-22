@@ -28,9 +28,8 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
-  Map getAttributes() {
-    final Map attributes = json.decode(attributesController.text);
-    return attributes;
+  Map<String, String> getAttributes() {
+    return Map<String, String>.from(json.decode(attributesController.text));
   }
 
   @override
@@ -102,10 +101,10 @@ class _MyAppState extends State<MyApp> {
                         const Text("Location 1"),
                         const RoktWidget(placeholderName: "Location1"),
                         const Text("Location 2"),
-                        RoktWidget(placeholderName: "Location2",
+                        RoktWidget(
+                            placeholderName: "Location2",
                             onWidgetCreated: () {
-                            debugPrint(
-                              "rokt_widget widget is created");
+                              debugPrint("rokt_widget widget is created");
                             }),
                         const Text("The end")
                       ],

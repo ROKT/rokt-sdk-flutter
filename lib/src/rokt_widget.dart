@@ -10,15 +10,18 @@ typedef WidgetCreatedCallback = void Function();
 class RoktWidget extends StatefulWidget {
   /// name for the Rokt widget
   final String placeholderName;
+
   /// callback when widget is created
   final WidgetCreatedCallback onWidgetCreated;
 
   /// Initializes [key] for subclasses, [placeholderName] is the location name
-  const RoktWidget({Key? key,
-    required this.placeholderName,
-    this.onWidgetCreated = _defaultWidgetCreatedCallback }) : super(key: key);
+  const RoktWidget(
+      {Key? key,
+      required this.placeholderName,
+      this.onWidgetCreated = _defaultWidgetCreatedCallback})
+      : super(key: key);
 
-  static void _defaultWidgetCreatedCallback(){}
+  static void _defaultWidgetCreatedCallback() {}
 
   @override
   State<StatefulWidget> createState() => _RoktContainerState();
@@ -48,8 +51,8 @@ class _RoktContainerState extends State<RoktWidget>
     super.build(context);
     return SizedBox(
         height: _height,
-        child:
-            _RoktStatelessWidget(platformViewCreatedCallback: _onPlatformViewCreated));
+        child: _RoktStatelessWidget(
+            platformViewCreatedCallback: _onPlatformViewCreated));
   }
 
   void _onPlatformViewCreated(int id) {
@@ -63,7 +66,8 @@ class _RoktContainerState extends State<RoktWidget>
 class _RoktStatelessWidget extends StatelessWidget {
   final RoktPlatformViewCreatedCallback platformViewCreatedCallback;
 
-  const _RoktStatelessWidget({Key? key, required this.platformViewCreatedCallback})
+  const _RoktStatelessWidget(
+      {Key? key, required this.platformViewCreatedCallback})
       : super(key: key);
 
   @override
@@ -95,13 +99,13 @@ class _RoktStatelessWidget extends StatelessWidget {
             creationParamsCodec: const StandardMessageCodec(),
             onFocus: () => params.onFocusChanged(true),
           )
-          ..addOnPlatformViewCreatedListener(
-            params.onPlatformViewCreated,
-          )
-          ..addOnPlatformViewCreatedListener(
-            platformViewCreatedCallback,
-          )
-          ..create();
+                ..addOnPlatformViewCreatedListener(
+                  params.onPlatformViewCreated,
+                )
+                ..addOnPlatformViewCreatedListener(
+                  platformViewCreatedCallback,
+                )
+                ..create();
           return controller;
         },
       );
