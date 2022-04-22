@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 
 import '../rokt_sdk.dart';
 
-
 /// Rokt SDK Controller to handle callbacks and Method channels
 class RoktSdkController {
   final MethodChannel _channel;
@@ -24,7 +23,8 @@ class RoktSdkController {
   }
 
   /// Call Rokt Initialize method in Native SDK
-  Future<void> initialize({required String roktTagId, String appVersion = ''}) async {
+  Future<void> initialize(
+      {required String roktTagId, String appVersion = ''}) async {
     await _channel.invokeMethod(
         'initialize', {'roktTagId': roktTagId, 'appVersion': appVersion});
   }
@@ -32,7 +32,7 @@ class RoktSdkController {
   /// Call Rokt Execute method in Native SDK
   Future<void> execute(
       {required String viewName,
-      required Map attributes,
+      required Map<String, String> attributes,
       required RoktCallbackInternal callback}) async {
     final int currentCallbackId = _nextCallbackId++;
     _callbacksById[currentCallbackId] = callback;

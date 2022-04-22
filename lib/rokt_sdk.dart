@@ -68,7 +68,8 @@ class RoktSdk {
   /// The recommended way of calling the initialize method is early in the application.
   /// - Parameters:
   ///   - roktTagId: The tag id provided by Rokt, associated with your account.
-  static Future<void> initialize(String roktTagId, {String appVersion = ''}) async {
+  static Future<void> initialize(String roktTagId,
+      {String appVersion = ''}) async {
     await RoktSdkController.instance
         .initialize(roktTagId: roktTagId, appVersion: appVersion);
   }
@@ -88,7 +89,7 @@ class RoktSdk {
   ///   - onShouldHideLoadingIndicator: Function to execute when the loading indicator should be hidden
   static Future<void> execute({
     required String viewName,
-    Map attributes = const {},
+    Map<String, String> attributes = const {},
     RoktCallback onLoad = _defaultRoktCallBack,
     RoktCallback onUnLoad = _defaultRoktCallBack,
     RoktCallback onShouldShowLoadingIndicator = _defaultRoktCallBack,

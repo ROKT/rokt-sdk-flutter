@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  rokt_sdk: ^3.6.0
+  rokt_sdk: ^3.6.1
 ```
 
 ## Getting Started
@@ -39,6 +39,13 @@ This means that app will only be available for users that run Android SDK 19 or 
 
 ### iOS
 Rokt iOS SDK supports iOS version 10 and above
+
+## How to update the SDK
+_ Run `flutter clean`
+- Delete /ios/Pods
+- Delete /ios/Podfile.lock 
+- Run `flutter pub get`
+- From inside ios folder, run `pod install`
 
 ## Initializing the Rokt SDK
 Initialize the Rokt SDK prior to using it. We recommend calling the initi method in the beginning of the applications.
@@ -123,10 +130,10 @@ To run an placement in the sandbox environment, the list of attributes passed to
 
 ## How to run the example app locally
 - Open project in Android Studio for changing the code
-- run following commands in terminal or equalivant in Android Studio
-- run `flutter clean`
-- run `flutter pub get`
-- run `flutter run`
+- Run following commands in terminal or equivalent in Android Studio
+- Run `flutter clean`
+- Run `flutter pub get`
+- Run `flutter run`
 
 ## License
 ```
