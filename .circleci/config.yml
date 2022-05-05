@@ -3,5 +3,6 @@ orbs:
   flutter: circleci/flutter@1.0
 workflows:
   test:
+    jobs:
       - flutter/lint:
           version: 2.2.3
