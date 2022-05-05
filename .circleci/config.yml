@@ -1,0 +1,25 @@
+version: '2.1'
+orbs:
+  flutter: circleci/flutter@1.0
+jobs:
+  distribute:
+    macos:
+      xcode: 12.5.1
+    steps:
+      - flutter/install_sdk_and_pub:
+          version: 2.2.3
+      - flutter/install_ios_pod
+      - flutter/install_ios_gem
+      - run:
+          command: bundle exec fastlane distribute
+          working_directory: ios
+workflows:
+  test:
+    jobs:
+      - flutter/unit_test:
+          version: 2.2.3
+      - flutter/lint:
+          version: 2.2.3
+  # distribute:
+  #   jobs:
+  #     - distribute
