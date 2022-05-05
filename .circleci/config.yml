@@ -1,0 +1,7 @@
+version: '2.1'
+orbs:
+  flutter: circleci/flutter@1.0
+workflows:
+  test:
+      - flutter/lint:
+          version: 2.2.3
