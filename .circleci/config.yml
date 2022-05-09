@@ -1,8 +1,30 @@
 version: '2.1'
-orbs:
-  flutter: circleci/flutter@1.1.0
+jobs:
+  unit_test:
+    docker:
+    - image: cirrusci/flutter:2.10.5
+    steps:
+    - checkout
+    - restore_cache:
+        keys:
+        - pub-v1-{{ checksum "./pubspec.lock" }}-{{ arch }}
+    - run:
+        command: |
+          cd example
+          flutter pub get
+        name: Install Dependencies
+        working_directory: .
+    - save_cache:
+        key: pub-v1-{{ checksum "./pubspec.lock" }}-{{ arch }}
+        paths:
+        - ./.dart_tool
+    - run:
+        command: |
+          cd example
+          flutter test
+        name: Run Unit Test
+        working_directory: .
 workflows:
   test:
     jobs:
-      - flutter/unit_test:
-          version: 2.2.3
+    - unit_test
