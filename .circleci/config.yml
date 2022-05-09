@@ -7,7 +7,7 @@ jobs:
     - checkout
     - restore_cache:
         keys:
-        - pub-v1-{{ checksum "./pubspec.lock" }}-{{ arch }}
+        - pub-v1-{{ checksum "./example/pubspec.lock" }}-{{ arch }}
     - run:
         command: |
           cd example
@@ -15,7 +15,7 @@ jobs:
         name: Install Dependencies
         working_directory: .
     - save_cache:
-        key: pub-v1-{{ checksum "./pubspec.lock" }}-{{ arch }}
+        key: pub-v1-{{ checksum "./example/pubspec.lock" }}-{{ arch }}
         paths:
         - ./.dart_tool
     - run:
