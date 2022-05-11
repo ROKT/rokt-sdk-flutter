@@ -1,140 +1,22 @@
-version: 2.1
-
-reference:
-  ## Constants
-  gradle_cache_path: &gradle_cache_path
-                       gradle_cache-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
-  workspace: &workspace
-               ~/src
-  ## Configurations
-  android_config: &android_config
-    working_directory: *workspace
-    macos:
-      xcode: 13.3.1
-    shell: /bin/bash --login -eo pipefail
-    environment:
-      TERM: dumb
-      JVM_OPTS: -Xmx3200m
-  ## Cache
-  restore_gradle_cache: &restore_gradle_cache
-    restore_cache:
-      key: *gradle_cache_path
-  save_gradle_cache: &save_gradle_cache
-    save_cache:
-      key: *gradle_cache_path
-      paths:
-        - ~/.gradle
-    ## Dependency Downloads
-  download_android_dependencies: &download_android_dependencies
-    run:
-      name: Download Android Dependencies
-      command: ./gradlew androidDependencies
-
+version: '2.1'
+orbs:
+  flutter: circleci/flutter@1.1.0
 jobs:
-  distribute:
+  test_iOS:
     macos:
       xcode: 13.3.1
     steps:
-    - run:
-        command: |
-          mkdir ~/development && cd $_
-          if [ "$(uname)" == 'Darwin' ]; then
-            curl -o flutter_sdk.zip https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_2.10.5-stable.zip
-            unzip -qq flutter_sdk.zip
-          elif [ "$(expr substr $(uname -s) 1 5)" == 'Linux' ]; then
-            curl -o flutter_sdk.tar.xz https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_2.10.5-stable.tar.xz
-            tar xf flutter_sdk.tar.xz
-          else
-            echo "Your platform ($(uname -a)) is not supported."
-            exit 1
-          fi
-          echo 'export PATH=~/development/flutter/bin:$PATH' >> $BASH_ENV
-        name: Install Flutter SDK
-#    - run:
-#        command: flutter doctor
-    - checkout
-#    - restore_cache:
-#        keys:
-#        - pub-.-{{ checksum "./example/pubspec.lock" }}-{{ arch }}
-#    - run:
-#        command: flutter pub get
-#        name: Install Dependencies
-#        working_directory: ./example
-#    - save_cache:
-#        key: pub-.-{{ checksum "./example/pubspec.lock" }}-{{ arch }}
-#        paths:
-#        - ./example/.dart_tool
-#    - restore_cache:
-#        keys:
-#        - pod-v1-{{ checksum "./example/ios/Podfile.lock" }}
-#    - run:
-#        command: pod install
-#        name: Install Dependencies
-#        working_directory: ./example/ios
-#    - save_cache:
-#        key: pod-v1-{{ checksum "./example/ios/Podfile.lock" }}
-#        paths:
-#        - ./example/ios/Pods
-#    # - restore_cache:
-#    #     keys:
-#    #     - bundle-v1-ios-{{ checksum "./example/ios/Gemfile.lock" }}
-#    # - run:
-#    #     command: |
-#    #       bundle config set path ./example/vendor/bundle
-#    #       bundle install
-#    #     name: Install Dependencies
-#    #     working_directory: ./example/ios
-#    # - save_cache:
-#    #     key: bundle-v1-ios-{{ checksum "./example/ios/Gemfile.lock" }}
-#    #     paths:
-#    #     - ./example/ios/vendor/bundle
-#    - run:
-#        # command: bundle exec fastlane distribute
-#        command: flutter test
-#        working_directory: example
-
-#        android process
-    - run:
-        name: Setup environment variables
-        command: |
-          echo 'export PATH="$PATH:/usr/local/opt/node@8/bin:${HOME}/.yarn/bin:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin:/usr/local/share/android-sdk/tools/bin"' >> $BASH_ENV
-          echo 'export ANDROID_HOME="/usr/local/share/android-sdk"' >> $BASH_ENV
-          echo 'export ANDROID_SDK_HOME="/usr/local/share/android-sdk"' >> $BASH_ENV
-          echo 'export ANDROID_SDK_ROOT="/usr/local/share/android-sdk"' >> $BASH_ENV
-          echo 'export QEMU_AUDIO_DRV=none' >> $BASH_ENV
-          echo 'export JAVA_HOME=/Library/Java/Home' >> $BASH_ENV
-#          echo 'export JAVA_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home' >> $BASH_ENV
-    - run:
-        name: Install Android sdk
-        command: |
-          HOMEBREW_NO_AUTO_UPDATE=1 brew tap homebrew/cask
-          HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask homebrew/cask-versions/temurin8
-          HOMEBREW_NO_AUTO_UPDATE=1 brew install android-sdk --cask
-
-    - run:
-        name: Install emulator dependencies
-        command: (yes | sdkmanager "platform-tools" "platforms;android-26" "extras;intel;Hardware_Accelerated_Execution_Manager" "build-tools;26.0.0" "system-images;android-26;google_apis;x86" "emulator" --verbose) || true
-    - run:
-        command: flutter doctor
-    - *restore_gradle_cache
-    - *download_android_dependencies
-    - *save_gradle_cache
-    - run:
-        name: Download Android Dependencies
-        command: ./gradlew androidDependencies
-        working_directory: example/android
-    - run: avdmanager create avd -n Pixel_2_API_26 -k "system-images;android-26;google_apis;x86" -g google_apis -d "Nexus 5"
-    - run:
-        name: Run emulator in background
-        command: /usr/local/share/android-sdk/tools/emulator @Pixel_2_API_26 -skin 1080x2066 -memory 2048 -noaudio
-        background: true
-    - run:
-        name: Run Tests
-        command: ./gradlew app:connectedAndroidTest
-        working_directory: example/android
-#        android emulator
+      - checkout
+      - flutter/install_sdk_and_pub:
+          flutter_version: 2.10.5
+          app-dir: example
+      - flutter/install_ios_pod:
+          app-dir: example
+#      # - flutter/install_ios_gem
+      - run:
+          command: flutter test
+          working_directory: example
 workflows:
   distribute:
     jobs:
-    - distribute
-  version: 2
+      - test_iOS
