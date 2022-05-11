@@ -83,6 +83,7 @@ jobs:
     - run:
         name: Download Android Dependencies
         command: ./gradlew androidDependencies
+        working_directory: example/android
     - run: avdmanager create avd -n Pixel_2_API_26 -k "system-images;android-26;google_apis;x86" -g google_apis -d "Nexus 5"
     - run:
         name: Run emulator in background
