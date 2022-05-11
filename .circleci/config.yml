@@ -50,8 +50,8 @@ jobs:
           fi
           echo 'export PATH=~/development/flutter/bin:$PATH' >> $BASH_ENV
         name: Install Flutter SDK
-    - run:
-        command: flutter doctor
+#    - run:
+#        command: flutter doctor
     - checkout
 #    - restore_cache:
 #        keys:
@@ -102,7 +102,8 @@ jobs:
           echo 'export ANDROID_SDK_HOME="/usr/local/share/android-sdk"' >> $BASH_ENV
           echo 'export ANDROID_SDK_ROOT="/usr/local/share/android-sdk"' >> $BASH_ENV
           echo 'export QEMU_AUDIO_DRV=none' >> $BASH_ENV
-          echo 'export JAVA_HOME=/Library/Java/Home' >> $BASH_ENV
+#          echo 'export JAVA_HOME=/Library/Java/Home' >> $BASH_ENV
+          echo 'export JAVA_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home' >> $BASH_ENV
     - run:
         name: Install Android sdk
         command: |
@@ -111,12 +112,15 @@ jobs:
     - run:
         name: Install emulator dependencies
         command: (yes | sdkmanager "platform-tools" "platforms;android-26" "extras;intel;Hardware_Accelerated_Execution_Manager" "build-tools;26.0.0" "system-images;android-26;google_apis;x86" "emulator" --verbose) || true
+    - run:
+        command: flutter doctor
     - *restore_gradle_cache
     - *download_android_dependencies
     - *save_gradle_cache
     - run:
         name: Download Android Dependencies
         command: ./gradlew androidDependencies
+        working_directory: example/android
     - run: avdmanager create avd -n Pixel_2_API_26 -k "system-images;android-26;google_apis;x86" -g google_apis -d "Nexus 5"
     - run:
         name: Run emulator in background
