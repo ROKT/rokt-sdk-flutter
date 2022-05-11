@@ -1,6 +1,7 @@
 version: '2.1'
 orbs:
   flutter: circleci/flutter@1.1.0
+  android: circleci/android@1.0.3
 jobs:
   test_iOS:
     macos:
@@ -16,7 +17,23 @@ jobs:
       - run:
           command: flutter test
           working_directory: example
+  test_Android:
+    executor:
+      name: android/android-machine
+    steps:
+      - flutter/install_sdk_and_pub:
+          flutter_version: 2.10.5
+          app-dir: example
+      - flutter/install_android_gradle:
+          app-dir: example
+      # - flutter/install_android_gem
+      - run:
+          command: flutter test
+          working_directory: example
 workflows:
-  distribute:
+  test_iOS:
     jobs:
       - test_iOS
+  test_Android:
+    jobs:
+      - test_Android
