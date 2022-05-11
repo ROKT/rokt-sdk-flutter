@@ -25,9 +25,11 @@ jobs:
         keys:
         - pub-.-{{ checksum "./example/pubspec.lock" }}-{{ arch }}
     - run:
-        command: flutter pub get
+        command: |
+          cd example
+          flutter pub get
         name: Install Dependencies
-        working_directory: ./example
+        working_directory: ./
     - save_cache:
         key: pub-.-{{ checksum "./example/pubspec.lock" }}-{{ arch }}
         paths:
