@@ -21,15 +21,14 @@ jobs:
         name: Install Flutter SDK
     - run:
         command: flutter doctor
+    - checkout
     - restore_cache:
         keys:
         - pub-.-{{ checksum "./example/pubspec.lock" }}-{{ arch }}
     - run:
-        command: |
-          cd example
-          flutter pub get
+        command: flutter pub get
         name: Install Dependencies
-        working_directory: ./
+        working_directory: ./example
     - save_cache:
         key: pub-.-{{ checksum "./example/pubspec.lock" }}-{{ arch }}
         paths:
