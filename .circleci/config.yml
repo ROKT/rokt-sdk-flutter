@@ -44,19 +44,19 @@ jobs:
         key: pod-v1-{{ checksum "./example/ios/Podfile.lock" }}
         paths:
         - ./example/ios/Pods
-    - restore_cache:
-        keys:
-        - bundle-v1-ios-{{ checksum "./example/ios/Gemfile.lock" }}
-    - run:
-        command: |
-          bundle config set path ./example/vendor/bundle
-          bundle install
-        name: Install Dependencies
-        working_directory: ./example/ios
-    - save_cache:
-        key: bundle-v1-ios-{{ checksum "./example/ios/Gemfile.lock" }}
-        paths:
-        - ./example/ios/vendor/bundle
+    # - restore_cache:
+    #     keys:
+    #     - bundle-v1-ios-{{ checksum "./example/ios/Gemfile.lock" }}
+    # - run:
+    #     command: |
+    #       bundle config set path ./example/vendor/bundle
+    #       bundle install
+    #     name: Install Dependencies
+    #     working_directory: ./example/ios
+    # - save_cache:
+    #     key: bundle-v1-ios-{{ checksum "./example/ios/Gemfile.lock" }}
+    #     paths:
+    #     - ./example/ios/vendor/bundle
     - run:
         # command: bundle exec fastlane distribute
         command: flutter test
