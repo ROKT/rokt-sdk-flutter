@@ -1,4 +1,35 @@
 version: 2.1
+
+reference:
+  ## Constants
+  gradle_cache_path: &gradle_cache_path
+                       gradle_cache-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+  workspace: &workspace
+               ~/src
+  ## Configurations
+  android_config: &android_config
+    working_directory: *workspace
+    macos:
+      xcode: "9.4.0"
+    shell: /bin/bash --login -eo pipefail
+    environment:
+      TERM: dumb
+      JVM_OPTS: -Xmx3200m
+  ## Cache
+  restore_gradle_cache: &restore_gradle_cache
+    restore_cache:
+      key: *gradle_cache_path
+  save_gradle_cache: &save_gradle_cache
+    save_cache:
+      key: *gradle_cache_path
+      paths:
+        - ~/.gradle
+    ## Dependency Downloads
+  download_android_dependencies: &download_android_dependencies
+    run:
+      name: Download Android Dependencies
+      command: ./gradlew androidDependencies
+      
 jobs:
   distribute:
     macos:
@@ -80,10 +111,12 @@ jobs:
     - run:
         name: Install emulator dependencies
         command: (yes | sdkmanager "platform-tools" "platforms;android-26" "extras;intel;Hardware_Accelerated_Execution_Manager" "build-tools;26.0.0" "system-images;android-26;google_apis;x86" "emulator" --verbose) || true
+    - *restore_gradle_cache
+    - *download_android_dependencies
+    - *save_gradle_cache
     - run:
         name: Download Android Dependencies
         command: ./gradlew androidDependencies
-        working_directory: example/android
     - run: avdmanager create avd -n Pixel_2_API_26 -k "system-images;android-26;google_apis;x86" -g google_apis -d "Nexus 5"
     - run:
         name: Run emulator in background
