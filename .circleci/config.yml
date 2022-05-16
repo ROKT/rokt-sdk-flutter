@@ -27,7 +27,7 @@ jobs:
           app-dir: example
       - run:
           name: setup pub login
-          command: sh ./pub_login.sh  
+          command: sh .circleci/pub_login.sh  
       - run:
           name: publish pub
           command: dart pub publish --dry-run     
@@ -49,14 +49,15 @@ workflows:
   version: 2  
   test_iOS:
     jobs:
-      - test_iOS
-      - hold_for_publish:
-          type: approval
-          requires:
-            - test_iOS
-      - publish_package:
-          requires:
-            - hold_for_publish
-  test_Android:
-    jobs:
-      - test_Android
+      - publish_package    
+      # - test_iOS
+      # - hold_for_publish:
+      #     type: approval
+      #     requires:
+      #       - test_iOS
+      # - publish_package:
+          # requires:
+            # - hold_for_publish
+  # test_Android:
+  #   jobs:
+  #     - test_Android
