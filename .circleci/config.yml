@@ -17,6 +17,20 @@ jobs:
       - run:
           command: flutter test
           working_directory: example
+  publish_package:
+    macos:
+      xcode: 13.3.1
+    steps:
+      - checkout
+      - flutter/install_sdk_and_pub:
+          flutter_version: 2.10.5
+          app-dir: example
+      - run:
+          name: setup pub login
+          command: sh ./pub_login.sh  
+      - run:
+          name: publish pub
+          command: dart pub publish --dry-run     
   test_Android:
     executor:
       name: android/android-machine
@@ -32,9 +46,17 @@ jobs:
           command: flutter test
           working_directory: example
 workflows:
+  version: 2  
   test_iOS:
     jobs:
       - test_iOS
+      - hold_for_publish:
+          type: approval
+          requires:
+            - test_iOS
+      - publish_package:
+          requires:
+            - hold_for_publish
   test_Android:
     jobs:
       - test_Android
