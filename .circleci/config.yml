@@ -26,6 +26,11 @@ jobs:
           flutter_version: 2.10.5
           app-dir: example
       - run:
+          name: Install dart
+          command: |
+              brew tap dart-lang/dart
+              brew install dart
+      - run:
           name: setup pub login
           command: sh .circleci/pub_login.sh  
       - run:
