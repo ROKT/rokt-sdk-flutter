@@ -48,33 +48,34 @@ jobs:
           app-dir: example
       # - flutter/install_android_gem
       - run:
-          command: flutter test
+          command: flutter build apk
+#          command: flutter test
           working_directory: example
 workflows:
   version: 2  
-  test_iOS:
-    jobs:  
-      - test_iOS
+#  test_iOS:
+#    jobs:
+#      - test_iOS
   test_Android:
     jobs:
       - test_Android
-  publish_plugin:
-    jobs:  
-      - test_iOS
-      - test_Android
-      - hold_for_publish:
-          type: approval
-          requires:
-            - test_iOS
-            - test_Android
-          filters:
-            branches:
-                only: 
-                  - /release-(.*)/
-      - publish_package:
-          requires:
-            - hold_for_publish
-          filters:
-            branches:
-                only: 
-                  - /release-(.*)/
+#  publish_plugin:
+#    jobs:
+#      - test_iOS
+#      - test_Android
+#      - hold_for_publish:
+#          type: approval
+#          requires:
+#            - test_iOS
+#            - test_Android
+#          filters:
+#            branches:
+#                only:
+#                  - /release-(.*)/
+#      - publish_package:
+#          requires:
+#            - hold_for_publish
+#          filters:
+#            branches:
+#                only:
+#                  - /release-(.*)/
