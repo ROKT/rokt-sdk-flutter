@@ -53,16 +53,28 @@ jobs:
 workflows:
   version: 2  
   test_iOS:
+    jobs:  
+      - test_iOS
+  test_Android:
     jobs:
-      - publish_package    
-      # - test_iOS
-      # - hold_for_publish:
-      #     type: approval
-      #     requires:
-      #       - test_iOS
-      # - publish_package:
-          # requires:
-            # - hold_for_publish
-  # test_Android:
-  #   jobs:
-  #     - test_Android
+      - test_Android
+  publish_plugin:
+    jobs:  
+      - test_iOS
+      - test_Android
+      - hold_for_publish:
+          type: approval
+          requires:
+            - test_iOS
+            - test_Android
+          filters:
+            branches:
+                only: 
+                  - /release-(.*)/
+      - publish_package:
+          requires:
+            - hold_for_publish
+          filters:
+            branches:
+                only: 
+                  - /release-(.*)/
