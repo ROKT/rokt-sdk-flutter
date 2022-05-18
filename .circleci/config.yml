@@ -64,14 +64,12 @@ workflows:
   test_iOS:
     jobs:
       - test_iOS:
-          filters:
-            branches:
-                ignore:
-                  - /release-(.*)/
+          branches:
+              ignore:
+                - /release-(.*)/
   test_Android:
     jobs:
       - test_Android:
-          filters:
             branches:
               ignore:
                 - /release-(.*)/
@@ -84,14 +82,12 @@ workflows:
           requires:
             - test_iOS
             - test_Android
-          filters:
-            branches:
-                only:
-                  - /release-(.*)/
+          branches:
+              only:
+                - /release-(.*)/
       - publish_package:
           requires:
             - hold_for_publish
-          filters:
-            branches:
-                only:
-                  - /release-(.*)/
+          branches:
+              only:
+                - /release-(.*)/
