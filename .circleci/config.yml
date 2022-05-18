@@ -13,7 +13,7 @@ jobs:
           app-dir: example
       - flutter/install_ios_pod:
           app-dir: example
-#      # - flutter/install_ios_gem
+      #      # - flutter/install_ios_gem
       - run:
           command: flutter test
           working_directory: example
@@ -28,14 +28,14 @@ jobs:
       - run:
           name: Install dart
           command: |
-              brew tap dart-lang/dart
-              brew install dart
+            brew tap dart-lang/dart
+            brew install dart
       - run:
           name: setup pub login
-          command: sh .circleci/pub_login.sh  
+          command: sh .circleci/pub_login.sh
       - run:
           name: publish pub
-          command: dart pub publish --dry-run     
+          command: dart pub publish --dry-run
   test_Android:
     executor:
       name: android/android-machine
@@ -66,8 +66,8 @@ workflows:
       - test_iOS:
           filters:
             branches:
-                ignore:
-                  - /release-(.*)/
+              ignore:
+                - /release-(.*)/
   test_Android:
     jobs:
       - test_Android:
@@ -86,12 +86,12 @@ workflows:
             - test_Android
           filters:
             branches:
-                only:
-                  - /release-(.*)/
+              only:
+                - /release-(.*)/
       - publish_package:
           requires:
             - hold_for_publish
           filters:
             branches:
-                only:
-                  - /release-(.*)/
+              only:
+                - /release-(.*)/
