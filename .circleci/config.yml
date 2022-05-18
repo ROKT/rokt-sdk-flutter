@@ -56,32 +56,42 @@ jobs:
           command: flutter test
           working_directory: example
 workflows:
-  version: 2  
-#  test_iOS:
-#    jobs:
-#      - test_iOS
-#  test_Android:
-#    jobs:
-#      - test_Android
-  publish_plugin:
+  version: 2
+  lint:
     jobs:
       - flutter/lint:
           version: 2.10.5
-#      - test_iOS
-#      - test_Android
-#      - hold_for_publish:
-#          type: approval
-#          requires:
-#            - test_iOS
-#            - test_Android
-#          filters:
-#            branches:
-#                only:
-#                  - /release-(.*)/
-#      - publish_package:
-#          requires:
-#            - hold_for_publish
-#          filters:
-#            branches:
-#                only:
-#                  - /release-(.*)/
+  test_iOS:
+    jobs:
+      - test_iOS:
+          filters:
+            branches:
+                ignore:
+                  - /release-(.*)/
+  test_Android:
+    jobs:
+      - test_Android:
+          filters:
+            branches:
+              ignore:
+                - /release-(.*)/
+  publish_plugin:
+    jobs:
+      - test_iOS
+      - test_Android
+      - hold_for_publish:
+          type: approval
+          requires:
+            - test_iOS
+            - test_Android
+          filters:
+            branches:
+                only:
+                  - /release-(.*)/
+      - publish_package:
+          requires:
+            - hold_for_publish
+          filters:
+            branches:
+                only:
+                  - /release-(.*)/

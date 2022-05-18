@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-
 /// Internal callBack for Rokt Sdk
 typedef RoktCallbackInternal = void Function(dynamic msg);
 
