@@ -12,9 +12,6 @@ import 'package:rokt_sdk/src/widget_controller.dart';
 
 part 'src/rokt_widget.dart';
 
-/// Internal callBack for Rokt Sdk
-typedef RoktCallbackInternal = void Function(dynamic msg);
-
 /// callback for the rokt sdk
 typedef RoktCallback = void Function();
 
