@@ -1,3 +1,6 @@
+## 3.6.3-alpha.1
+* Supporting Flutter SDK 3.0
+
 ## 3.6.2
 * Updated Padding and Margin for Embedded Placement
 
