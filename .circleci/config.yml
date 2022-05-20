@@ -55,19 +55,19 @@ jobs:
           working_directory: example
 workflows:
   version: 2
-  lint:
+  build_test:
     jobs:
       - flutter/lint:
           version: 2.10.5
-  test_iOS:
-    jobs:
+          filters:
+            branches:
+              ignore:
+                - /release-(.*)/
       - test_iOS:
           filters:
             branches:
               ignore:
                 - /release-(.*)/
-  test_Android:
-    jobs:
       - test_Android:
           filters:
             branches:
@@ -75,6 +75,12 @@ workflows:
                 - /release-(.*)/
   publish_plugin:
     jobs:
+      - flutter/lint:
+          version: 2.10.5
+          filters:
+            branches:
+              only:
+                - /release-(.*)/
       - test_iOS:
           filters:
             branches:

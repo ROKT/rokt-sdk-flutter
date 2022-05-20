@@ -1,3 +1,6 @@
+## 3.6.3
+* Flutter SDK 3.0 supported
+
 ## 3.6.3-alpha.1
 * Supporting Flutter SDK 3.0
 
