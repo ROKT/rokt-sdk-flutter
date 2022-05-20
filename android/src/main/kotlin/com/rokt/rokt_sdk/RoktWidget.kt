@@ -8,14 +8,15 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
 import kotlin.math.abs
 
-class RoktWidget(context: Context, messenger: BinaryMessenger, viewId: Int) : PlatformView, RoktWidgetDimensionCallBack {
+class RoktWidget(context: Context?, messenger: BinaryMessenger, viewId: Int) : PlatformView,
+    RoktWidgetDimensionCallBack {
 
-    val widget: Widget = Widget(context)
+    val widget: Widget? = if (context != null) Widget(context) else null
     private var lastHeight = 0
     private val channel: MethodChannel = MethodChannel(messenger, "rokt_widget_$viewId")
 
     init {
-        widget.registerDimensionListener(this)
+        widget?.registerDimensionListener(this)
     }
 
     private fun sendUpdatedHeight(height: Double) {
@@ -33,10 +34,10 @@ class RoktWidget(context: Context, messenger: BinaryMessenger, viewId: Int) : Pl
         channel.invokeMethod(VIEW_PADDING_LISTENER, map)
     }
 
-    override fun getView(): Widget = widget
+    override fun getView(): Widget? = widget
 
     override fun dispose() {
-        widget.unregisterDimensionListener(this)
+        widget?.unregisterDimensionListener(this)
     }
 
     companion object {
