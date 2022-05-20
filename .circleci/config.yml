@@ -13,7 +13,6 @@ jobs:
           app-dir: example
       - flutter/install_ios_pod:
           app-dir: example
-      #      # - flutter/install_ios_gem
       - run:
           command: flutter test
           working_directory: example
@@ -46,7 +45,6 @@ jobs:
           app-dir: example
       - flutter/install_android_gradle:
           app-dir: example
-      # - flutter/install_android_gem
       - run:
           name: build apk
           command: flutter build apk
@@ -61,46 +59,45 @@ workflows:
     jobs:
       - flutter/lint:
           version: 2.10.5
-#  test_iOS:
-#    jobs:
-#      - test_iOS:
-#          filters:
-#            branches:
-#              ignore:
-#                - /release-(.*)/
-#  test_Android:
-#    jobs:
-#      - test_Android:
-#          filters:
-#            branches:
-#              ignore:
-#                - /release-(.*)/
+  test_iOS:
+    jobs:
+      - test_iOS:
+          filters:
+            branches:
+              ignore:
+                - /release-(.*)/
+  test_Android:
+    jobs:
+      - test_Android:
+          filters:
+            branches:
+              ignore:
+                - /release-(.*)/
   publish_plugin:
     jobs:
-#      - test_iOS:
-#          filters:
-#            branches:
-#              only:
-#                - /release-(.*)/
-#      - test_Android:
-#          filters:
-#            branches:
-#              only:
-#                - /release-(.*)/
-#      - hold_for_publish:
-#          type: approval
-#          requires:
-#            - test_iOS
-#            - test_Android
-#          filters:
-#            branches:
-#              only:
-#                - /release-(.*)/
-      - publish_package
-#      - publish_package:
-#          requires:
-#            - hold_for_publish
-#          filters:
-#            branches:
-#              only:
-#                - /release-(.*)/
+      - test_iOS:
+          filters:
+            branches:
+              only:
+                - /release-(.*)/
+      - test_Android:
+          filters:
+            branches:
+              only:
+                - /release-(.*)/
+      - hold_for_publish:
+          type: approval
+          requires:
+            - test_iOS
+            - test_Android
+          filters:
+            branches:
+              only:
+                - /release-(.*)/
+      - publish_package:
+          requires:
+            - hold_for_publish
+          filters:
+            branches:
+              only:
+                - /release-(.*)/
