@@ -35,7 +35,7 @@ jobs:
           command: sh .circleci/pub_login.sh
       - run:
           name: publish pub
-          command: dart pub publish
+          command: yes | dart pub publish
   test_Android:
     executor:
       name: android/android-machine
