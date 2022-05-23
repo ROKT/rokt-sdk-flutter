@@ -64,11 +64,15 @@ workflows:
               ignore:
                 - /release-(.*)/
       - test_iOS:
+          requires:
+            - flutter/lint
           filters:
             branches:
               ignore:
                 - /release-(.*)/
       - test_Android:
+          requires:
+            - flutter/lint
           filters:
             branches:
               ignore:
@@ -82,11 +86,15 @@ workflows:
               only:
                 - /release-(.*)/
       - test_iOS:
+          requires:
+            - flutter/lint
           filters:
             branches:
               only:
                 - /release-(.*)/
       - test_Android:
+          requires:
+            - flutter/lint
           filters:
             branches:
               only:
