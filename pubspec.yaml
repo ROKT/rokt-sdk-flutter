@@ -1,6 +1,6 @@
 name: rokt_sdk
 description: Rokt Mobile SDK to integrate ROKT Api into flutter applications.
-version: 3.6.2
+version: 3.6.3
 homepage: https://github.com/ROKT/rokt-sdk-flutter
 
 environment:
@@ -12,9 +12,9 @@ dependencies:
     sdk: flutter
 
 dev_dependencies:
+  flutter_lints: ^1.0.0
   flutter_test:
     sdk: flutter
-  flutter_lints: ^1.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

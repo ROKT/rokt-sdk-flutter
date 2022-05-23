@@ -70,15 +70,18 @@ class _RoktContainerState extends State<RoktWidget>
       padding: EdgeInsets.fromLTRB(_left, _top, _right, _bottom),
       child: SizedBox(
           height: _height,
-          child:
-              _RoktStatelessWidget(platformViewCreatedCallback: _onPlatformViewCreated)),
+          child: _RoktStatelessWidget(
+              platformViewCreatedCallback: _onPlatformViewCreated)),
     );
   }
 
   void _onPlatformViewCreated(int id) {
     RoktSdkController.instance
         .attachPlaceholder(id: id, name: widget.placeholderName);
-    WidgetController(id: id, sizeChangeCallback: _changeHeight, paddingChangeCallback: _changePadding);
+    WidgetController(
+        id: id,
+        sizeChangeCallback: _changeHeight,
+        paddingChangeCallback: _changePadding);
     widget.onWidgetCreated();
   }
 }

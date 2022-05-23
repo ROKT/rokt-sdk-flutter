@@ -10,8 +10,8 @@ import io.flutter.plugin.platform.PlatformViewFactory
 class RoktWidgetFactory(private val messenger: BinaryMessenger): PlatformViewFactory(StandardMessageCodec.INSTANCE) {
     val nativeViews = mutableMapOf<Int, Widget>()
 
-    override fun create(context: Context, viewId: Int, args: Any?): PlatformView {
-        val roktWidget = RoktWidget(context, messenger, viewId)
+    override fun create(context: Context?, viewId: Int, args: Any?): PlatformView {
+        val roktWidget = RoktWidget(context!!, messenger, viewId)
         nativeViews[viewId] = roktWidget.widget
         return roktWidget
     }
