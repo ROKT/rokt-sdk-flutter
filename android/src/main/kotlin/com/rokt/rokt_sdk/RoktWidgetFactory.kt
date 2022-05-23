@@ -11,8 +11,10 @@ class RoktWidgetFactory(private val messenger: BinaryMessenger): PlatformViewFac
     val nativeViews = mutableMapOf<Int, Widget>()
 
     override fun create(context: Context?, viewId: Int, args: Any?): PlatformView {
-        val roktWidget = RoktWidget(context!!, messenger, viewId)
-        nativeViews[viewId] = roktWidget.widget
+        val roktWidget = RoktWidget(context, messenger, viewId)
+        roktWidget.widget?.let { widget ->
+            nativeViews[viewId] = widget
+        }
         return roktWidget
     }
 }
