@@ -40,7 +40,7 @@ class _RoktContainerState extends State<RoktWidget>
 
   @override
   void initState() {
-    _height = 0;
+    _height = double.minPositive;
     _left = 0;
     _top = 0;
     _right = 0;
