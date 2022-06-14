@@ -99,9 +99,10 @@ class _MyAppState extends State<MyApp> {
                             keyboardType: TextInputType.multiline,
                             maxLines: null),
                         const Text("Location 1"),
-                        const RoktWidget(placeholderName: "Location1"),
+                        const RoktWidget(key: const ValueKey('widget1'), placeholderName: "Location1"),
                         const Text("Location 2"),
                         RoktWidget(
+                            key: const ValueKey('widget2'),
                             placeholderName: "Location2",
                             onWidgetCreated: () {
                               debugPrint("rokt_widget widget is created");
