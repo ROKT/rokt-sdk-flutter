@@ -1,21 +1,87 @@
 version: 2.1
 orbs:
   flutter: circleci/flutter@1.1.0
-  android: circleci/android@1.0.3
+  android: circleci/android@2.0.3
+  macos: circleci/macos@2.1.0
 jobs:
-  test_iOS:
+  build_test_iOS:
+    working_directory: ~/project/example
     macos:
       xcode: 13.3.1
     steps:
-      - checkout
+      - checkout:
+          path: ~/project
       - flutter/install_sdk_and_pub:
           flutter_version: 2.10.5
-          app-dir: example
-      - flutter/install_ios_pod:
-          app-dir: example
+      - flutter/install_ios_pod
       - run:
+          name: Run tests
           command: flutter test
-          working_directory: example
+      - macos/preboot-simulator:
+          device: iPhone 13
+          version: "15.4"
+      - run:
+          name: Run Integration Test
+          command: flutter test integration_test/app_test.dart
+
+  build_test_Android:
+    working_directory: ~/project/example/android
+    macos:
+      xcode: "12.3.0"
+    environment:
+      JVM_OPTS: -Xmx3200m
+    steps:
+      - checkout:
+          path: ~/project
+      - run:
+          name: Install JAVA
+          command: |
+            HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask homebrew/cask-versions/adoptopenjdk8
+      - run:
+          name: Install Android sdk
+          command: |
+            HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask android-sdk
+      - run:
+          name: Setup environment variables
+          command: |
+            echo 'export PATH="$PATH:/usr/local/opt/node@8/bin:${HOME}/.yarn/bin:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin:/usr/local/share/android-sdk/tools/bin"' >> $BASH_ENV
+            echo 'export JAVA_HOME=`/usr/libexec/java_home -v 1.8`' >> $BASH_ENV
+            echo 'export ANDROID_HOME="/usr/local/share/android-sdk"' >> $BASH_ENV
+            echo 'export ANDROID_SDK_HOME="/usr/local/share/android-sdk"' >> $BASH_ENV
+            echo 'export ANDROID_SDK_ROOT="/usr/local/share/android-sdk"' >> $BASH_ENV
+            echo 'export QEMU_AUDIO_DRV=none' >> $BASH_ENV
+            echo 'export PATH="$PATH:~/flutter/bin"'  >> $BASH_ENV
+      - run:
+          name: Install emulator dependencies
+          command: (yes | sdkmanager "platform-tools" "platforms;android-26" "extras;intel;Hardware_Accelerated_Execution_Manager" "build-tools;26.0.0" "system-images;android-26;google_apis;x86" "emulator" --verbose) || true
+      - run:
+          name: chmod permissions
+          command: chmod +x ./gradlew
+      - run: avdmanager create avd -n Pixel_2_API_26 -k "system-images;android-26;google_apis;x86" -g google_apis -d "Nexus 5"
+      - run:
+          name: Run emulator in background
+          command: /usr/local/share/android-sdk/tools/emulator @Pixel_2_API_26 -noaudio -no-boot-anim -no-window
+          background: true
+      - run:
+          name: download flutter SDK
+          command: if ! test -f "~/flutter_sdk.zip"; then curl -o ~/flutter_sdk.zip https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_2.10.5-stable.zip; fi
+      - run:
+          name: unzip flutter SDK
+          command: unzip ~/flutter_sdk.zip -d ~
+      - run: flutter doctor
+      - run:
+          name: Flutter build
+          command: cd ..; flutter build apk
+      - run:
+          name: Flutter test
+          command: cd ..; flutter test integration_test/app_test.dart
+      - run:
+          name: Download Android Dependencies
+          command: ./gradlew androidDependencies
+      - run:
+          name: Run Unit Tests
+          command: ./gradlew test
+
   publish_package:
     macos:
       xcode: 13.3.1
@@ -34,25 +100,8 @@ jobs:
           command: sh .circleci/pub_login.sh
       - run:
           name: publish pub
-          command: yes | dart pub publish
-  test_Android:
-    executor:
-      name: android/android-machine
-    steps:
-      - checkout
-      - flutter/install_sdk_and_pub:
-          flutter_version: 2.10.5
-          app-dir: example
-      - flutter/install_android_gradle:
-          app-dir: example
-      - run:
-          name: build apk
-          command: flutter build apk
-          working_directory: example
-      - run:
-          name: Run tests
-          command: flutter test
-          working_directory: example
+          command: dart pub publish -f
+
 workflows:
   version: 2
   build_test:
@@ -63,14 +112,14 @@ workflows:
             branches:
               ignore:
                 - /release-(.*)/
-      - test_iOS:
+      - build_test_iOS:
           requires:
             - flutter/lint
           filters:
             branches:
               ignore:
                 - /release-(.*)/
-      - test_Android:
+      - build_test_Android:
           requires:
             - flutter/lint
           filters:
@@ -85,14 +134,14 @@ workflows:
             branches:
               only:
                 - /release-(.*)/
-      - test_iOS:
+      - build_test_iOS:
           requires:
             - flutter/lint
           filters:
             branches:
               only:
                 - /release-(.*)/
-      - test_Android:
+      - build_test_Android:
           requires:
             - flutter/lint
           filters:
@@ -102,8 +151,8 @@ workflows:
       - hold_for_publish:
           type: approval
           requires:
-            - test_iOS
-            - test_Android
+            - build_test_iOS
+            - build_test_Android
           filters:
             branches:
               only:
