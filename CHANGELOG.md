@@ -1,3 +1,6 @@
+## 3.7.0
+* Updated Rokt SDKs and interfaces
+
 ## 3.6.3
 * Flutter SDK 3.0 supported
 
