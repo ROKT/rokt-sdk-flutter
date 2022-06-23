@@ -1,5 +1,5 @@
 ## 3.7.0
-* Updated Rokt SDKs and interfaces
+* Updated Rokt SDKs and interfaces, Customisable progress bar
 
 ## 3.6.3
 * Flutter SDK 3.0 supported
@@ -14,5 +14,4 @@
 * Updated Rokt SDKs and interfaces
 
 ## 3.6.0
-
 * Introducing Rokt flutter SDK
