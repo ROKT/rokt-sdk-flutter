@@ -127,7 +127,7 @@ jobs:
       - android/start-emulator:
           avd-name: myavd
           no-window: true
-          # restore-gradle-cache-prefix: v1a
+          restore-gradle-cache-prefix: v1a
           post-emulator-launch-assemble-command: ./gradlew androidDependencies
       - run:
           name: download flutter SDK
@@ -148,6 +148,10 @@ jobs:
       - run:
           name: Run Unit Tests
           command: ./gradlew test
+      
+      - android/run-tests
+      - android/save-gradle-cache:
+          cache-prefix: v1a
 
   publish_package:
     macos:
