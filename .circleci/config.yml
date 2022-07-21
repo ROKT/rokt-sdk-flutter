@@ -212,21 +212,23 @@ jobs:
       # - run: flutter doctor
       - run:
           name: Flutter build
-          command: cd ..; flutter build apk
+          command: flutter build apk
       - android/start-emulator:
           avd-name: myavd
           no-window: true
           # restore-gradle-cache-prefix: v1a
           post-emulator-launch-assemble-command: ./gradlew androidDependencies
+          run-logcat: android
+
       - run:
           name: Flutter test
-          command: cd ..; flutter test integration_test/app_test.dart
+          command: flutter test integration_test/app_test.dart
       # - run:
       #     name: Download Android Dependencies
       #     command: ./gradlew androidDependencies
       - run:
           name: Run Unit Tests
-          command: ./gradlew test    
+          command: cd android; ./gradlew test    
 
   publish_package:
     macos:
