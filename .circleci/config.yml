@@ -124,7 +124,9 @@ jobs:
           avd-name: myavd
           install: true
           system-image: system-images;android-29;default;x86
-      - android/restore-build-cache
+      # - android/restore-build-cache
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - android/start-emulator:
           avd-name: myavd
           no-window: true
