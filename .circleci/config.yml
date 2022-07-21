@@ -124,10 +124,13 @@ jobs:
           avd-name: myavd
           install: true
           system-image: system-images;android-29;default;x86
+
+      - android/restore-build-cache
+
       - android/start-emulator:
           avd-name: myavd
           no-window: true
-          restore-gradle-cache-prefix: v1a
+          # restore-gradle-cache-prefix: v1a
           post-emulator-launch-assemble-command: ./gradlew androidDependencies
       - run:
           name: download flutter SDK
@@ -151,7 +154,7 @@ jobs:
       
       - android/run-tests
       - android/save-gradle-cache:
-          cache-prefix: v1a
+          # cache-prefix: v1a
 
   publish_package:
     macos:
