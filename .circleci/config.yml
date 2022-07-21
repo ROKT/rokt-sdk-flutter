@@ -165,51 +165,10 @@ jobs:
       - flutter/install_sdk_and_pub:
           flutter_version: 2.10.5
       - flutter/install_android_gradle
-      # - flutter/install_android_gem
-
-      # - run:
-      #     name: Install JAVA
-      #     command: |
-      #       HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask homebrew/cask-versions/adoptopenjdk8
-      # - run:
-      #     name: Install Android sdk
-      #     command: |
-      #       HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask android-sdk
-      # - run:
-      #     name: Setup environment variables
-      #     command: |
-      #       echo 'export PATH="$PATH:/usr/local/opt/node@8/bin:${HOME}/.yarn/bin:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin:/usr/local/share/android-sdk/tools/bin"' >> $BASH_ENV
-      #       echo 'export JAVA_HOME=`/usr/libexec/java_home -v 1.8`' >> $BASH_ENV
-      #       echo 'export ANDROID_HOME="/usr/local/share/android-sdk"' >> $BASH_ENV
-      #       echo 'export ANDROID_SDK_HOME="/usr/local/share/android-sdk"' >> $BASH_ENV
-      #       echo 'export ANDROID_SDK_ROOT="/usr/local/share/android-sdk"' >> $BASH_ENV
-      #       echo 'export QEMU_AUDIO_DRV=none' >> $BASH_ENV
-      #       echo 'export PATH="$PATH:~/flutter/bin"'  >> $BASH_ENV
-      # - run:
-      #     name: Install emulator dependencies
-      #     command: (yes | sdkmanager "platform-tools" "platforms;android-26" "extras;intel;Hardware_Accelerated_Execution_Manager" "build-tools;26.0.0" "system-images;android-26;google_apis;x86" "emulator" --verbose) || true
-      # - run:
-      #     name: chmod permissions
-      #     command: chmod +x ./gradlew
-      # - run: avdmanager create avd -n Pixel_2_API_26 -k "system-images;android-26;google_apis;x86" -g google_apis -d "Nexus 5"
-      # - run:
-      #     name: Run emulator in background
-      #     command: /usr/local/share/android-sdk/tools/emulator @Pixel_2_API_26 -noaudio -no-boot-anim -no-window
-      #     background: true
       - android/create-avd:
           avd-name: myavd
           install: true
           system-image: system-images;android-29;default;x86
-      # - android/restore-build-cache
-      # - restore_cache:
-      #     key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
-      # - run:
-      #     name: download flutter SDK
-      #     command: if ! test -f "~/flutter_sdk.zip"; then curl -o ~/flutter_sdk.zip https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_2.10.5-stable.zip; fi
-      # - run:
-      #     name: unzip flutter SDK
-      #     command: unzip ~/flutter_sdk.zip -d ~
-      # - run: flutter doctor
       - run:
           name: Flutter build
           command: flutter build apk
@@ -218,7 +177,6 @@ jobs:
           no-window: true
           no-boot-anim: true
           no-audio: true
-          # restore-gradle-cache-prefix: v1a
           post-emulator-launch-assemble-command: cd android; ./gradlew androidDependencies
 
       - run:
@@ -228,7 +186,6 @@ jobs:
           name: Run Unit Tests
           command: cd android; ./gradlew test 
       - android/save-gradle-cache
-          # cache-prefix: v1a   
 
   publish_package:
     macos:
