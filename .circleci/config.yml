@@ -128,6 +128,7 @@ jobs:
           avd-name: myavd
           no-window: true
           restore-gradle-cache-prefix: v1a
+          post-emulator-launch-assemble-command: ./gradlew androidDependencies
       - run:
           name: download flutter SDK
           command: if ! test -f "~/flutter_sdk.zip"; then curl -o ~/flutter_sdk.zip https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_2.10.5-stable.zip; fi
@@ -141,9 +142,9 @@ jobs:
       - run:
           name: Flutter test
           command: cd ..; flutter test integration_test/app_test.dart
-      - run:
-          name: Download Android Dependencies
-          command: ./gradlew androidDependencies
+      # - run:
+      #     name: Download Android Dependencies
+      #     command: ./gradlew androidDependencies
       - run:
           name: Run Unit Tests
           command: ./gradlew test
