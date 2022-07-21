@@ -217,8 +217,7 @@ jobs:
           avd-name: myavd
           no-window: true
           # restore-gradle-cache-prefix: v1a
-          post-emulator-launch-assemble-command: ./gradlew androidDependencies
-          run-logcat: android
+          post-emulator-launch-assemble-command: cd android; ./gradlew androidDependencies
 
       - run:
           name: Flutter test
