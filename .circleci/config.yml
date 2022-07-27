@@ -35,7 +35,7 @@ jobs:
           path: ~/project
       - flutter/install_sdk_and_pub:
           cache-version: machine
-          flutter_version: 2.10.3
+          flutter_version: 2.10.5
       - android/create-avd:
           avd-name: flutter
           install: true

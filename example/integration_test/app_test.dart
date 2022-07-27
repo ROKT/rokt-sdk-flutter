@@ -3,6 +3,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:flutter/material.dart';
 import '../lib/main.dart' as app;
 
+@Timeout(Duration(hours: 10))
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
