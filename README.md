@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  rokt_sdk: ^3.7.0
+  rokt_sdk: ^3.8.0
 ```
 
 ## Getting Started

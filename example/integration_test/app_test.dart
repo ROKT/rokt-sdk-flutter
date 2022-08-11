@@ -7,40 +7,40 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('end-to-end test', () {
-    testWidgets('given the default account when execute is called verify embedded rokt widgets are loading',
-            (tester) async {
-          app.main();
-          await tester.pumpAndSettle();
+    testWidgets(
+        'given the default account when execute is called verify embedded rokt widgets are loading',
+        (tester) async {
+      app.main();
+      await tester.pumpAndSettle();
 
-          expect(find.text('Initial'), findsOneWidget);
+      expect(find.text('Initial'), findsOneWidget);
 
-          final Finder init = find.text('Initial');
+      final Finder init = find.text('Initial');
 
-          await tester.tap(init);
+      await tester.tap(init);
 
-          await addDelay(3000);
-          await tester.pumpAndSettle();
+      await addDelay(3000);
+      await tester.pumpAndSettle();
 
-          final roktWidget1 = find.byKey(const ValueKey('widget1'));
-          expect(tester.getSize(roktWidget1).height, equals(double.minPositive));
+      final roktWidget1 = find.byKey(const ValueKey('widget1'));
+      expect(tester.getSize(roktWidget1).height, equals(double.minPositive));
 
-          final roktWidget2 = find.byKey(const ValueKey('widget2'));
-          expect(tester.getSize(roktWidget2).height, equals(double.minPositive));
+      final roktWidget2 = find.byKey(const ValueKey('widget2'));
+      expect(tester.getSize(roktWidget2).height, equals(double.minPositive));
 
+      final Finder execute = find.text('Execute');
 
-          final Finder execute = find.text('Execute');
+      await tester.tap(execute);
+      await addDelay(3000);
+      await tester.pumpAndSettle();
 
-          await tester.tap(execute);
-          await addDelay(3000);
-          await tester.pumpAndSettle();
+      expect(tester.getSize(roktWidget1).height, greaterThan(200.0));
 
-          expect(tester.getSize(roktWidget1).height, greaterThan(200.0));
-
-          final scrollView = find.byType(CustomScrollView);
-          await tester.dragUntilVisible(roktWidget2, scrollView, Offset(0, -500));
-          expect(roktWidget2, findsOneWidget);
-          expect(tester.getSize(roktWidget2).height, greaterThan(200.0));
-        });
+      final scrollView = find.byType(CustomScrollView);
+      await tester.dragUntilVisible(roktWidget2, scrollView, Offset(0, -500));
+      expect(roktWidget2, findsOneWidget);
+      expect(tester.getSize(roktWidget2).height, greaterThan(200.0));
+    });
   });
 }
 

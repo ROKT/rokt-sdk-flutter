@@ -1,3 +1,6 @@
+## 3.8.0
+* Updated Rokt SDKs and interfaces, added Bottomsheet placement.
+
 ## 3.7.0
 * Updated Rokt SDKs and interfaces, Customisable progress bar
 
