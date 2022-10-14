@@ -4,6 +4,15 @@ The Rokt Flutter SDK enables you to integrate Rokt into your native mobile apps 
 
 The Rokt SDK for Flutter applications can be used by Rokt partners to display overlay or embedded placements, or by Rokt advertisers to record conversions for campaigns.
 
+## Resident Experts
+
+- Danial Motahari - danial.motahari@rokt.com
+- Sahil Suri - sahil.suri@rokt.com
+
+| Environment | Build |
+| ----------- | :----- |
+| release |  [![CircleCI](https://dl.circleci.com/status-badge/img/gh/ROKT/rokt-sdk-flutter/tree/release-3%2E8%2Ex.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/ROKT/rokt-sdk-flutter/tree/release-3%2E8%2Ex)
+
 ## Usage
 
 To use this plugin, add following code in your pubspec.yaml file.
@@ -128,6 +137,43 @@ void showWidget() {
 
 To run an placement in the sandbox environment, the list of attributes passed to Rokt needs to be updated to include `"sandbox": "true"`
 
+## Requirements
+
+Download [Android Studio](https://developer.android.com/studio) or [VS Code](https://code.visualstudio.com/) for editor and install [Flutter SDK](https://docs.flutter.dev/get-started/install/macos)
+
+## Project structure
+
+This project consists of sdk Plugin which contains [lib](lib)] which is the main entry for the sdk plugin, [android](android), [iOS](ios) platform specific code for the sdk plugin
+and an [example App](example) which is a sample App to run the sdk plugin.
+
+## Publishing SDK
+This SDK is published to [pub.dev](https://pub.dev/) [here](https://pub.dev/packages/rokt_sdk). You can publish the alpha or prod package.
+To publish the package, you need to modify pubspec.yaml and update the version field. We should append ```-aplha``` after version if we intend to publish
+the alpha package. Make sure you add the changes in CHANGELOG.md.
+Publishing the package is possible through [CircleCi](https://app.circleci.com/pipelines/github/ROKT/rokt-sdk-flutter) by approving the ```hold_for_publish``` job.
+
+## How to manually publish sdk ?
+
+1. Make sure you have following environment variables set:
+   ```
+   PUB_DEV_PUBLISH_ACCESS_TOKEN=
+   PUB_DEV_PUBLISH_REFRESH_TOKEN=
+   PUB_DEV_PUBLISH_TOKEN_ENDPOINT=
+   PUB_DEV_PUBLISH_EXPIRATION=
+   ```
+2. Run following command
+   ```
+   cd .circleci
+   ./pub_login.sh
+   dart pub publish -f
+    ```
+
+## How to manually run UI Test ?
+UI test are located inside example app and you can run it by executing below command
+```
+flutter test integration_test/app_test.dart
+```
+
 ## How to run the example app locally
 - Open project in Android Studio for changing the code
 - Run following commands in terminal or equivalent in Android Studio
@@ -135,8 +181,22 @@ To run an placement in the sandbox environment, the list of attributes passed to
 - Run `flutter pub get`
 - Run `flutter run`
 
-## License
+## What are the branches?
+
+There is one main branch with **release-** prefix. This branch is where all development branches are merged into. Publishing the package is possible with **release-** prefix branches only.
+
+## Update Rokt Native Sdk
+To update the iOS rokt sdk, make the following changes.
+``` open ios/rokt_sdk.podspec
+   s.version          = 'X.X.X'
+   s.dependency 'Rokt-Widget', '~> X.X.X'
 ```
+For Android, do the folliwing
+``` open android/build.gradle
+   implementation "com.rokt:roktsdk:X.X.X"
+```
+## License
+
 Copyright 2020 Rokt Pte Ltd
 
 Licensed under the Rokt Software Development Kit (SDK) Terms of Use
