@@ -1,3 +1,6 @@
+## 3.9.0
+* Updated Rokt SDKs and interfaces, use default mobile browser for actions.
+
 ## 3.8.0
 * Updated Rokt SDKs and interfaces, added Bottomsheet placement.
 

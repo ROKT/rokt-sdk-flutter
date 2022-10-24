@@ -7,7 +7,7 @@ jobs:
   build_test_iOS:
     working_directory: ~/project/example
     macos:
-      xcode: 13.3.1
+      xcode: 14.0.0
     steps:
       - checkout:
           path: ~/project
@@ -18,8 +18,8 @@ jobs:
           name: Run tests
           command: flutter test
       - macos/preboot-simulator:
-          device: iPhone 13
-          version: "15.4"
+          device: iPhone 14
+          version: "16.0"
       - run:
           name: Run Integration Test
           command: flutter test integration_test/app_test.dart
