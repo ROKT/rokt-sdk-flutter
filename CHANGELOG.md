@@ -1,3 +1,6 @@
+## 3.9.1
+* Updated Rokt SDKs and interfaces, performance improvements and bug fixes
+
 ## 3.9.0
 * Updated Rokt SDKs and interfaces, use default mobile browser for actions.
 
