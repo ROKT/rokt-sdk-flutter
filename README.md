@@ -11,7 +11,7 @@ The Rokt SDK for Flutter applications can be used by Rokt partners to display ov
 
 | Environment | Build |
 | ----------- | :----- |
-| release |  [![CircleCI](https://dl.circleci.com/status-badge/img/gh/ROKT/rokt-sdk-flutter/tree/release-3%2E9%2Ex.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/ROKT/rokt-sdk-flutter/tree/release-3%2E9%2Ex)
+| release |  [![CircleCI](https://dl.circleci.com/status-badge/img/gh/ROKT/rokt-sdk-flutter/tree/release-3%2E10%2Ex.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/ROKT/rokt-sdk-flutter/tree/release-3%2E10%2Ex)
 
 ## Usage
 
@@ -21,7 +21,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  rokt_sdk: ^3.9.1
+  rokt_sdk: ^3.10.0
 ```
 
 ## Getting Started
