@@ -34,12 +34,12 @@ void main() {
       await addDelay(3000);
       await tester.pumpAndSettle();
 
-      //expect(tester.getSize(roktWidget1).height, greaterThan(200.0));
+      expect(tester.getSize(roktWidget1).height, greaterThan(0.0));
 
       final scrollView = find.byType(CustomScrollView);
       await tester.dragUntilVisible(roktWidget2, scrollView, Offset(0, -500));
       expect(roktWidget2, findsOneWidget);
-      //expect(tester.getSize(roktWidget2).height, greaterThan(200.0));
+      expect(tester.getSize(roktWidget2).height, greaterThan(0.0));
     });
   });
 }

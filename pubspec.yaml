@@ -1,6 +1,6 @@
 name: rokt_sdk
 description: Rokt Mobile SDK to integrate ROKT Api into flutter applications.
-version: 3.10.0
+version: 3.10.1-alpha.1
 homepage: https://github.com/ROKT/rokt-sdk-flutter
 
 environment:
