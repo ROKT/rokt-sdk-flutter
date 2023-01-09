@@ -1,3 +1,6 @@
+## 3.10.1-alpha.1
+* Updated Rokt SDKs and interfaces
+
 ## 3.10.0
 * Updated Rokt SDKs and interfaces, support word wrap for Title text.
 
