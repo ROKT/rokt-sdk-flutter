@@ -1,5 +1,5 @@
 ## 3.11.0
-* Updated Rokt SDKs and interfaces, support partner-triggered close and show image on dark mode.
+* Updated Rokt SDKs and interfaces, support show image on dark mode.
 
 ## 3.10.1-alpha.2
 * Updated Rokt SDKs and interfaces
