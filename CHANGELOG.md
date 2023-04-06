@@ -1,3 +1,6 @@
+## 3.12.0
+* Bug fixes, close placements on negative button, and updates to styling configurables.
+
 ## 3.11.0
 * Updated Rokt SDKs and interfaces, support show image on dark mode.
 
