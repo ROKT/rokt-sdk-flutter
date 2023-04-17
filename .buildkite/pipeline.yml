@@ -28,7 +28,13 @@ steps:
     key: 'build-test-android'
     commands:
       - flutter pub get
+      - sdkmanager 'system-images;android-29;default;x86'
       - echo no | avdmanager create avd -n flutter -k 'system-images;android-29;default;x86'
+      - emulator @flutter
+      - wait
+      - cd example
+      - flutter build apk --debug
+      - flutter test integration_test/app_test.dart
     plugins:
       - docker#v5.6.0:
           image: instrumentisto/flutter
