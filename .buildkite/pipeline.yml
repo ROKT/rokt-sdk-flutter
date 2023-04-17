@@ -27,11 +27,9 @@ steps:
   - name: ':hammer: Build and test Android'
     key: 'build-test-android'
     commands:
-      - brew tap leoafarias/fvm
-      - brew install fvm
-      - fvm install ${FLUTTER_VERSION}
-      - fvm use ${FLUTTER_VERSION}
-      - fvm flutter pub get
+      - flutter upgrade
+      - flutter downgrade v${FLUTTER_VERSION}
+      - flutter pub get
       - emulator @android_emulator
       - wait
       - cd example
