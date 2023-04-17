@@ -1,7 +1,8 @@
 env:
   MAC_BK_AGENT: eng-prod-us-west-2-mac-arm-macos-build-medium
   ENG_BK_AGENT: eng-default
-  FLUTTER_VERSION: 2.10.5
+  IOS_FLUTTER_VERSION: 2.10.5
+  ANDROID_FLUTTER_VERSION: 2.10.3
 
 steps:
   - name: ':hammer: Build and test iOS'
@@ -11,8 +12,8 @@ steps:
       - rbenv local 2.7.6
       - brew tap leoafarias/fvm
       - brew install fvm
-      - fvm install ${FLUTTER_VERSION}
-      - fvm use ${FLUTTER_VERSION}
+      - fvm install ${IOS_FLUTTER_VERSION}
+      - fvm use ${IOS_FLUTTER_VERSION}
       - cd example
       - xcrun simctl boot "iPhone 14" || true
       - fvm flutter pub get
@@ -20,6 +21,19 @@ steps:
       - cd ios && pod install && cd -
       - fvm flutter test
       - fvm flutter test integration_test/app_test.dart
+    agents: 
+      queue: ${MAC_BK_AGENT}
+    timeout_in_minutes: 25
+
+  - name: ':hammer: Build and test Android'
+    key: 'build-test-android'
+    commands:
+      - flutter pub get
+    plugins:
+      - docker#v5.6.0:
+          image: instrumentisto/flutter
+          user: "root"
+          mount-buildkite-agent: true
     agents: 
       queue: ${MAC_BK_AGENT}
     timeout_in_minutes: 25
