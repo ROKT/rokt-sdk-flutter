@@ -27,17 +27,18 @@ steps:
   - name: ':hammer: Build and test Android'
     key: 'build-test-android'
     commands:
-      - flutter upgrade
-      - flutter downgrade v${FLUTTER_VERSION}
       - flutter pub get
-      - emulator @android_emulator
+      - sdkmanager 'system-images;android-29;google_apis;x86'
+      - sdkmanager --licenses
+      - echo no | avdmanager create avd -n flutter -b google_apis/x86 -k 'system-images;android-29;google_apis;x86'
+      - emulator @flutter
       - wait
       - cd example
-      - fvm flutter build apk --debug
-      - fvm flutter test integration_test/app_test.dart
+      - flutter build apk --debug
+      - flutter test integration_test/app_test.dart
     plugins:
       - docker#v5.6.0:
-          image: bitsydarel/flutter-ci
+          image: instrumentisto/flutter
           user: "root"
           mount-buildkite-agent: true
     agents: 
