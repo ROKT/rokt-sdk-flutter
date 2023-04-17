@@ -36,7 +36,7 @@ steps:
       - ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager 'system-images;android-29;default;arm64-v8a'
       - yes | ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses
       - echo no | ~/Library/Android/sdk/cmdline-tools/latest/bin/avdmanager create avd -n flutter -k 'system-images;android-29;default;arm64-v8a'
-      - ~/Library/Android/sdk/emulator/emulator @flutter
+      - emulator @flutter
     agents: 
       queue: ${MAC_BK_AGENT}
     timeout_in_minutes: 25
