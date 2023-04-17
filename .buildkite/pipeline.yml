@@ -27,12 +27,16 @@ steps:
   - name: ':hammer: Build and test Android'
     key: 'build-test-android'
     commands:
-      - flutter pub get
+      - brew tap leoafarias/fvm
+      - brew install fvm
+      - fvm install ${FLUTTER_VERSION}
+      - fvm use ${FLUTTER_VERSION}
+      - fvm flutter pub get
       - emulator @android_emulator
       - wait
       - cd example
-      - flutter build apk --debug
-      - flutter test integration_test/app_test.dart
+      - fvm flutter build apk --debug
+      - fvm flutter test integration_test/app_test.dart
     plugins:
       - docker#v5.6.0:
           image: bitsydarel/flutter-ci
