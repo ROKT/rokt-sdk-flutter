@@ -34,7 +34,7 @@ steps:
       - fvm install ${FLUTTER_VERSION}
       - fvm use ${FLUTTER_VERSION}
       - ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager 'system-images;android-29;default;arm64-v8a'
-      - ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses 
+      - yes | ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses 
     agents: 
       queue: ${MAC_BK_AGENT}
     timeout_in_minutes: 25
