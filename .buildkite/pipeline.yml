@@ -28,8 +28,8 @@ steps:
     key: 'build-test-android'
     commands:
       - flutter pub get
-      - sdkmanager 'system-images;android-29;default;x86'
-      - echo no | avdmanager create avd -n flutter -k 'system-images;android-29;default;x86'
+      - sdkmanager 'system-images;android-29;default;arm64-v8a'
+      - echo no | avdmanager create avd -n flutter -k 'system-images;android-29;default;arm64-v8a'
       - emulator @flutter -gpu host
       - wait
       - cd example
