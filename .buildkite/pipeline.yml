@@ -30,7 +30,7 @@ steps:
       - flutter pub get
       - sdkmanager 'system-images;android-29;default;x86'
       - echo no | avdmanager create avd -n flutter -k 'system-images;android-29;default;x86'
-      - emulator @flutter
+      - emulator @flutter -gpu host
       - wait
       - cd example
       - flutter build apk --debug
