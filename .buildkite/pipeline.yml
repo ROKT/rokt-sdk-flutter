@@ -29,7 +29,7 @@ steps:
     commands:
       - curl -LO https://github.com/intel/haxm/releases/download/v7.2.0/haxm-windows_v7_2_0.zip
       - unzip haxm-windows_v7_2_0.zip
-      - ./intelhaxm-android.exe
+      - chmod u+x intelhaxm-android.exe && ./intelhaxm-android.exe
       - flutter pub get
       - sdkmanager 'system-images;android-29;google_apis;x86'
       - sdkmanager --licenses
