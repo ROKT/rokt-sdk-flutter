@@ -35,7 +35,7 @@ steps:
       - flutter test integration_test/app_test.dart
     plugins:
       - docker#v5.6.0:
-          image: bitsydarel/android
+          image: bitsydarel/flutter-ci
           user: "root"
           mount-buildkite-agent: true
     agents: 
