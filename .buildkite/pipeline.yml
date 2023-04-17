@@ -28,7 +28,7 @@ steps:
     key: 'build-test-android'
     commands:
       - flutter pub get
-      - echo no | Android/Sdk/tools/bin/avdmanager create avd -n flutter -k 'system-images;android-29;default;arm64-v8a'
+      - echo no | avdmanager create avd -n flutter -k 'system-images;android-29;default;x86'
     plugins:
       - docker#v5.6.0:
           image: instrumentisto/flutter
