@@ -27,25 +27,16 @@ steps:
   - name: ':hammer: Build and test Android'
     key: 'build-test-android'
     commands:
-      - curl -LO https://github.com/intel/haxm/releases/download/v7.2.0/haxm-windows_v7_2_0.zip
-      - unzip haxm-windows_v7_2_0.zip
-      - chmod u+x intelhaxm-android.exe && ./intelhaxm-android.exe
-      - flutter pub get
-      - sdkmanager 'system-images;android-29;google_apis;x86'
-      - sdkmanager --licenses
-      - echo no | avdmanager create avd -n flutter -b google_apis/x86 -k 'system-images;android-29;google_apis;x86'
-      - emulator @flutter
-      - wait
-      - cd example
-      - flutter build apk --debug
-      - flutter test integration_test/app_test.dart
-    plugins:
-      - docker#v5.6.0:
-          image: instrumentisto/flutter
-          user: "root"
-          mount-buildkite-agent: true
+      - . ~/.zshrc
+      - rbenv local 2.7.6
+      - brew tap leoafarias/fvm
+      - brew install fvm
+      - fvm install ${FLUTTER_VERSION}
+      - fvm use ${FLUTTER_VERSION}
+      - ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager 'system-images;android-29;default;arm64-v8a'
+      - ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses 
     agents: 
-      queue: ${ENG_BK_AGENT}
+      queue: ${MAC_BK_AGENT}
     timeout_in_minutes: 25
 
   - block: ':whale: Hold for publish'
