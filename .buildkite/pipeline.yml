@@ -38,9 +38,9 @@ steps:
       - fvm use ${FLUTTER_VERSION}
       - xcrun simctl shutdown "iPhone 14" || true
       - fvm flutter config --android-sdk ${ANDROID_SDK_ROOT}
-      - yes | ${ANDROID_SDKMANAGER} 'system-images;android-23;default;arm64-v8a' 'platforms;android-23'
+      - yes | ${ANDROID_SDKMANAGER} 'system-images;android-31;default;arm64-v8a' 'platforms;android-31'
       - yes | ${ANDROID_SDKMANAGER} --licenses
-      - echo no | ${ANDROID_AVDMANAGER} --silent create avd --force -n flutter -k 'system-images;android-23;default;arm64-v8a'
+      - echo no | ${ANDROID_AVDMANAGER} create avd --force -n flutter -k 'system-images;android-31;default;arm64-v8a'
       - sleep 60
       - fvm flutter emulators --launch "flutter"
       - sleep 60
