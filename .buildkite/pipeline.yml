@@ -1,0 +1,77 @@
+env:
+  MAC_BK_AGENT: eng-prod-us-west-2-mac-arm-macos-build-medium
+  ENG_BK_AGENT: eng-default
+  FLUTTER_VERSION: 2.10.5
+
+steps:
+  - name: ':hammer: Build and test iOS'
+    key: 'build-test-ios'
+    commands:
+      - . ~/.zshrc
+      - rbenv local 2.7.6
+      - brew tap leoafarias/fvm
+      - brew install fvm
+      - fvm install ${FLUTTER_VERSION}
+      - fvm use ${FLUTTER_VERSION}
+      - cd example
+      - xcrun simctl boot "iPhone 14" || true
+      - fvm flutter pub get
+      - fvm flutter precache --ios
+      - cd ios && pod install && cd -
+      - fvm flutter test
+      - fvm flutter test integration_test/app_test.dart
+    agents: 
+      queue: ${MAC_BK_AGENT}
+    timeout_in_minutes: 25
+
+  - name: ':hammer: Build and test Android'
+    key: 'build-test-android'
+    commands:
+      - . ~/.zshrc
+      - rbenv local 2.7.6
+      - brew tap leoafarias/fvm
+      - brew install fvm
+      - fvm install ${FLUTTER_VERSION}
+      - fvm use ${FLUTTER_VERSION}
+      - yes | ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager 'system-images;android-29;default;arm64-v8a' 'platforms;android-29'
+      - yes | ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+      - ~/Library/Android/sdk/cmdline-tools/latest/bin/avdmanager --silent create avd --force -n flutter -k 'system-images;android-29;default;arm64-v8a'
+      - sleep 30
+      # - ~/Library/Android/sdk/emulator/emulator @flutter -writable-system -gpu swiftshader_indirect
+      - cd example
+      - fvm flutter emulators --create
+      - avdmanager list avd
+      - fvm flutter emulators --create
+      - fvm flutter emulators --launch
+      - fvm flutter pub get
+      - fvm flutter build apk --debug
+      - fvm flutter test integration_test/app_test.dart
+    agents: 
+      queue: ${MAC_BK_AGENT}
+    timeout_in_minutes: 25
+
+  - block: ':whale: Hold for publish'
+    key: 'hold-publish'
+    prompt: 'Publish package?'
+    depends_on:
+      - 'build-test-android'
+      - 'build-test-ios'
+
+  - name: ':rocket: Publish package'
+    depends_on:
+      - 'hold-publish'
+    commands:
+      - . ~/.zshrc
+      - rbenv local 2.7.6
+      - brew tap leoafarias/fvm
+      - brew install fvm
+      - fvm install ${FLUTTER_VERSION}
+      - fvm use ${FLUTTER_VERSION}
+      - cd example && fvm flutter pub get && cd -
+      - brew tap dart-lang/dart
+      - brew install dart
+      - sh .circleci/pub_login.sh
+      - dart pub publish -f
+    agents: 
+      queue: ${MAC_BK_AGENT}
+    timeout_in_minutes: 25
