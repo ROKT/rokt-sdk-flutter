@@ -37,7 +37,7 @@ steps:
       - yes | ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses
       - echo no | ~/Library/Android/sdk/cmdline-tools/latest/bin/avdmanager create avd --force -n flutter -k 'system-images;android-29;default;arm64-v8a'
       # - ~/Library/Android/sdk/cmdline-tools/latest/bin/avdmanager --silent create avd --force -n flutter -k 'system-images;android-29;default;arm64-v8a'
-      - ~/Library/Android/sdk/emulator/emulator @flutter -gpu swiftshader_indirect
+      - ~/Library/Android/sdk/emulator/emulator @flutter -writable-system -gpu swiftshader_indirect
       - cd example
       - fvm flutter pub get
       - fvm flutter build apk --debug
