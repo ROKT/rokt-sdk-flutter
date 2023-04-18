@@ -42,6 +42,7 @@ steps:
       - yes | ${ANDROID_SDKMANAGER} --licenses
       - echo no | ${ANDROID_AVDMANAGER} create avd --force -n flutter -k 'system-images;android-31;default;arm64-v8a'
       - sleep 60
+      - fvm flutter emulators
       - fvm flutter emulators --launch "flutter"
       - sleep 60
       - fvm flutter doctor -v
