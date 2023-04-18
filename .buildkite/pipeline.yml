@@ -27,7 +27,9 @@ steps:
   - name: ':hammer: Build and test Android'
     key: 'build-test-android'
     commands:
+      - flutter pub get
       - flutter emulators --launch flutter_emulator
+      - echo 'emulator launched'
       - cd example
       - flutter build apk --debug
       - flutter test integration_test/app_test.dart
