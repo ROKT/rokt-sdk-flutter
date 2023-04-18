@@ -28,18 +28,20 @@ steps:
     key: 'build-test-android'
     commands:
       - flutter pub get
-      - flutter emulators --launch flutter_emulator
-      - echo 'emulator launched'
+      - sdkmanager 'system-images;android-29;default;arm64-v8a'
+      - sdkmanager --licenses
+      - echo no | avdmanager create avd -n flutter -k 'system-images;android-29;default;arm64-v8a'
+      - emulator @flutter
       - cd example
       - flutter build apk --debug
       - flutter test integration_test/app_test.dart
     plugins:
       - docker#v5.6.0:
-          image: matspfeiffer/flutter
+          image: instrumentisto/flutter
           user: "root"
           mount-buildkite-agent: true
     agents: 
-      queue: ${ENG_BK_AGENT}
+      queue: ${MAC_BK_AGENT}
     timeout_in_minutes: 25
 
   - block: ':whale: Hold for publish'
