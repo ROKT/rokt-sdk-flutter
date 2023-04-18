@@ -35,10 +35,9 @@ steps:
       - fvm use ${FLUTTER_VERSION}
       - yes | ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager 'system-images;android-29;default;arm64-v8a' 'platforms;android-29'
       - yes | ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-      # - echo no | ~/Library/Android/sdk/cmdline-tools/latest/bin/avdmanager create avd --force -n flutter -k 'system-images;android-29;default;arm64-v8a'
-      - ~/Library/Android/sdk/cmdline-tools/latest/bin/avdmanager --silent create avd --force -n flutter -k 'system-images;android-29;default;arm64-v8a'
-      # - ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager --list
-      # - ~/Library/Android/sdk/emulator/emulator -avd flutter     
+      - echo no | ~/Library/Android/sdk/cmdline-tools/latest/bin/avdmanager create avd --force -n flutter -k 'system-images;android-29;default;arm64-v8a'
+      # - ~/Library/Android/sdk/cmdline-tools/latest/bin/avdmanager --silent create avd --force -n flutter -k 'system-images;android-29;default;arm64-v8a'
+      # - ~/Library/Android/sdk/emulator/emulator @flutter -writable-system -gpu swiftshader_indirect
       - cd example
       - fvm flutter emulators --launch flutter
       - fvm flutter pub get
