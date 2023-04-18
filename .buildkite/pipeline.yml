@@ -20,7 +20,6 @@ steps:
       - cd ios && pod install && cd -
       - fvm flutter test
       - fvm flutter test integration_test/app_test.dart
-      - xcrun simctl shutdown "iPhone 14" || true
     agents: 
       queue: ${MAC_BK_AGENT}
     timeout_in_minutes: 25
@@ -34,11 +33,12 @@ steps:
       - brew install fvm
       - fvm install ${FLUTTER_VERSION}
       - fvm use ${FLUTTER_VERSION}
-      - xcrun simctl shutdown "iPhone 14" || true
       - yes | ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager 'system-images;android-29;default;arm64-v8a' 'platforms;android-29'
       - yes | ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-      - echo no | ~/Library/Android/sdk/cmdline-tools/latest/bin/avdmanager --silent create avd --force -n flutter -k 'system-images;android-29;default;arm64-v8a'
+      # - no | ~/Library/Android/sdk/cmdline-tools/latest/bin/avdmanager create avd --force -n flutter -k 'system-images;android-29;default;arm64-v8a'
+      - ~/Library/Android/sdk/cmdline-tools/latest/bin/avdmanager --silent create avd --force -n flutter -k 'system-images;android-29;default;arm64-v8a'
       - sleep 30
+      # - ~/Library/Android/sdk/emulator/emulator @flutter -writable-system -gpu swiftshader_indirect
       - cd example
       - fvm flutter emulators --launch "flutter"
       - fvm flutter pub get
