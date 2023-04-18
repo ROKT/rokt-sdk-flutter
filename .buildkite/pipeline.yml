@@ -39,7 +39,7 @@ steps:
       # - ~/Library/Android/sdk/cmdline-tools/latest/bin/avdmanager --silent create avd --force -n flutter -k 'system-images;android-29;default;arm64-v8a'
       # - ~/Library/Android/sdk/emulator/emulator @flutter -writable-system -gpu swiftshader_indirect
       - cd example
-      - fvm flutter emulators --launch "test-flutter"
+      - fvm flutter emulators --launch "flutter"
       - fvm flutter pub get
       - fvm flutter build apk --debug
       - fvm flutter test integration_test/app_test.dart
