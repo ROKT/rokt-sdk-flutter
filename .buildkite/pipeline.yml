@@ -27,22 +27,17 @@ steps:
   - name: ':hammer: Build and test Android'
     key: 'build-test-android'
     commands:
-      - . ~/.zshrc
-      - rbenv local 2.7.6
-      - brew tap leoafarias/fvm
-      - brew install fvm
-      - fvm install ${FLUTTER_VERSION}
-      - fvm use ${FLUTTER_VERSION}
-      - ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager 'system-images;android-29;default;arm64-v8a'
-      - yes | ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-      - echo no | ~/Library/Android/sdk/cmdline-tools/latest/bin/avdmanager create avd --force -n flutter -k 'system-images;android-29;default;arm64-v8a'
-      - ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager --list
-      - ~/Library/Android/sdk/emulator/emulator @flutter
+      - flutter emulators --launch flutter_emulator
       - cd example
-      - fvm flutter build apk --debug
-      - fvm flutter test integration_test/app_test.dart
+      - flutter build apk --debug
+      - flutter test integration_test/app_test.dart
+    plugins:
+      - docker#v5.6.0:
+          image: matspfeiffer/flutter
+          user: "root"
+          mount-buildkite-agent: true
     agents: 
-      queue: ${MAC_BK_AGENT}
+      queue: ${ENG_BK_AGENT}
     timeout_in_minutes: 25
 
   - block: ':whale: Hold for publish'
