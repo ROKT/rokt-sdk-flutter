@@ -43,7 +43,7 @@ steps:
       - echo no | ${ANDROID_AVDMANAGER} create avd --force -n flutter -k 'system-images;android-29;default;arm64-v8a'
       - sleep 60
       - fvm flutter emulators # For testing
-      - ~/Library/Android/sdk/emulator/emulator -avd flutter
+      - fvm flutter emulators --launch "flutter"
       - sleep 60
       - fvm flutter doctor -v # For testing
       - cd example && fvm flutter pub get
