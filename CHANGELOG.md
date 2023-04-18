@@ -1,5 +1,5 @@
 ## 3.12.1
-* Updated Rokt SDKs and interfaces, Allows static links to be opened with default mobile browser.
+* Updated Rokt SDKs and interfaces, Allow static links to be opened with the default mobile browser.
 
 ## 3.12.0
 * Updated Rokt SDKs and interfaces, Bug fixes, close placements on negative button, and updates to styling configurables.
