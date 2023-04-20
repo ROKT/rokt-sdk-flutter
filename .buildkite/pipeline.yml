@@ -31,9 +31,9 @@ steps:
   - name: ':hammer: Build and test Android'
     key: 'build-test-android'
     commands:
-      - yes | sdkmanager 'system-images;android-29;default;x86' 'platforms;android-29'
+      - yes | sdkmanager 'system-images;android-29;default;x86_64' 'platforms;android-29'
       - yes | sdkmanager --licenses
-      - echo no | avdmanager create avd --force -n flutter -k 'system-images;android-29;default;x86'
+      - echo no | avdmanager create avd --force -n flutter -k 'system-images;android-29;default;x86_64'
       - sleep 60
       - emulator -avd flutter
       - sleep 60
