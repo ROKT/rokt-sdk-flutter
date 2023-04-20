@@ -40,10 +40,11 @@ steps:
       - fvm flutter config --android-sdk ${ANDROID_SDK_ROOT}
       - yes | ${ANDROID_SDKMANAGER} 'system-images;android-29;default;arm64-v8a' 'platforms;android-29'
       - yes | ${ANDROID_SDKMANAGER} --licenses
-      - echo no | ${ANDROID_AVDMANAGER} create avd --force -n flutter -k 'system-images;android-29;default;arm64-v8a'
+      # - echo no | ${ANDROID_AVDMANAGER} create avd --force -n flutter -k 'system-images;android-29;default;arm64-v8a'
+      - fvm flutter emulators --create
       - sleep 60
       - fvm flutter emulators # For testing
-      - fvm flutter emulators --launch "flutter"
+      - fvm flutter emulators --launch
       - sleep 60
       - fvm flutter doctor -v # For testing
       - cd example && fvm flutter pub get
