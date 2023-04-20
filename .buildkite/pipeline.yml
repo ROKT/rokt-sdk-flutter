@@ -33,7 +33,7 @@ steps:
     commands:
       - yes | sdkmanager 'system-images;android-29;default;x86_64' 'platforms;android-29'
       - yes | sdkmanager --licenses
-      - echo no | avdmanager create avd --force -n flutter -k 'system-images;android-29;default;x86_64'
+      - echo no | avdmanager create avd --force -n flutter -k 'system-images;android-29;default;x86_64' -noaudio -no-boot-anim -netdelay none -accel on -no-window -no-snapshot -memory 4096 -partition-size 4096 &
       - sleep 60
       - emulator -avd flutter
       - sleep 60
