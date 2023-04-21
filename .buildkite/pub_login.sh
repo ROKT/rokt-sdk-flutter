@@ -24,7 +24,7 @@ if [ -z "${PUB_DEV_PUBLISH_EXPIRATION}" ]; then
 fi
 
 # Create folder
-mkdir ~/Library/Application\ Support/dart/
+mkdir -p ~/Library/Application\ Support/dart/
 # Create pub-credentials.json file.
 cat <<EOF > ~/Library/Application\ Support/dart/pub-credentials.json
 {
