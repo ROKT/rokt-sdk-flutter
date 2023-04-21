@@ -148,9 +148,9 @@ and an [example App](example) which is a sample App to run the sdk plugin.
 
 ## Publishing SDK
 This SDK is published to [pub.dev](https://pub.dev/) [here](https://pub.dev/packages/rokt_sdk). You can publish the alpha or prod package.
-To publish the package, you need to modify pubspec.yaml and update the version field. We should append ```-aplha``` after version if we intend to publish
+To publish the package, you need to modify pubspec.yaml and update the version field. We should append ```-alpha``` after version if we intend to publish
 the alpha package. Make sure you add the changes in CHANGELOG.md.
-Publishing the package is possible through [CircleCi](https://app.circleci.com/pipelines/github/ROKT/rokt-sdk-flutter) by approving the ```hold_for_publish``` job.
+Publishing the package is possible through [CircleCi](https://app.circleci.com/pipelines/github/ROKT/rokt-sdk-flutter) or [Buildkite](https://buildkite.com/rokt/rokt-flutter-sdk) by approving the ```hold_for_publish``` job.
 
 ## How to manually publish sdk ?
 
