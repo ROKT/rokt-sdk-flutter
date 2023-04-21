@@ -40,9 +40,8 @@ steps:
       - yes | ${ANDROID_SDKMANAGER} 'system-images;android-29;google_apis;arm64-v8a' 'platforms;android-29'
       - yes | ${ANDROID_SDKMANAGER} --licenses
       - echo no | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/avdmanager create avd --force -n flutter -k 'system-images;android-29;google_apis;arm64-v8a'
-      - wait
       - ${ANDROID_SDK_ROOT}/emulator/emulator -avd "flutter" -gpu swiftshader_indirect -noaudio -no-boot-anim -netdelay none -accel on -no-window -no-snapshot -memory 4096 -partition-size 4096 &
-      - wait
+      - sleep 60
       - cd example && fvm flutter pub get
       - fvm flutter build apk --debug
       - fvm flutter test integration_test/app_test.dart
@@ -70,8 +69,23 @@ steps:
       - cd example && fvm flutter pub get && cd -
       - brew tap dart-lang/dart
       - brew install dart
-      - sh .circleci/pub_login.sh
+      - sh .buildkite/pub_login.sh
       - dart pub publish -f
+    plugins:
+      - seek-oss/aws-sm#v2.0.0:
+          env:
+            PUB_DEV_PUBLISH_ACCESS_TOKEN:
+              secret-id: 'stage-flutter-sdk-buildkite'
+              json-key: '.PUB_DEV_PUBLISH_ACCESS_TOKEN'
+            PUB_DEV_PUBLISH_REFRESH_TOKEN:
+              secret-id: 'stage-flutter-sdk-buildkite'
+              json-key: '.PUB_DEV_PUBLISH_REFRESH_TOKEN'
+            PUB_DEV_PUBLISH_TOKEN_ENDPOINT:
+              secret-id: 'stage-flutter-sdk-buildkite'
+              json-key: '.PUB_DEV_PUBLISH_TOKEN_ENDPOINT'
+            PUB_DEV_PUBLISH_EXPIRATION:
+              secret-id: 'stage-flutter-sdk-buildkite'
+              json-key: '.PUB_DEV_PUBLISH_EXPIRATION'
     agents: 
       queue: ${MAC_BK_AGENT}
     timeout_in_minutes: 25
