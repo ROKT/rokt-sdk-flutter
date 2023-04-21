@@ -70,8 +70,7 @@ steps:
       - brew tap dart-lang/dart
       - brew install dart
       - sh .buildkite/pub_login.sh
-      - fvm flutter pub get
-      - dart pub publish -f
+      - fvm dart pub publish -f
     plugins:
       - seek-oss/aws-sm#v2.0.0:
           env:
