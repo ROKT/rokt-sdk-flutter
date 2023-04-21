@@ -47,7 +47,7 @@ steps:
       - fvm flutter test integration_test/app_test.dart
     agents:
       queue: ${MAC_BK_AGENT}
-    timeout_in_minutes: 30
+    timeout_in_minutes: 25
 
   - block: ':whale: Hold for publish'
     key: 'hold-publish'
