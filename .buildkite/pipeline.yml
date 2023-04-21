@@ -30,6 +30,12 @@ steps:
   - name: ':hammer: Build and test Android'
     key: 'build-test-android'
     commands:
+      - - . ~/.zshrc
+      - rbenv local 2.7.6
+      - brew tap leoafarias/fvm
+      - brew install fvm
+      - fvm install ${FLUTTER_VERSION}
+      - fvm use ${FLUTTER_VERSION}
       - xcrun simctl shutdown "iPhone 14" || true
       - fvm flutter config --android-sdk ${ANDROID_SDK_ROOT}
       - yes | ${ANDROID_SDKMANAGER} 'system-images;android-29;google_apis;arm64-v8a' 'platforms;android-29'
