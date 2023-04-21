@@ -43,12 +43,8 @@ steps:
       - cd example && fvm flutter pub get
       - fvm flutter build apk --debug
       - fvm flutter test integration_test/app_test.dart
-    plugins:
-      - docker#v5.6.0:
-          image: reactnativecommunity/react-native-android
-          user: "root"
     agents:
-      queue: ${ENG_BK_AGENT}
+      queue: ${MAC_BK_AGENT}
     timeout_in_minutes: 30
 
   - block: ':whale: Hold for publish'
