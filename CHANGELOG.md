@@ -1,3 +1,9 @@
+## 3.12.1-alpha.2
+* Updated Rokt SDKs and interfaces
+
+## 3.12.1-alpha.1
+* Updated Rokt SDKs and interfaces
+
 ## 3.12.1
 * Updated Rokt SDKs and interfaces, Allow static links to be opened with the default mobile browser.
 
