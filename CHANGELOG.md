@@ -1,3 +1,6 @@
+## 3.13.0
+* Updated Rokt SDKs and interfaces, text-based progress bar
+
 ## 3.12.1-alpha.2
 * Updated Rokt SDKs and interfaces
 
