@@ -1,3 +1,6 @@
+## 3.14.0
+* Added Support for New Layout and General bug fixes.
+
 ## 3.13.0
 * Updated Rokt SDKs and interfaces, text-based progress bar
 
