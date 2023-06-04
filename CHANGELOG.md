@@ -1,3 +1,6 @@
+## 3.14.2
+* Updated Rokt SDKs and interfaces and General bug fixes
+
 ## 3.14.1
 * Updated Rokt SDKs and interfaces
 
