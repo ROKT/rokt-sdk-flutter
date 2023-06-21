@@ -1,3 +1,6 @@
+## 3.15.0
+* Support for additional close button at the bottom of the placement and updates to header design.
+
 ## 3.14.2
 * Updated Rokt SDKs and interfaces and General bug fixes
 
