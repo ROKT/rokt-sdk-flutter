@@ -21,7 +21,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  rokt_sdk: ^3.15.0
+  rokt_sdk: ^4.0.0
 ```
 
 ## Getting Started
@@ -31,13 +31,13 @@ dependencies:
 ```
 android {
 defaultConfig {
-minSdkVersion 19
+minSdkVersion 21
 multidexEnabled true
 
     }
 }
 ```
-This means that app will only be available for users that run Android SDK 19 or higher.
+This means that app will only be available for users that run Android SDK 21 or higher.
 
 2) Include appcompat dependency
 `implementation 'androidx.appcompat:appcompat:x.x.x’`
@@ -141,9 +141,14 @@ To run an placement in the sandbox environment, the list of attributes passed to
 
 Download [Android Studio](https://developer.android.com/studio) or [VS Code](https://code.visualstudio.com/) for editor and install [Flutter SDK](https://docs.flutter.dev/get-started/install/macos)
 
+Requirements to integrate from versions 4.0.0 onwards include:
+- Kotlin version 1.8.0 or newer (e.g. `ext.kotlin_version = '1.8.0'`)
+- Android Gradle plugin 7.4.0 or newer (e.g. `com.android.tools.build:gradle:7.4.0`)
+- Gradle version 7.5 or newer (e.g. `distributionUrl=https\://services.gradle.org/distributions/gradle-7.5-all.zip`)
+
 ## Project structure
 
-This project consists of sdk Plugin which contains [lib](lib)] which is the main entry for the sdk plugin, [android](android), [iOS](ios) platform specific code for the sdk plugin
+This project consists of sdk Plugin which contains [lib](lib) which is the main entry for the sdk plugin, [android](android), [iOS](ios) platform specific code for the sdk plugin
 and an [example App](example) which is a sample App to run the sdk plugin.
 
 ## Publishing SDK
