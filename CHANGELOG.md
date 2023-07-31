@@ -1,3 +1,6 @@
+## 4.0.0-alpha.3
+* Introduces Layouts
+
 ## 3.15.0
 * Support for additional close button at the bottom of the placement and updates to header design.
 

@@ -21,7 +21,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  rokt_sdk: ^4.0.0
+  rokt_sdk: ^4.0.0-alpha.3
 ```
 
 ## Getting Started
@@ -54,7 +54,7 @@ _ Run `flutter clean`
 - Delete /ios/Pods
 - Delete /ios/Podfile.lock 
 - Run `flutter pub get`
-- From inside ios folder, run `pod install`
+- From inside ios folder, run `pod install` (or `arch -x86_64 pod install` for M1 Mac users)
 
 ## Initializing the Rokt SDK
 Initialize the Rokt SDK prior to using it. We recommend calling the initi method in the beginning of the applications.
