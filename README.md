@@ -11,7 +11,7 @@ The Rokt SDK for Flutter applications can be used by Rokt partners to display ov
 
 | Environment | Build |
 | ----------- | :----- |
-| release |  [![CircleCI](https://dl.circleci.com/status-badge/img/gh/ROKT/rokt-sdk-flutter/tree/release-3%2E11%2Ex.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/ROKT/rokt-sdk-flutter/tree/release-3%2E11%2Ex)
+| release |  [![Build status](https://badge.buildkite.com/3aa0df89f14b4282428aa29c1121859b7cc774f35447539474.svg)](https://buildkite.com/rokt/rokt-flutter-sdk)
 
 ## Usage
 
@@ -150,7 +150,7 @@ and an [example App](example) which is a sample App to run the sdk plugin.
 This SDK is published to [pub.dev](https://pub.dev/) [here](https://pub.dev/packages/rokt_sdk). You can publish the alpha or prod package.
 To publish the package, you need to modify pubspec.yaml and update the version field. We should append ```-alpha``` after version if we intend to publish
 the alpha package. Make sure you add the changes in CHANGELOG.md.
-Publishing the package is possible through [CircleCi](https://app.circleci.com/pipelines/github/ROKT/rokt-sdk-flutter) or [Buildkite](https://buildkite.com/rokt/rokt-flutter-sdk) by approving the ```hold_for_publish``` job.
+Publishing the package is possible through [Buildkite](https://buildkite.com/rokt/rokt-flutter-sdk) by approving the `Hold for publish` job.
 
 ## How to manually publish sdk ?
 
@@ -163,7 +163,7 @@ Publishing the package is possible through [CircleCi](https://app.circleci.com/p
    ```
 2. Run following command
    ```
-   cd .circleci
+   cd .buildkite
    ./pub_login.sh
    dart pub publish -f
     ```
