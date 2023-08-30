@@ -1,3 +1,6 @@
+## 3.15.5
+* Updated Rokt SDKs and interfaces and General bug fixes
+
 ## 3.15.4
 * Updated Rokt SDKs and interfaces, Customisable progress bar start index and some small UI adjustments
 
