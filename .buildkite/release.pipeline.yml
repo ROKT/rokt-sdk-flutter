@@ -1,0 +1,109 @@
+env:
+  MAC_BK_AGENT: eng-prod-us-west-2-mac-arm-macos-build-medium
+  ENG_BK_AGENT: eng-default
+  FLUTTER_VERSION: 2.10.5
+  ANDROID_SDK_ROOT: ~/Library/Android/sdk
+  ANDROID_SDKMANAGER: ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager
+
+steps:
+  - name: ":git: Create git tag"
+    key: "tag"
+    commands:
+      - . ~/.zshrc
+      - rbenv local 2.7.6
+      - ./.buildkite/bin/update_versions.sh $(buildkite-agent meta-data get ANDROID_VERSION) android/build.gradle $(buildkite-agent meta-data get IOS_VERSION) ios/rokt_sdk.podspec $(buildkite-agent meta-data get VERSION) pubspec.yaml
+      - ./.buildkite/bin/create_tag.sh $(buildkite-agent meta-data get VERSION)
+    agents:
+      queue: ${MAC_BK_AGENT}
+
+  - name: ":hammer: Build and test iOS"
+    depends_on: "tag"
+    key: "build-test-ios"
+    commands:
+      - . ~/.zshrc
+      - rbenv local 2.7.6
+      - git fetch --all --tags --force
+      - git checkout "v$(buildkite-agent meta-data get VERSION)"
+      - brew tap leoafarias/fvm
+      - brew install fvm
+      - fvm install ${FLUTTER_VERSION}
+      - fvm use ${FLUTTER_VERSION}
+      - cd example
+      - xcrun simctl boot "iPhone 14" || true
+      - fvm flutter pub get
+      - fvm flutter precache --ios
+      - cd ios && pod install && cd -
+      - fvm flutter test
+      - fvm flutter test integration_test/app_test.dart
+    agents: 
+      queue: ${MAC_BK_AGENT}
+    timeout_in_minutes: 25
+
+  - name: ":hammer: Build and test Android"
+    key: "build-test-android"
+    depends_on: "tag"
+    commands:
+      - . ~/.zshrc
+      - rbenv local 2.7.6
+      - git fetch --all --tags --force
+      - git checkout "v$(buildkite-agent meta-data get VERSION)"
+      - brew tap leoafarias/fvm
+      - brew install fvm
+      - fvm install ${FLUTTER_VERSION}
+      - fvm use ${FLUTTER_VERSION}
+      - xcrun simctl shutdown "iPhone 14" || true
+      - fvm flutter config --android-sdk ${ANDROID_SDK_ROOT}
+      - yes | ${ANDROID_SDKMANAGER} 'system-images;android-29;google_apis;arm64-v8a' 'platforms;android-29'
+      - yes | ${ANDROID_SDKMANAGER} --licenses
+      - echo no | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/avdmanager create avd --force -n flutter -k 'system-images;android-29;google_apis;arm64-v8a'
+      - ${ANDROID_SDK_ROOT}/emulator/emulator -avd "flutter" -gpu swiftshader_indirect -noaudio -no-boot-anim -netdelay none -accel on -no-window -no-snapshot -memory 4096 -partition-size 4096 &
+      - sleep 60
+      - cd example && fvm flutter pub get
+      - fvm flutter build apk --debug
+      - fvm flutter test integration_test/app_test.dart
+    agents:
+      queue: ${MAC_BK_AGENT}
+    timeout_in_minutes: 25
+
+  - block: ":whale: Hold for publish"
+    key: "hold-publish"
+    prompt: "Publish package?"
+    depends_on:
+      - "build-test-android"
+      - "build-test-ios"
+
+  - name: ":rocket: Publish package"
+    depends_on:
+      - "hold-publish"
+    commands:
+      - . ~/.zshrc
+      - rbenv local 2.7.6
+      - git fetch --all --tags --force
+      - git checkout "v$(buildkite-agent meta-data get VERSION)"
+      - brew tap leoafarias/fvm
+      - brew install fvm
+      - fvm install ${FLUTTER_VERSION}
+      - fvm use ${FLUTTER_VERSION}
+      - cd example && fvm flutter pub get && cd -
+      - brew tap dart-lang/dart
+      - brew install dart
+      - sh .buildkite/pub_login.sh
+      - fvm dart pub publish -f
+    plugins:
+      - seek-oss/aws-sm#v2.0.0:
+          env:
+            PUB_DEV_PUBLISH_ACCESS_TOKEN:
+              secret-id: "stage-flutter-sdk-buildkite"
+              json-key: ".PUB_DEV_PUBLISH_ACCESS_TOKEN"
+            PUB_DEV_PUBLISH_REFRESH_TOKEN:
+              secret-id: "stage-flutter-sdk-buildkite"
+              json-key: ".PUB_DEV_PUBLISH_REFRESH_TOKEN"
+            PUB_DEV_PUBLISH_TOKEN_ENDPOINT:
+              secret-id: "stage-flutter-sdk-buildkite"
+              json-key: ".PUB_DEV_PUBLISH_TOKEN_ENDPOINT"
+            PUB_DEV_PUBLISH_EXPIRATION:
+              secret-id: "stage-flutter-sdk-buildkite"
+              json-key: ".PUB_DEV_PUBLISH_EXPIRATION"
+    agents: 
+      queue: ${MAC_BK_AGENT}
+    timeout_in_minutes: 25
