@@ -11,6 +11,10 @@ steps:
     commands:
       - . ~/.zshrc
       - rbenv local 2.7.6
+      - echo "$(buildkite-agent meta-data get CHANGELOG)"
+      - echo test
+      - echo $(buildkite-agent meta-data get CHANGELOG)
+      - echo end 
       - ./.buildkite/bin/update_versions.sh $(buildkite-agent meta-data get ANDROID_VERSION) android/build.gradle $(buildkite-agent meta-data get IOS_VERSION) ios/rokt_sdk.podspec $(buildkite-agent meta-data get VERSION) pubspec.yaml
       - ./.buildkite/bin/update_changelog.sh CHANGELOG.md $(buildkite-agent meta-data get VERSION) "$(buildkite-agent meta-data get CHANGELOG)"
       - ./.buildkite/bin/create_tag.sh $(buildkite-agent meta-data get VERSION)
