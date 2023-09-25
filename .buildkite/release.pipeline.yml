@@ -83,7 +83,7 @@ steps:
       - brew tap dart-lang/dart
       - brew install dart
       - sh .buildkite/pub_login.sh
-      - fvm dart pub publish -f --dry-run
+      - fvm dart pub publish --dry-run
     plugins:
       - seek-oss/aws-sm#v2.0.0:
           env:
