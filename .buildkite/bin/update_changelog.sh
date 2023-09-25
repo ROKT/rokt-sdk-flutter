@@ -13,5 +13,5 @@ then
 fi
 
 CHANGELOG_TEXT="$3"
-echo -e "## $2\n* $CHANGELOG_TEXT\n" | cat - $1 > /tmp/out
-mv /tmp/out $1
+echo -e "## $2\n* $CHANGELOG_TEXT\n" | cat - "$1" > /tmp/out
+mv /tmp/out "$1"

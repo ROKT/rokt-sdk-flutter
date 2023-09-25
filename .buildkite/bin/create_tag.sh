@@ -4,9 +4,9 @@ set -eu
 
 # $1 version
 
-PROJECT_DIR="$(dirname $0)/../.."
+PROJECT_DIR="$(dirname "$0")/../.."
 
-cd $PROJECT_DIR
+cd "$PROJECT_DIR"
 
 git config user.email "buildkite@rokt.com"
 git config user.name "Buildkite"
