@@ -8,11 +8,10 @@ set -eu
 
 if [ -z "$3" ]; 
 then
-    echo "Empty changelog text provided. Using default"
-    CHANGELOG_TEXT="Updated Rokt SDKs and interfaces"
-else
-    CHANGELOG_TEXT="$3"
+    echo "Empty changelog text provided. Skipping..."
+    exit 0
 fi
 
+CHANGELOG_TEXT="$3"
 echo -e "## $2\n* $CHANGELOG_TEXT\n" | cat - $1 > /tmp/out
 mv /tmp/out $1
