@@ -29,6 +29,7 @@ struct RoktMethodCallHandler {
         
         if let args = call.arguments as? Dictionary<String, Any>,
            let roktTagId = args["roktTagId"] as? String {
+	    Rokt.setFrameworkType(frameworkType: .Flutter)
             Rokt.initWith(roktTagId: roktTagId)
             result(SUCCESS)
         } else {
