@@ -1,3 +1,6 @@
+## 4.1.0-beta.1
+* Bug fixes and layouts supports carousel
+
 ## 4.0.0-alpha.3
 * Introduces Layouts
 
