@@ -59,6 +59,7 @@ class MethodCallHandlerImpl(
         val roktTagId = call.argument<String>("roktTagId")
         val appVersion = call.argument<String>("appVersion").orEmpty()
         roktTagId?.let { tagId ->
+            Rokt.setFrameworkType(Rokt.SdkFrameworkType.Flutter)
             Rokt.init(tagId, appVersion, activity)
             result.success("Initialized")
         } ?: result.error(

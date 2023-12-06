@@ -173,6 +173,9 @@ Publishing the package is possible through [CircleCi](https://app.circleci.com/p
    dart pub publish -f
     ```
 
+## Automated Publishing
+The SDK can be released via the [Mobile Release Pipeline](https://github.com/ROKT/mobile-release-pipeline). Follow the instructions in the Mobile Release Pipeline repo to release. You can still release the SDK manually by following the steps in the previous section.
+
 ## How to manually run UI Test ?
 UI test are located inside example app and you can run it by executing below command
 ```
