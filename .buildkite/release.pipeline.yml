@@ -85,7 +85,8 @@ steps:
       - sh .buildkite/pub_login.sh
       - fvm dart pub publish -f
     plugins:
-      - seek-oss/aws-sm#v2.0.0:
+      - seek-oss/aws-sm#v2.3.1:
+          region: us-west-2
           env:
             PUB_DEV_PUBLISH_ACCESS_TOKEN:
               secret-id: "stage-flutter-sdk-buildkite"
