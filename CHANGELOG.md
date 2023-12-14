@@ -1,3 +1,6 @@
+## 3.17.0
+* Added configurable font weights
+
 ## 3.15.5
 * Updated Rokt SDKs and interfaces and General bug fixes
 
