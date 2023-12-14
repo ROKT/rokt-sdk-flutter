@@ -1,3 +1,6 @@
+## 4.1.0-beta.4
+* Added configurable font weights
+
 ## 4.0.0-alpha.3
 * Introduces Layouts
 
