@@ -1,3 +1,6 @@
+## 4.1.0-beta.5
+* Added more UI experiences and further accessibility support
+
 ## 4.0.0-alpha.3
 * Introduces Layouts
 
