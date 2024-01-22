@@ -1,3 +1,6 @@
+## 4.1.0-beta.6
+* Bug fixes and enhancement.
+
 ## 4.0.0-alpha.3
 * Introduces Layouts
 
