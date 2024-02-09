@@ -19,7 +19,7 @@ rootProject.allprojects {
         google()
         mavenCentral()
         maven {
-            url  "https://rokt-eng-us-west-2-mobile-sdk-artefacts.s3.amazonaws.com"
+            url  "https://apps.rokt.com/msdk"
         }
     }
 }
