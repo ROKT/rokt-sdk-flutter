@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'rokt_sdk'
-  s.version          = '4.1.0-beta.1'
+  s.version          = '4.1.0-beta.8'
   s.summary          = 'Rokt Mobile SDK to integrate ROKT Api into Flutter application'
   s.description      = <<-DESC
 Rokt Mobile SDK to integrate ROKT Api into Flutter application.
@@ -15,7 +15,7 @@ Rokt Mobile SDK to integrate ROKT Api into Flutter application.
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'Rokt-Widget', '~> 4.1.0-beta.1'
+  s.dependency 'Rokt-Widget', '~> 4.1.0-beta.8'
   s.platform = :ios, '10.0'
 
   # Flutter.framework does not contain a i386 slice.
