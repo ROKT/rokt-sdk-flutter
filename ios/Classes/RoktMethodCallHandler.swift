@@ -23,12 +23,17 @@ struct RoktMethodCallHandler {
     
     let channel: FlutterMethodChannel
     let factory: RoktWidgetFactory
+    let registrar: FlutterPluginRegistrar
     
     public func initialize(_ call: FlutterMethodCall,
                            result: @escaping FlutterResult) {
         
         if let args = call.arguments as? Dictionary<String, Any>,
            let roktTagId = args["roktTagId"] as? String {
+            let fontFilePathMap = args["fontFilePathMap"] as? Dictionary<String, String>
+            if let typefaces = fontFilePathMap {
+                registerPartnerFonts(typefaces)
+            }
             Rokt.setFrameworkType(frameworkType: .Flutter)
             Rokt.initWith(roktTagId: roktTagId)
             result(SUCCESS)
@@ -106,6 +111,20 @@ struct RoktMethodCallHandler {
         }
     }
     
+    private func registerPartnerFonts(_ typefaces: Dictionary<String, String>) {
+        let bundle = Bundle.main
+        for (_, fileName) in typefaces {
+            let fontKey = registrar.lookupKey(forAsset: fileName)
+            let path = bundle.path(forResource: fontKey, ofType: nil)
+            var errorRef: Unmanaged<CFError>? = nil
+            guard let filePath = path, path?.isEmpty == false else {
+                continue
+            }
+            let fontUrl = NSURL(fileURLWithPath: filePath)
+            CTFontManagerRegisterFontsForURL(fontUrl, .process, &errorRef)
+        }
+    }
+
 }
 
 

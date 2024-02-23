@@ -1,8 +1,10 @@
 package com.rokt.rokt_sdk
 
 import android.app.Activity
+import android.graphics.Typeface
 import com.rokt.roktsdk.Rokt
 import com.rokt.roktsdk.Widget
+import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterAssets
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -10,6 +12,7 @@ import java.lang.ref.WeakReference
 
 class MethodCallHandlerImpl(
     private val messenger: BinaryMessenger,
+    private val flutterAssets: FlutterAssets,
     private val widgetFactory: RoktWidgetFactory
 ) :
     MethodChannel.MethodCallHandler {
@@ -22,12 +25,15 @@ class MethodCallHandlerImpl(
             INIT_METHOD -> {
                 init(call, result)
             }
+
             EXECUTE_METHOD -> {
                 execute(call, result)
             }
+
             LOGGING_METHOD -> {
                 logging(call, result)
             }
+
             else -> result.notImplemented()
         }
     }
@@ -58,9 +64,16 @@ class MethodCallHandlerImpl(
     private fun init(call: MethodCall, result: MethodChannel.Result) {
         val roktTagId = call.argument<String>("roktTagId")
         val appVersion = call.argument<String>("appVersion").orEmpty()
+        val fontFileMap = call.argument<HashMap<String, String>>("fontFilePathMap").orEmpty()
+            .mapValues { flutterAssets.getAssetFilePathByName(it.value) }
         roktTagId?.let { tagId ->
             Rokt.setFrameworkType(Rokt.SdkFrameworkType.Flutter)
-            Rokt.init(tagId, appVersion, activity)
+            Rokt.init(
+                roktTagId = tagId,
+                appVersion = appVersion,
+                activity = activity,
+                fontFilePathMap = fontFileMap,
+            )
             result.success("Initialized")
         } ?: result.error(
             "No_TAG_ID",
@@ -84,7 +97,12 @@ class MethodCallHandlerImpl(
         }
         val map: MutableMap<String, Any> = mutableMapOf()
         map["id"] = callBackId
-        Rokt.execute(viewName, attributes, roktCallback, placeHolders)
+        Rokt.execute(
+            viewName = viewName,
+            attributes = attributes,
+            callback = roktCallback,
+            placeholders = placeHolders,
+        )
         result.success("Executed")
     }
 

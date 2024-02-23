@@ -65,10 +65,14 @@ class RoktSdk {
   /// The recommended way of calling the initialize method is early in the application.
   /// - Parameters:
   ///   - roktTagId: The tag id provided by Rokt, associated with your account.
+  ///   - appVersion: App version string
+  ///   - fontFilePathMap: Optional. A map of custom font postscript name to font file. Eg: "Arial-bold": "fonts/Arial-Bold.ttf"
   static Future<void> initialize(String roktTagId,
-      {String appVersion = ''}) async {
+      {String appVersion = '', Map<String, String> fontFilePathMap = const {}}) async {
     await RoktSdkController.instance
-        .initialize(roktTagId: roktTagId, appVersion: appVersion);
+        .initialize(roktTagId: roktTagId,
+        appVersion: appVersion,
+        fontFilePathMap: fontFilePathMap);
   }
 
   /// Execute Rokt widget
@@ -90,7 +94,7 @@ class RoktSdk {
     RoktCallback onLoad = _defaultRoktCallBack,
     RoktCallback onUnLoad = _defaultRoktCallBack,
     RoktCallback onShouldShowLoadingIndicator = _defaultRoktCallBack,
-    RoktCallback onShouldHideLoadingIndicator = _defaultRoktCallBack,
+    RoktCallback onShouldHideLoadingIndicator = _defaultRoktCallBack
   }) async {
     _onLoad = onLoad;
     _onUnLoad = onUnLoad;

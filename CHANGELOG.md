@@ -1,3 +1,6 @@
+## 4.1.0
+* Release 4.1.0 stable SDK
+
 ## 4.0.0-alpha.3
 * Introduces Layouts
 

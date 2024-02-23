@@ -1,14 +1,17 @@
 package com.rokt.rokt_sdk
 
+import android.graphics.Typeface
 import androidx.annotation.NonNull
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterAssets
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.BinaryMessenger
+import io.flutter.plugin.common.PluginRegistry
 
 
 /** RoktSdkPlugin */
-class RoktSdkPlugin: FlutterPlugin, ActivityAware {
+class RoktSdkPlugin : FlutterPlugin, ActivityAware {
     private var methodCallHandler: MethodCallHandlerImpl? = null
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
@@ -16,7 +19,11 @@ class RoktSdkPlugin: FlutterPlugin, ActivityAware {
         flutterPluginBinding.platformViewRegistry.registerViewFactory(
             VIEW_TYPE, widgetFactory
         )
-        setupMethodChannel(flutterPluginBinding.binaryMessenger, widgetFactory)
+        setupMethodChannel(
+            flutterPluginBinding.binaryMessenger,
+            flutterPluginBinding.flutterAssets,
+            widgetFactory
+        )
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
@@ -36,8 +43,12 @@ class RoktSdkPlugin: FlutterPlugin, ActivityAware {
     override fun onDetachedFromActivity() {
     }
 
-    private fun setupMethodChannel(messenger: BinaryMessenger, widgetFactory: RoktWidgetFactory) {
-        methodCallHandler = MethodCallHandlerImpl(messenger, widgetFactory)
+    private fun setupMethodChannel(
+        messenger: BinaryMessenger,
+        flutterAssets: FlutterAssets,
+        widgetFactory: RoktWidgetFactory
+    ) {
+        methodCallHandler = MethodCallHandlerImpl(messenger, flutterAssets, widgetFactory)
     }
 
     private fun teardownMethodChannel() {

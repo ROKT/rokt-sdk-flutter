@@ -25,9 +25,9 @@ class RoktSdkController {
 
   /// Call Rokt Initialize method in Native SDK
   Future<void> initialize(
-      {required String roktTagId, String appVersion = ''}) async {
+      {required String roktTagId, String appVersion = '', Map<String, String> fontFilePathMap = const {}}) async {
     await _channel.invokeMethod(
-        'initialize', {'roktTagId': roktTagId, 'appVersion': appVersion});
+        'initialize', {'roktTagId': roktTagId, 'appVersion': appVersion, 'fontFilePathMap': fontFilePathMap});
   }
 
   /// Call Rokt Execute method in Native SDK
@@ -41,7 +41,7 @@ class RoktSdkController {
       'viewName': viewName,
       'attributes': attributes,
       'placeholders': instance._placeholders,
-      'callbackId': currentCallbackId
+      'callbackId': currentCallbackId,
     });
   }
 
