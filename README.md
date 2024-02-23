@@ -151,6 +151,8 @@ Requirements to integrate from versions 4.0.0 onwards include:
 This project consists of sdk Plugin which contains [lib](lib) which is the main entry for the sdk plugin, [android](android), [iOS](ios) platform specific code for the sdk plugin
 and an [example App](example) which is a sample App to run the sdk plugin.
 
+The Apple privacy manifest for the Rokt Flutter iOS SDK is contained in [ios/Resources/PrivacyInfo.xcprivacy](ios/Resources/PrivacyInfo.xcprivacy).
+
 ## Publishing SDK
 This SDK is published to [pub.dev](https://pub.dev/) [here](https://pub.dev/packages/rokt_sdk). You can publish the alpha or prod package.
 To publish the package, you need to modify pubspec.yaml and update the version field. We should append ```-alpha``` after version if we intend to publish
