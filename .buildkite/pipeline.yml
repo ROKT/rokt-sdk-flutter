@@ -19,7 +19,10 @@ steps:
       - xcrun simctl boot "iPhone 15" || true
       - fvm flutter pub get
       - fvm flutter precache --ios
-      - cd ios && pod install && cd -
+      - cd ios
+      - bundle check || bundle install --path vendor/bundle
+      - bundle exec pod install
+      - cd -
       - fvm flutter test
       - fvm flutter test integration_test/app_test.dart
     agents: 
