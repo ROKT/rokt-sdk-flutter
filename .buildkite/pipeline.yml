@@ -6,11 +6,19 @@ env:
   ANDROID_SDKMANAGER: ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager
 
 steps:
-  - name: ':hammer: Build and test iOS'
-    key: 'build-test-ios'
+  - name: ':hammer: prepare ruby'
+    key: 'build-ruby'
     commands:
       - . ~/.zshrc
-      - rbenv local 3.2.2
+      - rbenv install 2.7.6
+
+  - name: ':hammer: Build and test iOS'
+    key: 'build-test-ios'
+    depends_on:
+      - 'build-ruby'
+    commands:
+      - . ~/.zshrc
+      - rbenv local 2.7.6
       - brew tap leoafarias/fvm
       - brew install fvm
       - fvm install ${FLUTTER_VERSION}
@@ -31,9 +39,11 @@ steps:
 
   - name: ':hammer: Build and test Android'
     key: 'build-test-android'
+    depends_on:
+      - 'build-ruby'
     commands:
       - . ~/.zshrc
-      - rbenv local 3.2.2
+      - rbenv local 2.7.6
       - brew tap leoafarias/fvm
       - brew install fvm
       - fvm install ${FLUTTER_VERSION}
@@ -64,7 +74,7 @@ steps:
       - 'hold-publish'
     commands:
       - . ~/.zshrc
-      - rbenv local 3.2.2
+      - rbenv local 2.7.6
       - brew tap leoafarias/fvm
       - brew install fvm
       - fvm install ${FLUTTER_VERSION}
