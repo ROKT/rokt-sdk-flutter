@@ -1,5 +1,5 @@
 env:
-  MAC_BK_AGENT: eng-prod-us-west-2-mac-arm-macos-build-medium
+  MAC_BK_AGENT: eng-stage-us-west-2-mac-arm-macos-build-medium
   ENG_BK_AGENT: eng-default
   FLUTTER_VERSION: 2.10.5
   ANDROID_SDK_ROOT: ~/Library/Android/sdk
@@ -10,13 +10,13 @@ steps:
     key: 'build-test-ios'
     commands:
       - . ~/.zshrc
-      - rbenv local 2.7.6
+      - rbenv local 3.2.2
       - brew tap leoafarias/fvm
       - brew install fvm
       - fvm install ${FLUTTER_VERSION}
       - yes | fvm use ${FLUTTER_VERSION}
       - cd example
-      - xcrun simctl boot "iPhone 14" || true
+      - xcrun simctl boot "iPhone 15" || true
       - fvm flutter pub get
       - fvm flutter precache --ios
       - cd ios && pod install && cd -
@@ -30,12 +30,12 @@ steps:
     key: 'build-test-android'
     commands:
       - . ~/.zshrc
-      - rbenv local 2.7.6
+      - rbenv local 3.2.2
       - brew tap leoafarias/fvm
       - brew install fvm
       - fvm install ${FLUTTER_VERSION}
       - yes | fvm use ${FLUTTER_VERSION}
-      - xcrun simctl shutdown "iPhone 14" || true
+      - xcrun simctl shutdown "iPhone 15" || true
       - fvm flutter config --android-sdk ${ANDROID_SDK_ROOT}
       - yes | ${ANDROID_SDKMANAGER} 'system-images;android-29;google_apis;arm64-v8a' 'platforms;android-29'
       - yes | ${ANDROID_SDKMANAGER} --licenses
@@ -61,7 +61,7 @@ steps:
       - 'hold-publish'
     commands:
       - . ~/.zshrc
-      - rbenv local 2.7.6
+      - rbenv local 3.2.2
       - brew tap leoafarias/fvm
       - brew install fvm
       - fvm install ${FLUTTER_VERSION}
