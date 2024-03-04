@@ -1,7 +1,7 @@
 env:
   MAC_BK_AGENT: eng-stage-us-west-2-mac-arm-macos-build-medium
   ENG_BK_AGENT: eng-default
-  FLUTTER_VERSION: 3.0.0
+  FLUTTER_VERSION: 3.19.2
   ANDROID_SDK_ROOT: ~/Library/Android/sdk
   ANDROID_SDKMANAGER: ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager
 
