@@ -26,16 +26,19 @@ steps:
       - brew install fvm
       - fvm install ${FLUTTER_VERSION}
       - yes | fvm use ${FLUTTER_VERSION}
+      - bundle check || bundle install --path vendor/bundle
       - cd example
+      - rbenv local 2.7.6
       - xcrun simctl boot "iPhone 15" || true
       - fvm flutter pub get
       - fvm flutter precache --ios
       - cd ios
+      - rbenv local 2.7.6
       - bundle check || bundle install --path vendor/bundle
       - bundle exec pod install
       - cd -
-      - fvm flutter test
-      - fvm flutter test integration_test/app_test.dart
+      - bundle exec fvm flutter test
+      - bundle exec fvm flutter test integration_test/app_test.dart
     agents: 
       queue: ${MAC_BK_AGENT}
     timeout_in_minutes: 25
