@@ -11,6 +11,7 @@ steps:
     commands:
       - . ~/.zshrc
       - yes | rbenv install 2.7.6
+      - sleep 10
     agents: 
       queue: ${MAC_BK_AGENT}
     timeout_in_minutes: 25
@@ -26,8 +27,8 @@ steps:
       - brew install fvm
       - fvm install ${FLUTTER_VERSION}
       - yes | fvm use ${FLUTTER_VERSION}
-      - bundle check || bundle install --path vendor/bundle
       - cd example
+      - bundle check || bundle install --path vendor/bundle
       - rbenv local 2.7.6
       - xcrun simctl boot "iPhone 15" || true
       - fvm flutter pub get
