@@ -6,22 +6,11 @@ env:
   ANDROID_SDKMANAGER: ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager
 
 steps:
-  - name: ':hammer: prepare ruby'
-    key: 'build-ruby'
+  - name: ':hammer: Build and test iOS'
+    key: 'build-test-ios'
     commands:
       - . ~/.zshrc
       - yes | rbenv install 2.7.6
-      - sleep 10
-    agents: 
-      queue: ${MAC_BK_AGENT}
-    timeout_in_minutes: 25
-
-  - name: ':hammer: Build and test iOS'
-    key: 'build-test-ios'
-    depends_on:
-      - 'build-ruby'
-    commands:
-      - . ~/.zshrc
       - rbenv local 2.7.6
       - brew tap leoafarias/fvm
       - brew install fvm
@@ -46,10 +35,9 @@ steps:
 
   - name: ':hammer: Build and test Android'
     key: 'build-test-android'
-    depends_on:
-      - 'build-ruby'
     commands:
       - . ~/.zshrc
+      - yes | rbenv install 2.7.6
       - rbenv local 2.7.6
       - brew tap leoafarias/fvm
       - brew install fvm
