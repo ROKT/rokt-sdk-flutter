@@ -10,7 +10,7 @@ steps:
     key: 'build-ruby'
     commands:
       - . ~/.zshrc
-      - no | rbenv install 2.7.6
+      - yes N | rbenv install 2.7.6
     agents: 
       queue: ${MAC_BK_AGENT}
     timeout_in_minutes: 25
