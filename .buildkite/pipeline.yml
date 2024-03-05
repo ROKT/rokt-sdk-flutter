@@ -10,7 +10,7 @@ steps:
     key: 'build-test-ios'
     commands:
       - . ~/.zshrc
-      - yes N | rbenv install 2.7.6
+      - yes N | rbenv install 2.7.6 || true
       - rbenv local 2.7.6
       - brew tap leoafarias/fvm
       - brew install fvm
@@ -37,7 +37,7 @@ steps:
     key: 'build-test-android'
     commands:
       - . ~/.zshrc
-      - yes N | rbenv install 2.7.6
+      - yes N | rbenv install 2.7.6 || true
       - rbenv local 2.7.6
       - brew tap leoafarias/fvm
       - brew install fvm
