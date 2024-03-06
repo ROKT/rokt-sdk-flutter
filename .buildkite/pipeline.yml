@@ -10,18 +10,25 @@ steps:
     key: 'build-test-ios'
     commands:
       - . ~/.zshrc
+      - yes N | rbenv install 2.7.6 || true
       - rbenv local 2.7.6
       - brew tap leoafarias/fvm
       - brew install fvm
       - fvm install ${FLUTTER_VERSION}
       - fvm use ${FLUTTER_VERSION}
       - cd example
-      - xcrun simctl boot "iPhone 14" || true
+      - bundle check || bundle install --path vendor/bundle
+      - rbenv local 2.7.6
+      - xcrun simctl boot "iPhone 15" || true
       - fvm flutter pub get
       - fvm flutter precache --ios
-      - cd ios && pod install && cd -
-      - fvm flutter test
-      - fvm flutter test integration_test/app_test.dart
+      - cd ios
+      - rbenv local 2.7.6
+      - bundle check || bundle install --path vendor/bundle
+      - bundle exec pod install
+      - cd -
+      - bundle exec fvm flutter test
+      - bundle exec fvm flutter test integration_test/app_test.dart
     agents: 
       queue: ${MAC_BK_AGENT}
     timeout_in_minutes: 25
@@ -30,12 +37,14 @@ steps:
     key: 'build-test-android'
     commands:
       - . ~/.zshrc
+      - yes N | rbenv install 2.7.6 || true
       - rbenv local 2.7.6
       - brew tap leoafarias/fvm
       - brew install fvm
       - fvm install ${FLUTTER_VERSION}
-      - fvm use ${FLUTTER_VERSION}
-      - xcrun simctl shutdown "iPhone 14" || true
+      - yes | fvm use ${FLUTTER_VERSION}
+      - yes | sdk install java 17.0.10-zulu
+      - xcrun simctl shutdown "iPhone 15" || true
       - fvm flutter config --android-sdk ${ANDROID_SDK_ROOT}
       - yes | ${ANDROID_SDKMANAGER} 'system-images;android-29;google_apis;arm64-v8a' 'platforms;android-29'
       - yes | ${ANDROID_SDKMANAGER} --licenses
