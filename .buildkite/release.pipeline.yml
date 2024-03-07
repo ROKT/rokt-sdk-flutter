@@ -10,7 +10,8 @@ steps:
     key: "tag"
     commands:
       - . ~/.zshrc
-      - rbenv local 3.2.2
+      - yes N | rbenv install 2.7.6 || true
+      - rbenv local 2.7.6
       - ./.buildkite/bin/update_versions.sh "${ANDROID_VERSION}" android/build.gradle "${IOS_VERSION}" ios/rokt_sdk.podspec "${VERSION}" pubspec.yaml
       - ./.buildkite/bin/update_changelog.sh CHANGELOG.md "${VERSION}" "${CHANGELOG}"
       - ./.buildkite/bin/create_tag.sh "${VERSION}"
@@ -22,7 +23,8 @@ steps:
     key: "build-test-ios"
     commands:
       - . ~/.zshrc
-      - rbenv local 3.2.2
+      - yes N | rbenv install 2.7.6 || true
+      - rbenv local 2.7.6
       - git fetch --all --tags --force
       - git checkout "v${VERSION}"
       - brew tap leoafarias/fvm
@@ -33,7 +35,11 @@ steps:
       - xcrun simctl boot "iPhone 15" || true
       - fvm flutter pub get
       - fvm flutter precache --ios
-      - cd ios && pod install && cd -
+      - cd ios
+      - rbenv local 2.7.6
+      - bundle check || bundle install --path vendor/bundle
+      - bundle exec pod install
+      - cd -
       - fvm flutter test
       - fvm flutter test integration_test/app_test.dart
     agents: 
@@ -45,7 +51,8 @@ steps:
     depends_on: "tag"
     commands:
       - . ~/.zshrc
-      - rbenv local 3.2.2
+      - yes N | rbenv install 2.7.6 || true
+      - rbenv local 2.7.6
       - git fetch --all --tags --force
       - git checkout "v${VERSION}"
       - brew tap leoafarias/fvm
@@ -72,7 +79,8 @@ steps:
       - "build-test-ios"
     commands:
       - . ~/.zshrc
-      - rbenv local 3.2.2
+      - yes N | rbenv install 2.7.6 || true
+      - rbenv local 2.7.6
       - git fetch --all --tags --force
       - git checkout "v${VERSION}"
       - brew tap leoafarias/fvm
