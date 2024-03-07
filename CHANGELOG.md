@@ -1,3 +1,6 @@
+## 4.2.0-alpha.1
+* Release alpha for 4.2.0
+
 ## 4.1.0
 * Release 4.1.0 stable SDK
 
