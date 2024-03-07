@@ -32,6 +32,8 @@ steps:
       - fvm install ${FLUTTER_VERSION}
       - yes | fvm use ${FLUTTER_VERSION}
       - cd example
+      - bundle check || bundle install --path vendor/bundle
+      - rbenv local 2.7.6
       - xcrun simctl boot "iPhone 15" || true
       - fvm flutter pub get
       - fvm flutter precache --ios
