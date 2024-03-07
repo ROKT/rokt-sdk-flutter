@@ -40,8 +40,8 @@ steps:
       - bundle check || bundle install --path vendor/bundle
       - bundle exec pod install --verbose --repo-update 
       - cd -
-      - fvm flutter test
-      - fvm flutter test integration_test/app_test.dart
+      - bundle exec fvm flutter test
+      - bundle exec fvm flutter test integration_test/app_test.dart
     agents: 
       queue: ${MAC_BK_AGENT}
     timeout_in_minutes: 25
