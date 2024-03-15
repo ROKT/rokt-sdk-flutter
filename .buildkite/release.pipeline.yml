@@ -30,7 +30,7 @@ steps:
       - brew tap leoafarias/fvm
       - brew install fvm
       - fvm install ${FLUTTER_VERSION}
-      - fvm use ${FLUTTER_VERSION}
+      - yes | fvm use ${FLUTTER_VERSION}
       - cd example
       - bundle check || bundle install --path vendor/bundle
       - rbenv local 2.7.6
@@ -88,7 +88,7 @@ steps:
       - brew tap leoafarias/fvm
       - brew install fvm
       - fvm install ${FLUTTER_VERSION}
-      - fvm use ${FLUTTER_VERSION}
+      - yes | fvm use ${FLUTTER_VERSION}
       - cd example && fvm flutter pub get && cd -
       - brew tap dart-lang/dart
       - brew install dart
