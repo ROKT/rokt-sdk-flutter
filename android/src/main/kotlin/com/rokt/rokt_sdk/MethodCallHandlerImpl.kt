@@ -2,23 +2,38 @@ package com.rokt.rokt_sdk
 
 import android.app.Activity
 import android.graphics.Typeface
+import android.util.Log
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.rokt.roktsdk.Rokt
 import com.rokt.roktsdk.Widget
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterAssets
 import io.flutter.plugin.common.BinaryMessenger
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 
 class MethodCallHandlerImpl(
     private val messenger: BinaryMessenger,
     private val flutterAssets: FlutterAssets,
-    private val widgetFactory: RoktWidgetFactory
+    private val widgetFactory: RoktWidgetFactory,
+    private val roktEventChannel: EventChannel,
+    private val coroutineScope: CoroutineScope,
 ) :
     MethodChannel.MethodCallHandler {
     private var channel: MethodChannel? = null
     private lateinit var activity: Activity
     private val roktCallbacks: MutableSet<Rokt.RoktCallback> = mutableSetOf()
+    private val roktEventSinkMap: MutableMap<String, EventChannel.EventSink> = mutableMapOf()
+
+    init {
+        setupEventChannel("PizzaHutLayout")
+    }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
@@ -97,6 +112,16 @@ class MethodCallHandlerImpl(
         }
         val map: MutableMap<String, Any> = mutableMapOf()
         map["id"] = callBackId
+        (activity as? LifecycleOwner)?.lifecycleScope?.launch {
+            (activity as LifecycleOwner).lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                Log.d("Sahil", "repeatOnLifeCycle ${(activity as LifecycleOwner).lifecycle.currentState}")
+                Rokt.roktEvents(viewName).collect { event ->
+                    Log.d("Sahil", "collecting *** $event")
+                    val params: Map<String, String> = mapOf("event" to event.javaClass.simpleName, "viewName" to viewName )
+                    roktEventSinkMap[viewName]?.success(params)
+                }
+            }
+        }
         Rokt.execute(
             viewName = viewName,
             attributes = attributes,
@@ -106,11 +131,29 @@ class MethodCallHandlerImpl(
         result.success("Executed")
     }
 
+    private fun setupEventChannel(viewName: String) {
+        EventChannel(messenger, EVENT_CHANNEL_NAME).setStreamHandler(
+            object : EventChannel.StreamHandler {
+                override fun onListen(arguments: Any?, sink: EventChannel.EventSink?) {
+                    Log.d("Sahil", "setupEventChannel $arguments")
+                    if (sink != null) {
+                        roktEventSinkMap[viewName] = sink
+                    }
+                }
+
+                override fun onCancel(arguments: Any?) {
+                    roktEventSinkMap.remove(viewName)
+                }
+            }
+        )
+    }
+
     companion object {
         private const val CHANNEL_NAME = "rokt_sdk"
         private const val INIT_METHOD = "initialize"
         private const val EXECUTE_METHOD = "execute"
         private const val LOGGING_METHOD = "logging"
         const val TAG = "ROKTSDK_FLUTTER"
+        private const val EVENT_CHANNEL_NAME = "rokt_event"
     }
 }
