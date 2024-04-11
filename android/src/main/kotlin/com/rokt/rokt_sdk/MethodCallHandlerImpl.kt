@@ -6,6 +6,7 @@ import com.rokt.roktsdk.Rokt
 import com.rokt.roktsdk.Widget
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterAssets
 import io.flutter.plugin.common.BinaryMessenger
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import java.lang.ref.WeakReference
@@ -19,6 +20,11 @@ class MethodCallHandlerImpl(
     private var channel: MethodChannel? = null
     private lateinit var activity: Activity
     private val roktCallbacks: MutableSet<Rokt.RoktCallback> = mutableSetOf()
+    private val eventListeners = mutableSetOf<EventChannel.EventSink>()
+
+    init {
+        setupEventChannel()
+    }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
@@ -106,11 +112,27 @@ class MethodCallHandlerImpl(
         result.success("Executed")
     }
 
+    private fun setupEventChannel() {
+        EventChannel(messenger, EVENT_CHANNEL_NAME).setStreamHandler(
+            object : EventChannel.StreamHandler {
+                override fun onListen(arguments: Any?, sink: EventChannel.EventSink?) {
+                    if (sink != null) {
+                        eventListeners.add(sink)
+                    }
+                }
+
+                override fun onCancel(arguments: Any?) {
+                }
+            }
+        )
+    }
+
     companion object {
         private const val CHANNEL_NAME = "rokt_sdk"
         private const val INIT_METHOD = "initialize"
         private const val EXECUTE_METHOD = "execute"
         private const val LOGGING_METHOD = "logging"
+        private const val EVENT_CHANNEL_NAME = "rokt_event"
         const val TAG = "ROKTSDK_FLUTTER"
     }
 }
