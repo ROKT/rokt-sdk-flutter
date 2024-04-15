@@ -25,9 +25,14 @@ class RoktSdkController {
 
   /// Call Rokt Initialize method in Native SDK
   Future<void> initialize(
-      {required String roktTagId, String appVersion = '', Map<String, String> fontFilePathMap = const {}}) async {
-    await _channel.invokeMethod(
-        'initialize', {'roktTagId': roktTagId, 'appVersion': appVersion, 'fontFilePathMap': fontFilePathMap});
+      {required String roktTagId,
+      String appVersion = '',
+      Map<String, String> fontFilePathMap = const {}}) async {
+    await _channel.invokeMethod('initialize', {
+      'roktTagId': roktTagId,
+      'appVersion': appVersion,
+      'fontFilePathMap': fontFilePathMap
+    });
   }
 
   /// Call Rokt Execute method in Native SDK
@@ -52,6 +57,8 @@ class RoktSdkController {
 
   /// Placeholders are attached to be passed to Rokt Execute
   void attachPlaceholder({required int id, required String name}) {
+    // Prevent duplicate placeholders with same name
+    instance._placeholders.removeWhere((key, value) => value == name);
     instance._placeholders[id] = name;
   }
 
