@@ -1,14 +1,19 @@
 package com.rokt.rokt_sdk
 
 import android.app.Activity
-import android.graphics.Typeface
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.rokt.roktsdk.Rokt
+import com.rokt.roktsdk.RoktEvent
 import com.rokt.roktsdk.Widget
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterAssets
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 
 class MethodCallHandlerImpl(
@@ -103,6 +108,52 @@ class MethodCallHandlerImpl(
         }
         val map: MutableMap<String, Any> = mutableMapOf()
         map["id"] = callBackId
+        (activity as? LifecycleOwner)?.lifecycleScope?.launch {
+            (activity as LifecycleOwner).lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                Rokt.events(viewName).collect { event ->
+                    val params: MutableMap<String, String> = mutableMapOf()
+                    val placementId: String? = when (event) {
+                        is RoktEvent.HideLoadingIndicator -> {
+                            null
+                        }
+
+                        is RoktEvent.FirstPositiveEngagement -> {
+                            event.id
+                        }
+                        is RoktEvent.OfferEngagement -> {
+                            event.id
+                        }
+                        is RoktEvent.PlacementClosed -> {
+                            event.id
+                        }
+                        is RoktEvent.PlacementCompleted -> {
+                            event.id
+                        }
+                        is RoktEvent.PlacementFailure -> {
+                            event.id
+                        }
+                        is RoktEvent.PlacementInteractive -> {
+                            event.id
+                        }
+                        is RoktEvent.PlacementReady -> {
+                            event.id
+                        }
+                        is RoktEvent.PositiveEngagement -> {
+                            event.id
+                        }
+                        RoktEvent.ShowLoadingIndicator -> {
+                            null
+                        }
+                    }
+                    params["event"] = event.javaClass.simpleName
+                    params["viewName"] = viewName
+                    if (placementId != null) {
+                        params["placementId"] = placementId
+                    }
+                    eventListeners.forEach { listener -> listener.success(params) }
+                }
+            }
+        }
         Rokt.execute(
             viewName = viewName,
             attributes = attributes,
