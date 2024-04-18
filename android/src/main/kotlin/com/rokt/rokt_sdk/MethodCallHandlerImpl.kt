@@ -112,40 +112,49 @@ class MethodCallHandlerImpl(
             (activity as LifecycleOwner).lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 Rokt.events(viewName).collect { event ->
                     val params: MutableMap<String, String> = mutableMapOf()
+                    params["viewName"] = viewName
                     val placementId: String? = when (event) {
                         is RoktEvent.HideLoadingIndicator -> {
+                            params["event"] = "HideLoadingIndicator"
                             null
                         }
                         is RoktEvent.FirstPositiveEngagement -> {
+                            params["event"] = "FirstPositiveEngagement"
                             event.id
                         }
                         is RoktEvent.OfferEngagement -> {
+                            params["event"] = "OfferEngagement"
                             event.id
                         }
                         is RoktEvent.PlacementClosed -> {
+                            params["event"] = "PlacementClosed"
                             event.id
                         }
                         is RoktEvent.PlacementCompleted -> {
+                            params["event"] = "PlacementCompleted"
                             event.id
                         }
                         is RoktEvent.PlacementFailure -> {
+                            params["event"] = "PlacementFailure"
                             event.id
                         }
                         is RoktEvent.PlacementInteractive -> {
+                            params["event"] = "PlacementInteractive"
                             event.id
                         }
                         is RoktEvent.PlacementReady -> {
+                            params["event"] = "PlacementReady"
                             event.id
                         }
                         is RoktEvent.PositiveEngagement -> {
+                            params["event"] = "PositiveEngagement"
                             event.id
                         }
                         RoktEvent.ShowLoadingIndicator -> {
+                            params["event"] = "ShowLoadingIndicator"
                             null
                         }
                     }
-                    params["event"] = event.javaClass.simpleName
-                    params["viewName"] = viewName
                     if (placementId != null) {
                         params["placementId"] = placementId
                     }
