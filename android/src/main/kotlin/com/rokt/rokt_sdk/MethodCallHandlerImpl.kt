@@ -116,7 +116,6 @@ class MethodCallHandlerImpl(
                         is RoktEvent.HideLoadingIndicator -> {
                             null
                         }
-
                         is RoktEvent.FirstPositiveEngagement -> {
                             event.id
                         }
