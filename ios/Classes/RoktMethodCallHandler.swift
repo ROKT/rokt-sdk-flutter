@@ -83,17 +83,49 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
             let callBackId = args["callbackId"] as? Int ?? 0
             var callbackMap = [String: Any] ()
             callbackMap["id"] = callBackId
-            Rokt.onRoktEvent(viewName: viewName) { eventName, roktEvent in
+            Rokt.events(viewName: viewName, onEvent: { roktEvent in
                 var eventParamMap = [String: String] ()
+                var eventName = ""
+                var placementId: String?
+                if let event = roktEvent as? RoktEvent.FirstPositiveEngagement {
+                    eventName = "FirstPositiveEngagement"
+                    placementId = event.placementId
+                } else if let event = roktEvent as? RoktEvent.ShowLoadingIndicator {
+                    eventName = "ShowLoadingIndicator"
+                } else if let event = roktEvent as? RoktEvent.HideLoadingIndicator {
+                    eventName = "HideLoadingIndicator"
+                } else if let event = roktEvent as? RoktEvent.OfferEngagement {
+                    eventName = "OfferEngagement"
+                    placementId = event.placementId
+                } else if let event = roktEvent as? RoktEvent.PositiveEngagement {
+                    eventName = "PositiveEngagement"
+                    placementId = event.placementId
+                } else if let event = roktEvent as? RoktEvent.PlacementReady {
+                    eventName = "PlacementReady"
+                    placementId = event.placementId
+                } else if let event = roktEvent as? RoktEvent.PlacementInteractive {
+                    eventName = "PlacementInteractive"
+                    placementId = event.placementId
+                } else if let event = roktEvent as? RoktEvent.PlacementFailure {
+                    eventName = "PlacementFailure"
+                    placementId = event.placementId
+                } else if let event = roktEvent as? RoktEvent.PlacementCompleted {
+                    eventName = "PlacementCompleted"
+                    placementId = event.placementId
+                } else if let event = roktEvent as? RoktEvent.PlacementClosed {
+                    eventName = "PlacementClosed"
+                    placementId = event.placementId
+                }
+                
                 eventParamMap["event"] = eventName
                 eventParamMap["viewName"] = viewName
-                if let event = roktEvent as? RoktEventInfo {
-                    eventParamMap["placementId"] = event.placementId
+                if (placementId != nil) {
+                    eventParamMap["placementId"] = placementId
                 }
                 for listener in self.eventListeners {
                     listener(eventParamMap)
                 }
-            }
+            })
             Rokt.execute(viewName: viewName, attributes: attributes, placements: placements, onLoad: {
                 // Optional callback for when the Rokt placement loads
                 callbackMap[self.ARGS] = "load"
