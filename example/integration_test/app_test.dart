@@ -23,10 +23,10 @@ void main() {
       await tester.pumpAndSettle();
 
       final roktWidget1 = find.byKey(const ValueKey('widget1'));
-      expect(tester.getSize(roktWidget1).height, equals(double.minPositive));
+      expect(tester.getSize(roktWidget1).height, equals(1));
 
       final roktWidget2 = find.byKey(const ValueKey('widget2'));
-      expect(tester.getSize(roktWidget2).height, equals(double.minPositive));
+      expect(tester.getSize(roktWidget2).height, equals(1));
 
       final Finder execute = find.text('Execute');
 

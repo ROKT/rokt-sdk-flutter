@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:convert';
 
 import 'package:rokt_sdk/rokt_sdk.dart';
@@ -22,10 +23,18 @@ class _MyAppState extends State<MyApp> {
   final attributesController =
       TextEditingController(text: constants.defaultAttributes);
   Map<int, String> placeholders = {};
+  final EventChannel roktEventChannel = EventChannel('RoktEvents');
 
   @override
   void initState() {
     super.initState();
+    receiveRoktEvent();
+  }
+
+  void receiveRoktEvent() {
+    roktEventChannel.receiveBroadcastStream().listen((dynamic event) {
+      debugPrint("rokt_sdk _receiveRoktEvent $event ");
+    });
   }
 
   Map<String, String> getAttributes() {

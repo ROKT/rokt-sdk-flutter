@@ -25,7 +25,7 @@ steps:
       - cd ios
       - rbenv local 2.7.6
       - bundle check || bundle install --path vendor/bundle
-      - bundle exec pod install
+      - bundle exec pod install --verbose --repo-update 
       - cd -
       - bundle exec fvm flutter test
       - bundle exec fvm flutter test integration_test/app_test.dart
