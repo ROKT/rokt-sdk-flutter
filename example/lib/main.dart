@@ -23,7 +23,7 @@ class _MyAppState extends State<MyApp> {
   final attributesController =
       TextEditingController(text: constants.defaultAttributes);
   Map<int, String> placeholders = {};
-  final EventChannel roktEventChannel = EventChannel('rokt_event');
+  final EventChannel roktEventChannel = EventChannel('RoktEvents');
 
   @override
   void initState() {

@@ -191,7 +191,7 @@ class MethodCallHandlerImpl(
         private const val INIT_METHOD = "initialize"
         private const val EXECUTE_METHOD = "execute"
         private const val LOGGING_METHOD = "logging"
-        private const val EVENT_CHANNEL_NAME = "rokt_event"
+        private const val EVENT_CHANNEL_NAME = "RoktEvents"
         const val TAG = "ROKTSDK_FLUTTER"
     }
 }

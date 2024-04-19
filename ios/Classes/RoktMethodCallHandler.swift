@@ -20,7 +20,7 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
     fileprivate let FAIL = "fail"
     fileprivate let ARGS = "args"
     fileprivate let CALL_LISTENER = "callListener"
-    fileprivate let EVENT_CHANNEL = "rokt_event"
+    fileprivate let EVENT_CHANNEL = "RoktEvents"
     
     let channel: FlutterMethodChannel
     let factory: RoktWidgetFactory
