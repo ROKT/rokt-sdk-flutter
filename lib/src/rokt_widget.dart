@@ -66,13 +66,16 @@ class _RoktContainerState extends State<RoktWidget>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Padding(
-      padding: EdgeInsets.fromLTRB(_left, _top, _right, _bottom),
-      child: SizedBox(
-          height: _height,
-          child: _RoktStatelessWidget(
-              platformViewCreatedCallback: _onPlatformViewCreated)),
-    );
+    return AnimatedOpacity(
+        opacity: (_height > 0) ? 1.0 : 0.0,
+        duration: Duration(seconds: 1),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(_left, _top, _right, _bottom),
+          child: SizedBox(
+              height: _height,
+              child: _RoktStatelessWidget(
+                  platformViewCreatedCallback: _onPlatformViewCreated)),
+        ));
   }
 
   void _onPlatformViewCreated(int id) {
