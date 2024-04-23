@@ -1,3 +1,6 @@
+## 4.3.0
+* Supporting Event Channel. Bug fixes and enhancements.
+
 ## 4.1.0
 * Release 4.1.0 stable SDK
 
