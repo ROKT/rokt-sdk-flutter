@@ -73,7 +73,7 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
             if let placeholders = args["placeholders"] as? [Int: String] {
                 for (placeholderId, placeholderName) in placeholders {
                     for (id, flutterView) in factory.platformViews {
-                        if id == placeholderId && (flutterView.roktEmbeddedView.window != nil) {
+                        if id == placeholderId {
                             placements[placeholderName] = flutterView.roktEmbeddedView
                         }
                     }

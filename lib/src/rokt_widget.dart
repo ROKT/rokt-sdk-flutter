@@ -67,8 +67,8 @@ class _RoktContainerState extends State<RoktWidget>
   Widget build(BuildContext context) {
     super.build(context);
     return AnimatedOpacity(
-        opacity: (_height > 1) ? 1.0 : 0.0,
-        duration: Duration(seconds: 1),
+        opacity: (_height > 1) ? 1.0 : 0.1,
+        duration: Duration(milliseconds: 200),
         child: Padding(
           padding: EdgeInsets.fromLTRB(_left, _top, _right, _bottom),
           child: SizedBox(
