@@ -1,4 +1,4 @@
-part of rokt_sdk;
+part of '../rokt_sdk.dart';
 
 /// Callback when Rokt platform view gets created and returns platform view id
 typedef RoktPlatformViewCreatedCallback = void Function(int widgetId);

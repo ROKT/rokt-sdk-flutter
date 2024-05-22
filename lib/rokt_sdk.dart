@@ -68,9 +68,10 @@ class RoktSdk {
   ///   - appVersion: App version string
   ///   - fontFilePathMap: Optional. A map of custom font postscript name to font file. Eg: "Arial-bold": "fonts/Arial-Bold.ttf"
   static Future<void> initialize(String roktTagId,
-      {String appVersion = '', Map<String, String> fontFilePathMap = const {}}) async {
-    await RoktSdkController.instance
-        .initialize(roktTagId: roktTagId,
+      {String appVersion = '',
+      Map<String, String> fontFilePathMap = const {}}) async {
+    await RoktSdkController.instance.initialize(
+        roktTagId: roktTagId,
         appVersion: appVersion,
         fontFilePathMap: fontFilePathMap);
   }
@@ -88,14 +89,13 @@ class RoktSdk {
   ///   - onUnLoad: Function to execute right after widget is unloaded, there is no widget or there is an exception
   ///   - onShouldShowLoadingIndicator: Function to execute when the loading indicator should be shown
   ///   - onShouldHideLoadingIndicator: Function to execute when the loading indicator should be hidden
-  static Future<void> execute({
-    required String viewName,
-    Map<String, String> attributes = const {},
-    RoktCallback onLoad = _defaultRoktCallBack,
-    RoktCallback onUnLoad = _defaultRoktCallBack,
-    RoktCallback onShouldShowLoadingIndicator = _defaultRoktCallBack,
-    RoktCallback onShouldHideLoadingIndicator = _defaultRoktCallBack
-  }) async {
+  static Future<void> execute(
+      {required String viewName,
+      Map<String, String> attributes = const {},
+      RoktCallback onLoad = _defaultRoktCallBack,
+      RoktCallback onUnLoad = _defaultRoktCallBack,
+      RoktCallback onShouldShowLoadingIndicator = _defaultRoktCallBack,
+      RoktCallback onShouldHideLoadingIndicator = _defaultRoktCallBack}) async {
     _onLoad = onLoad;
     _onUnLoad = onUnLoad;
     _onShouldShowLoadingIndicator = onShouldShowLoadingIndicator;
