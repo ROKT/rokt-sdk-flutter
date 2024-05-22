@@ -1,0 +1,132 @@
+version: 2.1
+orbs:
+  flutter: circleci/flutter@1.1.0
+  android: circleci/android@2.1.0
+  macos: circleci/macos@2.1.0
+jobs:
+  build_test_iOS:
+    working_directory: ~/project/example
+    macos:
+      xcode: 14.0.0
+    steps:
+      - checkout:
+          path: ~/project
+      - flutter/install_sdk_and_pub:
+          flutter_version: 2.10.5
+      - flutter/install_ios_pod
+      - run:
+          name: Run tests
+          command: flutter test
+      - macos/preboot-simulator:
+          device: iPhone 14
+          version: "16.0"
+      - run:
+          name: Run Integration Test
+          command: flutter test integration_test/app_test.dart
+
+  build_test_Android:
+    working_directory: ~/project/example
+    executor:
+      name: android/android-machine
+      resource-class: large
+      tag: 2022.03.1
+    steps:
+      - checkout:
+          path: ~/project
+      - flutter/install_sdk_and_pub:
+          cache-version: machine
+          flutter_version: 2.10.3
+      - android/create-avd:
+          avd-name: flutter
+          install: true
+          system-image: system-images;android-29;default;x86
+      - android/start-emulator:
+          avd-name: flutter
+          post-emulator-launch-assemble-command: 'flutter build apk --debug'
+          restore-gradle-cache-find-args: ./android -name 'build.gradle'
+      - run:
+          name: Flutter test
+          command: flutter test integration_test/app_test.dart
+
+  publish_package:
+    macos:
+      xcode: 13.3.1
+    steps:
+      - checkout
+      - flutter/install_sdk_and_pub:
+          flutter_version: 2.10.5
+          app-dir: example
+      - run:
+          name: Install dart
+          command: |
+            brew tap dart-lang/dart
+            brew install dart
+      - run:
+          name: setup pub login
+          command: sh .circleci/pub_login.sh
+      - run:
+          name: publish pub
+          command: dart pub publish -f
+
+workflows:
+  version: 2
+  build_test:
+    jobs:
+      - flutter/lint:
+          version: 2.10.5
+          filters:
+            branches:
+              ignore:
+                - /release-(.*)/
+      - build_test_iOS:
+          requires:
+            - flutter/lint
+          filters:
+            branches:
+              ignore:
+                - /release-(.*)/
+      - build_test_Android:
+          requires:
+            - flutter/lint
+          filters:
+            branches:
+              ignore:
+                - /release-(.*)/
+  publish_plugin:
+    jobs:
+      - flutter/lint:
+          version: 2.10.5
+          filters:
+            branches:
+              only:
+                - /release-(.*)/
+      - build_test_iOS:
+          requires:
+            - flutter/lint
+          filters:
+            branches:
+              only:
+                - /release-(.*)/
+      - build_test_Android:
+          requires:
+            - flutter/lint
+          filters:
+            branches:
+              only:
+                - /release-(.*)/
+      - hold_for_publish:
+          type: approval
+          requires:
+            - build_test_iOS
+            - build_test_Android
+          filters:
+            branches:
+              only:
+                - /release-(.*)/
+      - publish_package:
+          requires:
+            - hold_for_publish
+          filters:
+            branches:
+              only:
+                - /release-(.*)/
