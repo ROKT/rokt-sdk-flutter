@@ -1,0 +1,35 @@
+#checkov:skip=CKV_OPENAPI_4:Not required to have auth schema defs
+openapi: 3.0.0
+info:
+  title: Rokt Flutter SDK
+  x-cortex-tag: flutter-sdk
+  x-cortex-type: service
+  description: |
+    Flutter SDK and example app.
+  x-cortex-git:
+    github:
+      repository: ROKT/rokt-sdk-flutter
+
+  x-cortex-owners:
+    - type: group
+      name: mobile-integrations
+      provider: CORTEX
+  x-cortex-groups:
+    - lang-dart
+    - lang-kotlin
+    - lang-swift
+
+  x-cortex-oncall:
+    opsgenie:
+      type: SCHEDULE
+      id: Mobile Integrations_schedule
+
+  x-cortex-ci-cd:
+    buildkite:
+      pipelines:
+        - slug: rokt-flutter-sdk
+
+  x-cortex-link:
+    - name: Mobile SDK Detailed Error View
+      type: dashboard
+      url: https://rokt.datadoghq.com/dashboard/nsi-c8c-gtd
