@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:rokt_sdk/rokt_sdk.dart';
 
 /// Internal callBack for Rokt Sdk
 typedef RoktCallbackInternal = void Function(dynamic msg);
@@ -39,7 +40,8 @@ class RoktSdkController {
   Future<void> execute(
       {required String viewName,
       required Map<String, String> attributes,
-      required RoktCallbackInternal callback}) async {
+      required RoktCallbackInternal callback,
+      RoktConfig? config}) async {
     final int currentCallbackId = _nextCallbackId++;
     _callbacksById[currentCallbackId] = callback;
     await _channel.invokeMethod('execute', {
@@ -47,6 +49,7 @@ class RoktSdkController {
       'attributes': attributes,
       'placeholders': instance._placeholders,
       'callbackId': currentCallbackId,
+      'config': _roktConfigToMap(config: config),
     });
   }
 
@@ -72,5 +75,11 @@ class RoktSdkController {
           print('No method matching !!');
         }
     }
+  }
+
+  Map<String, dynamic> _roktConfigToMap({required RoktConfig? config}) {
+    return {
+      'colorMode': config?.colorMode?.name ?? ColorMode.SYSTEM,
+    };
   }
 }

@@ -92,6 +92,7 @@ class RoktSdk {
   static Future<void> execute(
       {required String viewName,
       Map<String, String> attributes = const {},
+      RoktConfig? roktConfig,
       RoktCallback onLoad = _defaultRoktCallBack,
       RoktCallback onUnLoad = _defaultRoktCallBack,
       RoktCallback onShouldShowLoadingIndicator = _defaultRoktCallBack,
@@ -104,6 +105,7 @@ class RoktSdk {
     await RoktSdkController.instance.execute(
         viewName: viewName,
         attributes: attributes,
+        config: roktConfig,
         callback: _defaultRoktCallBackInternal);
   }
 
@@ -113,4 +115,27 @@ class RoktSdk {
   static Future<void> setLoggingEnabled({required bool enable}) async {
     await RoktSdkController.instance.setLoggingEnabled(enable: enable);
   }
+}
+
+/// Configuration settings for the Rokt SDK <br>
+///
+/// Create the object using cascade notation e.g.: <br>
+/// var config = RoktConfig() <br>
+/// &nbsp;&nbsp;..colorMode = ColorMode.LIGHT
+class RoktConfig {
+  /// The device color mode your application is using
+  /// Defaults to respecting the system's color mode
+  ColorMode? colorMode = ColorMode.SYSTEM;
+}
+
+/// Enum representing device color modes
+enum ColorMode {
+  /// Request Light mode configuration
+  LIGHT,
+
+  /// Request Dark mode configuration
+  DARK,
+
+  /// Request System's current configuration
+  SYSTEM
 }
