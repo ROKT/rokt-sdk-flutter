@@ -125,17 +125,17 @@ class RoktSdk {
 class RoktConfig {
   /// The device color mode your application is using
   /// Defaults to respecting the system's color mode
-  ColorMode? colorMode = ColorMode.SYSTEM;
+  ColorMode? colorMode = ColorMode.system;
 }
 
 /// Enum representing device color modes
 enum ColorMode {
   /// Request Light mode configuration
-  LIGHT,
+  light,
 
   /// Request Dark mode configuration
-  DARK,
+  dark,
 
   /// Request System's current configuration
-  SYSTEM
+  system
 }
