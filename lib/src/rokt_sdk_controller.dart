@@ -79,7 +79,7 @@ class RoktSdkController {
 
   Map<String, dynamic> _roktConfigToMap({required RoktConfig? config}) {
     return {
-      'colorMode': config?.colorMode?.name ?? ColorMode.system.name,
+      'colorMode': config?.colorMode.name ?? ColorMode.system.name,
     };
   }
 }

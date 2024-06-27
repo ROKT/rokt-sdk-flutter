@@ -122,14 +122,16 @@ class RoktSdk {
 ///
 /// - Attributes
 ///   - [ColorMode]? colorMode: preferred device color mode configuration
-///
-/// Create the object using cascade notation e.g. <br>
-/// var config = RoktConfig() <br>
-/// &nbsp;&nbsp;..colorMode = ColorMode.light
+@immutable
 class RoktConfig {
   /// The device color mode your application is using
-  /// Defaults to respecting the system's color mode
-  ColorMode? colorMode = ColorMode.system;
+  final ColorMode colorMode;
+
+  /// Constructor
+  ///
+  /// - Parameters
+  ///   - [ColorMode]? colorMode: preferred device color mode configuration
+  const RoktConfig({this.colorMode = ColorMode.system});
 }
 
 /// Enum representing device color modes
