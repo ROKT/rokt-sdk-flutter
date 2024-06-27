@@ -85,6 +85,7 @@ class RoktSdk {
   /// - Parameters:
   ///   - viewName: The name that should be displayed in the widget
   ///   - attributes: A string map containing the parameters that should be displayed in the widget
+  ///   - roktConfig: Rokt SDK configuration object
   ///   - onLoad: Function to execute right after the widget is successfully loaded and displayed
   ///   - onUnLoad: Function to execute right after widget is unloaded, there is no widget or there is an exception
   ///   - onShouldShowLoadingIndicator: Function to execute when the loading indicator should be shown
@@ -119,9 +120,12 @@ class RoktSdk {
 
 /// Configuration settings for the Rokt SDK <br>
 ///
-/// Create the object using cascade notation e.g.: <br>
+/// - Attributes
+///   - [ColorMode]? colorMode: preferred device color mode configuration
+///
+/// Create the object using cascade notation e.g. <br>
 /// var config = RoktConfig() <br>
-/// &nbsp;&nbsp;..colorMode = ColorMode.LIGHT
+/// &nbsp;&nbsp;..colorMode = ColorMode.light
 class RoktConfig {
   /// The device color mode your application is using
   /// Defaults to respecting the system's color mode
