@@ -6,6 +6,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.rokt.roktsdk.Rokt
+import com.rokt.roktsdk.RoktConfig
 import com.rokt.roktsdk.RoktEvent
 import com.rokt.roktsdk.Widget
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterAssets
@@ -98,6 +99,8 @@ class MethodCallHandlerImpl(
         val attributes = call.argument<HashMap<String, String>>("attributes").orEmpty()
         val callBackId = call.argument<Int>("callbackId") ?: 0
         val placeHolders: MutableMap<String, WeakReference<Widget>> = mutableMapOf()
+        val configMap = call.argument<HashMap<String, String>>("config")
+        val config = configMap?.let { buildRoktConfig(it) }
         call.argument<HashMap<Int, String>>("placeholders")?.entries?.forEach {
             if (widgetFactory.nativeViews[it.key] != null) {
                 placeHolders[it.value] = WeakReference(widgetFactory.nativeViews[it.key])
@@ -167,6 +170,7 @@ class MethodCallHandlerImpl(
             attributes = attributes,
             callback = roktCallback,
             placeholders = placeHolders,
+            config = config
         )
         result.success("Executed")
     }
@@ -184,6 +188,26 @@ class MethodCallHandlerImpl(
                 }
             }
         )
+    }
+
+    private fun String.toColorMode(): RoktConfig.ColorMode {
+        return when (this) {
+            "dark" -> RoktConfig.ColorMode.DARK
+            "light" -> RoktConfig.ColorMode.LIGHT
+            else -> RoktConfig.ColorMode.SYSTEM
+        }
+    }
+
+    private fun buildRoktConfig(configMap: Map<String, String>): RoktConfig {
+        val builder = RoktConfig.Builder()
+        if (configMap.isEmpty()) {
+            return builder.build()
+        }
+        configMap["colorMode"]?.let {
+            builder.colorMode(it.toColorMode())
+        }
+
+        return builder.build()
     }
 
     companion object {
