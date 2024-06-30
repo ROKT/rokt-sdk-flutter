@@ -200,9 +200,6 @@ class MethodCallHandlerImpl(
 
     private fun buildRoktConfig(configMap: Map<String, String>): RoktConfig {
         val builder = RoktConfig.Builder()
-        if (configMap.isEmpty()) {
-            return builder.build()
-        }
         configMap["colorMode"]?.let {
             builder.colorMode(it.toColorMode())
         }
