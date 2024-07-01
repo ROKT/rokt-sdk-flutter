@@ -79,6 +79,9 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
                     }
                 }
             }
+
+            let configMap = args["config"] as? [String: String] ?? [String: String] ()
+            let config = configMap.isEmpty ? nil : buildRoktConfig(configMap)
             
             let callBackId = args["callbackId"] as? Int ?? 0
             var callbackMap = [String: Any] ()
@@ -126,7 +129,7 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
                     listener(eventParamMap)
                 }
             })
-            Rokt.execute(viewName: viewName, attributes: attributes, placements: placements, onLoad: {
+            Rokt.execute(viewName: viewName, attributes: attributes, placements: placements, config: config, onLoad: {
                 // Optional callback for when the Rokt placement loads
                 callbackMap[self.ARGS] = "load"
                 self.channel.invokeMethod(self.CALL_LISTENER, arguments: callbackMap)
@@ -188,6 +191,24 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
         }
     }
 
+    private func buildRoktConfig(_ config: Dictionary<String, String>) -> RoktConfig {
+        let builder = RoktConfig.Builder()
+        config["colorMode"].map {
+            builder.colorMode($0.toColorMode())
+        }
+        return builder.build()
+    }
+
+}
+
+fileprivate extension String {
+    func toColorMode() -> RoktConfig.ColorMode {
+        return switch self {
+            case "light": .light
+            case "dark": .dark
+            default: .system
+        }
+    }
 }
 
 
