@@ -85,6 +85,7 @@ class RoktSdk {
   /// - Parameters:
   ///   - viewName: The name that should be displayed in the widget
   ///   - attributes: A string map containing the parameters that should be displayed in the widget
+  ///   - roktConfig: Rokt SDK configuration object
   ///   - onLoad: Function to execute right after the widget is successfully loaded and displayed
   ///   - onUnLoad: Function to execute right after widget is unloaded, there is no widget or there is an exception
   ///   - onShouldShowLoadingIndicator: Function to execute when the loading indicator should be shown
@@ -92,6 +93,7 @@ class RoktSdk {
   static Future<void> execute(
       {required String viewName,
       Map<String, String> attributes = const {},
+      RoktConfig? roktConfig,
       RoktCallback onLoad = _defaultRoktCallBack,
       RoktCallback onUnLoad = _defaultRoktCallBack,
       RoktCallback onShouldShowLoadingIndicator = _defaultRoktCallBack,
@@ -104,6 +106,7 @@ class RoktSdk {
     await RoktSdkController.instance.execute(
         viewName: viewName,
         attributes: attributes,
+        config: roktConfig,
         callback: _defaultRoktCallBackInternal);
   }
 
@@ -113,4 +116,32 @@ class RoktSdk {
   static Future<void> setLoggingEnabled({required bool enable}) async {
     await RoktSdkController.instance.setLoggingEnabled(enable: enable);
   }
+}
+
+/// Configuration settings for the Rokt SDK <br>
+///
+/// - Attributes
+///   - [ColorMode]? colorMode: preferred device color mode configuration
+@immutable
+class RoktConfig {
+  /// The device color mode your application is using
+  final ColorMode colorMode;
+
+  /// Constructor
+  ///
+  /// - Parameters
+  ///   - [ColorMode]? colorMode: preferred device color mode configuration
+  const RoktConfig({this.colorMode = ColorMode.system});
+}
+
+/// Enum representing device color modes
+enum ColorMode {
+  /// Request Light mode configuration
+  light,
+
+  /// Request Dark mode configuration
+  dark,
+
+  /// Request System's current configuration
+  system
 }
