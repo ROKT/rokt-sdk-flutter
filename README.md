@@ -57,7 +57,7 @@ _ Run `flutter clean`
 - From inside ios folder, run `pod install` (or `arch -x86_64 pod install` for M1 Mac users)
 
 ## Initializing the Rokt SDK
-Initialize the Rokt SDK prior to using it. We recommend calling the initi method in the beginning of the applications.
+Initialize the Rokt SDK prior to using it. We recommend calling the initialize method in the beginning of the applications.
 ```
 // The following will reveal a demo integration. To view your integration:
 // 1) Replace the integration test tag ID (222) with your unique Rokt Tag ID
@@ -82,6 +82,7 @@ void executeRokt() {
                         "mobile": "(555)867-5309",
                         "postcode": "90210",
                         "country": "US"},
+                    config: RoktConfig(), // Optional RoktConfig object
                     onLoad: () {
                         // Optional callback for when the Rokt placement loads
                     },
@@ -120,6 +121,7 @@ void showWidget() {
                         "mobile": "(555)867-5309",
                         "postcode": "90210",
                         "country": "US"},
+                    config: RoktConfig(), // Optional RoktConfig object
                     onLoad: () {
                         // Optional callback for when the Rokt placement loads
                     },
@@ -211,3 +213,4 @@ Licensed under the Rokt Software Development Kit (SDK) Terms of Use
 Version 2.0 (the "License");
 
 You may not use this file except in compliance with the License.
+
