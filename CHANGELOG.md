@@ -1,3 +1,6 @@
+## 4.4.0
+* Supporting Application configurations.
+
 ## 4.1.0
 * Release 4.1.0 stable SDK
 
