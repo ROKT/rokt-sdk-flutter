@@ -54,7 +54,7 @@ _ Run `flutter clean`
 - Delete /ios/Pods
 - Delete /ios/Podfile.lock 
 - Run `flutter pub get`
-- From inside ios folder, run `pod install` (or `arch -x86_64 pod install` for M1 Mac users)
+- From inside ios folder, run `pod install`
 
 ## Initializing the Rokt SDK
 Initialize the Rokt SDK prior to using it. We recommend calling the initialize method in the beginning of the applications.
