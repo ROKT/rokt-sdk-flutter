@@ -1,3 +1,6 @@
+## 4.5.1
+* Bug fixes and enhancements.
+
 ## 4.1.0
 * Release 4.1.0 stable SDK
 
