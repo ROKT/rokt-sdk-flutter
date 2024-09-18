@@ -24,11 +24,19 @@ class _MyAppState extends State<MyApp> {
       TextEditingController(text: constants.defaultAttributes);
   Map<int, String> placeholders = {};
   final EventChannel roktEventChannel = EventChannel('RoktEvents');
+  double _height = 0;
 
   @override
   void initState() {
     super.initState();
+    _height = 0;
     receiveRoktEvent();
+  }
+
+  void _changeContainerHeight() {
+    setState(() {
+      _height = 300;
+    });
   }
 
   void receiveRoktEvent() {
@@ -49,81 +57,90 @@ class _MyAppState extends State<MyApp> {
               title: const Text('Plugin example app'),
             ),
             body: GestureDetector(
-              onTap: () {
-                FocusScope.of(context).requestFocus(FocusNode());
-              },
-              child: CustomScrollView(shrinkWrap: true, slivers: <Widget>[
-                SliverPadding(
-                  padding: const EdgeInsets.all(20.0),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate(
-                      <Widget>[
-                        Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                  child: TextField(
-                                      controller: tagIdController,
-                                      textAlign: TextAlign.center)),
-                              TextButton(
-                                child: const Text('Initial'),
-                                onPressed: () {
-                                  RoktSdk.setLoggingEnabled(enable: true);
-                                  RoktSdk.initialize(tagIdController.text,
-                                      appVersion: '1.0.0');
-                                },
-                              )
-                            ]),
-                        Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                  child: TextField(
-                                      controller: viewNameController,
-                                      textAlign: TextAlign.center)),
-                              TextButton(
-                                  child: const Text('Execute'),
-                                  onPressed: () {
-                                    RoktSdk.execute(
-                                        viewName: viewNameController.text,
-                                        attributes: getAttributes(),
-                                        onLoad: () {
-                                          debugPrint("rokt_sdk loaded");
-                                        },
-                                        onUnLoad: () {
-                                          debugPrint("rokt_sdk unloaded");
-                                        },
-                                        onShouldShowLoadingIndicator: () {
-                                          debugPrint(
-                                              "rokt_sdk onShouldShowLoadingIndicator");
-                                        },
-                                        onShouldHideLoadingIndicator: () {
-                                          debugPrint(
-                                              "rokt_sdk onShouldHideLoadingIndicator");
-                                        });
-                                  })
-                            ]),
-                        TextField(
-                            controller: attributesController,
-                            keyboardType: TextInputType.multiline,
-                            maxLines: null),
-                        const Text("Location 1"),
-                        const RoktWidget(
-                            key: const ValueKey('widget1'),
-                            placeholderName: "Location1"),
-                        const Text("Location 2"),
-                        RoktWidget(
-                            key: const ValueKey('widget2'),
-                            placeholderName: "Location2",
-                            onWidgetCreated: () {
-                              debugPrint("rokt_widget widget is created");
-                            }),
-                        const Text("The end")
-                      ],
-                    ),
-                  ),
-                ),
-              ]),
-            )));
+                onTap: () {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                },
+                child: Column(children: [
+                  Expanded(
+                    child: CustomScrollView(shrinkWrap: true, slivers: <Widget>[
+                      SliverPadding(
+                        padding: const EdgeInsets.all(20.0),
+                        sliver: SliverList(
+                          delegate: SliverChildListDelegate(
+                            <Widget>[
+                              Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                        child: TextField(
+                                            controller: tagIdController,
+                                            textAlign: TextAlign.center)),
+                                    TextButton(
+                                      child: const Text('Initial'),
+                                      onPressed: () {
+                                        RoktSdk.setLoggingEnabled(enable: true);
+                                        RoktSdk.initialize(tagIdController.text,
+                                            appVersion: '1.0.0');
+                                      },
+                                    )
+                                  ]),
+                              Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                        child: TextField(
+                                            controller: viewNameController,
+                                            textAlign: TextAlign.center)),
+                                    TextButton(
+                                        child: const Text('Execute'),
+                                        onPressed: () {
+                                          RoktSdk.execute(
+                                              viewName: viewNameController.text,
+                                              attributes: getAttributes(),
+                                              onLoad: () {
+                                                debugPrint("rokt_sdk loaded");
+                                                _changeContainerHeight();
+                                              },
+                                              onUnLoad: () {
+                                                debugPrint("rokt_sdk unloaded");
+                                              },
+                                              onShouldShowLoadingIndicator: () {
+                                                debugPrint(
+                                                    "rokt_sdk onShouldShowLoadingIndicator");
+                                              },
+                                              onShouldHideLoadingIndicator: () {
+                                                debugPrint(
+                                                    "rokt_sdk onShouldHideLoadingIndicator");
+                                              });
+                                        })
+                                  ]),
+                              TextField(
+                                  controller: attributesController,
+                                  keyboardType: TextInputType.multiline,
+                                  maxLines: null),
+                              const Text("Location 1"),
+                              Material(
+                                  child: RoktWidget(
+                                      key: const ValueKey('widget1'),
+                                      placeholderName: "RoktEmbedded1")),
+                              const Text("Location 2"),
+                              RoktWidget(
+                                key: const ValueKey('widget2'),
+                                placeholderName: "RoktEmbedded2"
+                              ),
+                              const Text("Container"),
+                              Container(
+                                height: 300.0,
+                                width: 300.0,
+                                color: Colors.red,
+                              ),
+                              const Text("The end")
+                            ],
+                          ),
+                        ),
+                      ),
+                    ]),
+                  )
+                ]))));
   }
 }

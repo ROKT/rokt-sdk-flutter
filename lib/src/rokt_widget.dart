@@ -71,10 +71,16 @@ class _RoktContainerState extends State<RoktWidget>
         duration: Duration(milliseconds: 200),
         child: Padding(
           padding: EdgeInsets.fromLTRB(_left, _top, _right, _bottom),
-          child: SizedBox(
-              height: _height,
-              child: _RoktStatelessWidget(
-                  platformViewCreatedCallback: _onPlatformViewCreated)),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: _height,
+                    child: _RoktStatelessWidget(
+                    platformViewCreatedCallback: _onPlatformViewCreated)
+                  ),
+                ]
+            ))
         ));
   }
 
