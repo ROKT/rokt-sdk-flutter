@@ -80,7 +80,8 @@ class _MyAppState extends State<MyApp> {
                                       onPressed: () {
                                         RoktSdk.setLoggingEnabled(enable: true);
                                         RoktSdk.initialize(tagIdController.text,
-                                            appVersion: '1.0.0');
+                                            appVersion: '1.0.0',
+                                            fontFilePathMap: {'LINESeedJPApp_OTF-Bold-AlphaNum': 'packages/test_font/fonts/LINESeedJP_A_OTF_Bd.otf'});
                                       },
                                     )
                                   ]),

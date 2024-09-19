@@ -180,7 +180,9 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
     private func registerPartnerFonts(_ typefaces: Dictionary<String, String>) {
         let bundle = Bundle.main
         for (_, fileName) in typefaces {
+            print("debug: trying for fileName", fileName)
             let fontKey = registrar.lookupKey(forAsset: fileName)
+            print("debug: found font key", fontKey)
             let path = bundle.path(forResource: fontKey, ofType: nil)
             var errorRef: Unmanaged<CFError>? = nil
             guard let filePath = path, path?.isEmpty == false else {
