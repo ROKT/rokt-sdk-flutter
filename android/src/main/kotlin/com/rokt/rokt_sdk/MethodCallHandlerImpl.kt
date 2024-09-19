@@ -14,6 +14,7 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 
@@ -80,6 +81,7 @@ class MethodCallHandlerImpl(
             .mapValues { flutterAssets.getAssetFilePathByName(it.value) }
         roktTagId?.let { tagId ->
             Rokt.setFrameworkType(Rokt.SdkFrameworkType.Flutter)
+            subscribeToEvents(Rokt.globalEvents())
             Rokt.init(
                 roktTagId = tagId,
                 appVersion = appVersion,
@@ -111,60 +113,7 @@ class MethodCallHandlerImpl(
         }
         val map: MutableMap<String, Any> = mutableMapOf()
         map["id"] = callBackId
-        (activity as? LifecycleOwner)?.lifecycleScope?.launch {
-            (activity as LifecycleOwner).lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                Rokt.events(viewName).collect { event ->
-                    val params: MutableMap<String, String> = mutableMapOf()
-                    params["viewName"] = viewName
-                    val placementId: String? = when (event) {
-                        is RoktEvent.HideLoadingIndicator -> {
-                            params["event"] = "HideLoadingIndicator"
-                            null
-                        }
-                        is RoktEvent.FirstPositiveEngagement -> {
-                            params["event"] = "FirstPositiveEngagement"
-                            event.id
-                        }
-                        is RoktEvent.OfferEngagement -> {
-                            params["event"] = "OfferEngagement"
-                            event.id
-                        }
-                        is RoktEvent.PlacementClosed -> {
-                            params["event"] = "PlacementClosed"
-                            event.id
-                        }
-                        is RoktEvent.PlacementCompleted -> {
-                            params["event"] = "PlacementCompleted"
-                            event.id
-                        }
-                        is RoktEvent.PlacementFailure -> {
-                            params["event"] = "PlacementFailure"
-                            event.id
-                        }
-                        is RoktEvent.PlacementInteractive -> {
-                            params["event"] = "PlacementInteractive"
-                            event.id
-                        }
-                        is RoktEvent.PlacementReady -> {
-                            params["event"] = "PlacementReady"
-                            event.id
-                        }
-                        is RoktEvent.PositiveEngagement -> {
-                            params["event"] = "PositiveEngagement"
-                            event.id
-                        }
-                        RoktEvent.ShowLoadingIndicator -> {
-                            params["event"] = "ShowLoadingIndicator"
-                            null
-                        }
-                    }
-                    if (placementId != null) {
-                        params["placementId"] = placementId
-                    }
-                    eventListeners.forEach { listener -> listener.success(params) }
-                }
-            }
-        }
+        subscribeToEvents(Rokt.events(viewName), viewName)
         Rokt.execute(
             viewName = viewName,
             attributes = attributes,
@@ -205,6 +154,78 @@ class MethodCallHandlerImpl(
         }
 
         return builder.build()
+    }
+
+    private fun subscribeToEvents(flow: Flow<RoktEvent>, viewName: String? = null) {
+        (activity as? LifecycleOwner)?.lifecycleScope?.launch {
+            (activity as LifecycleOwner).lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                flow.collect { event ->
+                    val params: MutableMap<String, String> = mutableMapOf()
+                    var eventName = ""
+                    val placementId: String? = when (event) {
+                        is RoktEvent.HideLoadingIndicator -> {
+                            eventName = "HideLoadingIndicator"
+                            null
+                        }
+
+                        is RoktEvent.FirstPositiveEngagement -> {
+                            eventName = "FirstPositiveEngagement"
+                            event.id
+                        }
+
+                        is RoktEvent.OfferEngagement -> {
+                            eventName = "OfferEngagement"
+                            event.id
+                        }
+
+                        is RoktEvent.PlacementClosed -> {
+                            eventName = "PlacementClosed"
+                            event.id
+                        }
+
+                        is RoktEvent.PlacementCompleted -> {
+                            eventName = "PlacementCompleted"
+                            event.id
+                        }
+
+                        is RoktEvent.PlacementFailure -> {
+                            eventName = "PlacementFailure"
+                            event.id
+                        }
+
+                        is RoktEvent.PlacementInteractive -> {
+                            eventName = "PlacementInteractive"
+                            event.id
+                        }
+
+                        is RoktEvent.PlacementReady -> {
+                            eventName = "PlacementReady"
+                            event.id
+                        }
+
+                        is RoktEvent.PositiveEngagement -> {
+                            eventName = "PositiveEngagement"
+                            event.id
+                        }
+
+                        RoktEvent.ShowLoadingIndicator -> {
+                            eventName = "ShowLoadingIndicator"
+                            null
+                        }
+
+                        is RoktEvent.InitComplete -> {
+                            eventName = "InitComplete"
+                            params["status"] = event.success.toString()
+                            null
+                        }
+                    }
+                    viewName?.let { params["viewName"] = viewName }
+                    placementId?.let { params["placementId"] = it }
+                    params["event"] = eventName
+                    eventListeners.forEach { listener -> listener.success(params) }
+                }
+            }
+        }
     }
 
     companion object {
