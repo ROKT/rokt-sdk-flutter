@@ -37,6 +37,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
+    namespace "com.rokt.rokt_sdk_example"
     compileSdkVersion 34
 
     compileOptions {
