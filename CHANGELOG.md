@@ -1,3 +1,6 @@
+## 4.6.0
+* Bug fixes and enhancements. InitComplete event
+
 ## 4.1.0
 * Release 4.1.0 stable SDK
 

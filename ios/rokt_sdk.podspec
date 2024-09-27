@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'rokt_sdk'
-  s.version          = '4.3.0-alpha.1'
+  s.version          = '4.6.0'
   s.summary          = 'Rokt Mobile SDK to integrate ROKT Api into Flutter application'
   s.description      = <<-DESC
 Rokt Mobile SDK to integrate ROKT Api into Flutter application.
@@ -15,7 +15,7 @@ Rokt Mobile SDK to integrate ROKT Api into Flutter application.
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'Rokt-Widget', '~> 4.5.2-alpha.3'
+  s.dependency 'Rokt-Widget', '~> 4.6.0'
   s.platform = :ios, '10.0'
   s.resource_bundles = { "Rokt-Widget" => ["PrivacyInfo.xcprivacy"] }
 
