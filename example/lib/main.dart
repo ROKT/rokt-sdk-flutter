@@ -80,8 +80,7 @@ class _MyAppState extends State<MyApp> {
                                       onPressed: () {
                                         RoktSdk.setLoggingEnabled(enable: true);
                                         RoktSdk.initialize(tagIdController.text,
-                                            appVersion: '1.0.0',
-                                            fontFilePathMap: {'LINESeedJPApp_OTF-Bold-AlphaNum': 'packages/test_font/fonts/LINESeedJP_A_OTF_Bd.otf'});
+                                            appVersion: '1.0.0');
                                       },
                                     )
                                   ]),
@@ -128,6 +127,12 @@ class _MyAppState extends State<MyApp> {
                               RoktWidget(
                                 key: const ValueKey('widget2'),
                                 placeholderName: "RoktEmbedded2"
+                              ),
+                              const Text("Container"),
+                              Container(
+                                height: 300.0,
+                                width: 300.0,
+                                color: Colors.red,
                               ),
                               const Text("Container"),
                               Container(

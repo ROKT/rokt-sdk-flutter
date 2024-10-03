@@ -77,6 +77,9 @@ import SwiftUI
         cleanupEmbeddedView()
 
         let vc = ResizableHostingController(rootView: AnyView(builder()))
+        if #available(iOS 16.4, *) {
+            vc.safeAreaRegions = []
+        }
         let swiftuiView = vc.view!
         self.roktEmbeddedSwiftUIView = swiftuiView
 
@@ -224,7 +227,7 @@ import SwiftUI
 class ResizableHostingController<Content>: UIHostingController<Content> where Content: View {
     override func viewDidLoad() {
         super.viewDidLoad()
-
+//        edgesForExtendedLayout = []
         view.backgroundColor = .clear
     }
 
@@ -232,6 +235,32 @@ class ResizableHostingController<Content>: UIHostingController<Content> where Co
         super.viewDidLayoutSubviews()
         self.view.invalidateIntrinsicContentSize()
     }
+    
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//        fixedSafeAreaInsets()
+//    }
+//    
+//    func fixedSafeAreaInsets() {
+//        guard let _class = view?.classForCoder else { return }
+//        
+//        let safeAreaInsets: @convention(block) (AnyObject) -> UIEdgeInsets = { (sself : AnyObject!) -> UIEdgeInsets in
+//            return .zero
+//        }
+//        
+//        guard let method = class_getInstanceMethod(_class.self, #selector(getter: UIView.safeAreaInsets)) else { return }
+//        class_replaceMethod(_class, #selector(getter: UIView.safeAreaInsets), imp_implementationWithBlock(safeAreaInsets), method_getTypeEncoding(method))
+//        
+//        let safeAreaLayoutGuide: @convention(block) (AnyObject) ->UILayoutGuide? = { (sself: AnyObject!) -> UILayoutGuide? in
+//            return nil
+//        }
+//        guard let method2 = class_getInstanceMethod(_class.self, #selector(getter: UIView.safeAreaLayoutGuide)) else { return }
+//        class_replaceMethod(_class, #selector(getter: UIView.safeAreaLayoutGuide), imp_implementationWithBlock(safeAreaLayoutGuide), method_getTypeEncoding(method2))
+//    }
+//    
+//    override var prefersStatusBarHidden: Bool {
+//        return true
+//    }
 }
 
 extension UIResponder {
