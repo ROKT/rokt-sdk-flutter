@@ -75,6 +75,16 @@ flutter {
     source '../..'
 }
 
+configurations.all {
+    resolutionStrategy {
+        eachDependency {
+            if (requested.group == "androidx.lifecycle" && requested.name == "lifecycle-livedata-core") {
+                useVersion("2.5.1")
+            }
+        }
+    }
+}
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.4.1'

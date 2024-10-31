@@ -45,6 +45,7 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
     func onCancel(withArguments arguments: Any?) -> FlutterError? {
         return nil
     }
+
     public func initialize(_ call: FlutterMethodCall,
                            result: @escaping FlutterResult) {
         
@@ -55,6 +56,9 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
                 registerPartnerFonts(typefaces)
             }
             Rokt.setFrameworkType(frameworkType: .Flutter)
+            Rokt.globalEvents { roktEvent in
+                self.handleEvents(roktEvent)
+            }
             Rokt.initWith(roktTagId: roktTagId)
             result(SUCCESS)
         } else {
@@ -87,47 +91,7 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
             var callbackMap = [String: Any] ()
             callbackMap["id"] = callBackId
             Rokt.events(viewName: viewName, onEvent: { roktEvent in
-                var eventParamMap = [String: String] ()
-                var eventName = ""
-                var placementId: String?
-                if let event = roktEvent as? RoktEvent.FirstPositiveEngagement {
-                    eventName = "FirstPositiveEngagement"
-                    placementId = event.placementId
-                } else if let event = roktEvent as? RoktEvent.ShowLoadingIndicator {
-                    eventName = "ShowLoadingIndicator"
-                } else if let event = roktEvent as? RoktEvent.HideLoadingIndicator {
-                    eventName = "HideLoadingIndicator"
-                } else if let event = roktEvent as? RoktEvent.OfferEngagement {
-                    eventName = "OfferEngagement"
-                    placementId = event.placementId
-                } else if let event = roktEvent as? RoktEvent.PositiveEngagement {
-                    eventName = "PositiveEngagement"
-                    placementId = event.placementId
-                } else if let event = roktEvent as? RoktEvent.PlacementReady {
-                    eventName = "PlacementReady"
-                    placementId = event.placementId
-                } else if let event = roktEvent as? RoktEvent.PlacementInteractive {
-                    eventName = "PlacementInteractive"
-                    placementId = event.placementId
-                } else if let event = roktEvent as? RoktEvent.PlacementFailure {
-                    eventName = "PlacementFailure"
-                    placementId = event.placementId
-                } else if let event = roktEvent as? RoktEvent.PlacementCompleted {
-                    eventName = "PlacementCompleted"
-                    placementId = event.placementId
-                } else if let event = roktEvent as? RoktEvent.PlacementClosed {
-                    eventName = "PlacementClosed"
-                    placementId = event.placementId
-                }
-                
-                eventParamMap["event"] = eventName
-                eventParamMap["viewName"] = viewName
-                if (placementId != nil) {
-                    eventParamMap["placementId"] = placementId
-                }
-                for listener in self.eventListeners {
-                    listener(eventParamMap)
-                }
+                self.handleEvents(roktEvent, viewName: viewName)
             })
             Rokt.execute(viewName: viewName, attributes: attributes, placements: placements, config: config, onLoad: {
                 // Optional callback for when the Rokt placement loads
@@ -197,6 +161,55 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
             builder.colorMode($0.toColorMode())
         }
         return builder.build()
+    }
+
+    private func handleEvents(_ roktEvent: RoktEvent, viewName: String? = nil) {
+        var eventParamMap = [String: String] ()
+        var eventName = ""
+        var placementId: String?
+        if let event = roktEvent as? RoktEvent.FirstPositiveEngagement {
+            eventName = "FirstPositiveEngagement"
+            placementId = event.placementId
+        } else if let event = roktEvent as? RoktEvent.ShowLoadingIndicator {
+            eventName = "ShowLoadingIndicator"
+        } else if let event = roktEvent as? RoktEvent.HideLoadingIndicator {
+            eventName = "HideLoadingIndicator"
+        } else if let event = roktEvent as? RoktEvent.OfferEngagement {
+            eventName = "OfferEngagement"
+            placementId = event.placementId
+        } else if let event = roktEvent as? RoktEvent.PositiveEngagement {
+            eventName = "PositiveEngagement"
+            placementId = event.placementId
+        } else if let event = roktEvent as? RoktEvent.PlacementReady {
+            eventName = "PlacementReady"
+            placementId = event.placementId
+        } else if let event = roktEvent as? RoktEvent.PlacementInteractive {
+            eventName = "PlacementInteractive"
+            placementId = event.placementId
+        } else if let event = roktEvent as? RoktEvent.PlacementFailure {
+            eventName = "PlacementFailure"
+            placementId = event.placementId
+        } else if let event = roktEvent as? RoktEvent.PlacementCompleted {
+            eventName = "PlacementCompleted"
+            placementId = event.placementId
+        } else if let event = roktEvent as? RoktEvent.PlacementClosed {
+            eventName = "PlacementClosed"
+            placementId = event.placementId
+        } else if let event = roktEvent as? RoktEvent.InitComplete {
+            eventName = "InitComplete"
+            eventParamMap["status"] = String(event.success)
+        }
+
+        eventParamMap["event"] = eventName
+        if (viewName != nil) {
+            eventParamMap["viewName"] = viewName
+        }
+        if (placementId != nil) {
+            eventParamMap["placementId"] = placementId
+        }
+        for listener in self.eventListeners {
+            listener(eventParamMap)
+        }
     }
 
 }
