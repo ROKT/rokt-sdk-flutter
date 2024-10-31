@@ -51,6 +51,6 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "com.rokt:roktsdk:4.6.0"
+    implementation "com.rokt:roktsdk:4.6.1"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.1"
 }

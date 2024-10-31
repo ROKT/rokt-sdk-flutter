@@ -1,3 +1,6 @@
+## 4.6.1
+* Bug fixes on embedded.
+
 ## 4.1.0
 * Release 4.1.0 stable SDK
 
