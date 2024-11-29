@@ -21,13 +21,13 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
     fileprivate let ARGS = "args"
     fileprivate let CALL_LISTENER = "callListener"
     fileprivate let EVENT_CHANNEL = "RoktEvents"
-    
+
     let channel: FlutterMethodChannel
     let factory: RoktWidgetFactory
     let registrar: FlutterPluginRegistrar
     let roktEventChannel: FlutterEventChannel
     var eventListeners = [FlutterEventSink]()
-    
+
     init(channel: FlutterMethodChannel, factory: RoktWidgetFactory, registrar: FlutterPluginRegistrar) {
         self.channel = channel
         self.factory = factory
@@ -36,19 +36,19 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
         super.init()
         self.roktEventChannel.setStreamHandler(self)
     }
-   
+
     func onListen(withArguments arguments: Any?, eventSink: @escaping FlutterEventSink) -> FlutterError? {
         eventListeners.append(eventSink)
         return nil
     }
-            
+
     func onCancel(withArguments arguments: Any?) -> FlutterError? {
         return nil
     }
 
     public func initialize(_ call: FlutterMethodCall,
                            result: @escaping FlutterResult) {
-        
+
         if let args = call.arguments as? Dictionary<String, Any>,
            let roktTagId = args["roktTagId"] as? String {
             let fontFilePathMap = args["fontFilePathMap"] as? Dictionary<String, String>
@@ -65,14 +65,14 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
             result(FAIL)
         }
     }
-    
+
     public func execute(_ call: FlutterMethodCall,
                         result: @escaping FlutterResult) {
-        
+
         if let args = call.arguments as? Dictionary<String, Any>,
            let viewName = args["viewName"] as? String,
            let attributes = args["attributes"] as? [String: String] {
-            
+
             var placements = [String: RoktEmbeddedView]()
             if let placeholders = args["placeholders"] as? [Int: String] {
                 for (placeholderId, placeholderName) in placeholders {
@@ -84,9 +84,9 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
                 }
             }
 
-            let configMap = args["config"] as? [String: String] ?? [String: String] ()
+            let configMap = args["config"] as? [String: Any] ?? [String: Any] ()
             let config = configMap.isEmpty ? nil : buildRoktConfig(configMap)
-            
+
             let callBackId = args["callbackId"] as? Int ?? 0
             var callbackMap = [String: Any] ()
             callbackMap["id"] = callBackId
@@ -122,16 +122,16 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
                     }
                 }
             })
-            
+
             result(SUCCESS)
         } else {
             result(FAIL)
         }
     }
-    
+
     public func logging(_ call: FlutterMethodCall,
                            result: @escaping FlutterResult) {
-        
+
         if let args = call.arguments as? Dictionary<String, Any>{
             let enable = args["enable"] as? Bool ?? false
             Rokt.setLoggingEnabled(enable: enable)
@@ -140,7 +140,7 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
             result(FAIL)
         }
     }
-    
+
     private func registerPartnerFonts(_ typefaces: Dictionary<String, String>) {
         let bundle = Bundle.main
         for (_, fileName) in typefaces {
@@ -155,11 +155,19 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
         }
     }
 
-    private func buildRoktConfig(_ config: Dictionary<String, String>) -> RoktConfig {
+    private func buildRoktConfig(_ config: Dictionary<String, Any>) -> RoktConfig {
         let builder = RoktConfig.Builder()
-        config["colorMode"].map {
-            builder.colorMode($0.toColorMode())
+
+        if let colorMode = config["colorMode"] as? String {
+            builder.colorMode(colorMode.toColorMode())
         }
+
+        if let cacheConfig = config["cacheConfig"] as? [String: Any] {
+            let cacheDuration = cacheConfig["cacheDurationInSeconds"] as? Double ?? RoktConfig.CacheConfig.maxCacheDuration
+            let cachedAttributes = cacheConfig["cacheAttributes"] as? [String: String]
+            builder.cacheConfig(RoktConfig.CacheConfig(cacheDuration: cacheDuration, cacheAttributes: cachedAttributes))
+        }
+
         return builder.build()
     }
 

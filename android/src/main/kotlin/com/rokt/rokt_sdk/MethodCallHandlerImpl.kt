@@ -5,6 +5,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.rokt.roktsdk.CacheConfig
 import com.rokt.roktsdk.Rokt
 import com.rokt.roktsdk.RoktConfig
 import com.rokt.roktsdk.RoktEvent
@@ -101,7 +102,7 @@ class MethodCallHandlerImpl(
         val attributes = call.argument<HashMap<String, String>>("attributes").orEmpty()
         val callBackId = call.argument<Int>("callbackId") ?: 0
         val placeHolders: MutableMap<String, WeakReference<Widget>> = mutableMapOf()
-        val configMap = call.argument<HashMap<String, String>>("config")
+        val configMap = call.argument<HashMap<String, Any>>("config")
         val config = configMap?.let { buildRoktConfig(it) }
         call.argument<HashMap<Int, String>>("placeholders")?.entries?.forEach {
             if (widgetFactory.nativeViews[it.key] != null) {
@@ -147,10 +148,15 @@ class MethodCallHandlerImpl(
         }
     }
 
-    private fun buildRoktConfig(configMap: Map<String, String>): RoktConfig {
+    private fun buildRoktConfig(configMap: Map<String, Any>): RoktConfig {
         val builder = RoktConfig.Builder()
-        configMap["colorMode"]?.let {
+        (configMap["colorMode"] as? String)?.let {
             builder.colorMode(it.toColorMode())
+        }
+        (configMap["cacheConfig"] as? Map<String, Any>)?.let { cacheConfig ->
+            val cacheDurationInSeconds = cacheConfig["cacheDurationInSeconds"] as? Int ?: 0
+            val cacheAttributes = cacheConfig["cacheAttributes"] as? Map<String, String> ?: null
+            builder.cacheConfig(CacheConfig(cacheDurationInSeconds.toLong(), cacheAttributes))
         }
 
         return builder.build()
