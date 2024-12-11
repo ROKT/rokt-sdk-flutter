@@ -15,6 +15,7 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
@@ -29,6 +30,7 @@ class MethodCallHandlerImpl(
     private lateinit var activity: Activity
     private val roktCallbacks: MutableSet<Rokt.RoktCallback> = mutableSetOf()
     private val eventListeners = mutableSetOf<EventChannel.EventSink>()
+    private val eventSubscriptions = mutableMapOf<String, Job?>()
 
     init {
         setupEventChannel()
@@ -82,6 +84,7 @@ class MethodCallHandlerImpl(
             .mapValues { flutterAssets.getAssetFilePathByName(it.value) }
         roktTagId?.let { tagId ->
             Rokt.setFrameworkType(Rokt.SdkFrameworkType.Flutter)
+            eventSubscriptions.clear()
             subscribeToEvents(Rokt.globalEvents())
             Rokt.init(
                 roktTagId = tagId,
@@ -163,7 +166,11 @@ class MethodCallHandlerImpl(
     }
 
     private fun subscribeToEvents(flow: Flow<RoktEvent>, viewName: String? = null) {
-        (activity as? LifecycleOwner)?.lifecycleScope?.launch {
+        val activeJob = eventSubscriptions[viewName.orEmpty()]?.takeIf { it.isActive }
+        if (activeJob != null) {
+            return
+        }
+        val job = (activity as? LifecycleOwner)?.lifecycleScope?.launch {
             (activity as LifecycleOwner).lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 flow.collect { event ->
                     val params: MutableMap<String, String> = mutableMapOf()
@@ -232,6 +239,7 @@ class MethodCallHandlerImpl(
                 }
             }
         }
+        eventSubscriptions[viewName.orEmpty()] = job
     }
 
     companion object {
