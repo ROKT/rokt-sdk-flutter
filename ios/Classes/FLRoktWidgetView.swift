@@ -19,6 +19,7 @@ class FLRoktWidgetView: NSObject, FlutterPlatformView {
     let roktEmbeddedView: RoktEmbeddedView
     let id: Int64
     let channel: FlutterMethodChannel
+    var constraints: [NSLayoutConstraint]?
     init(
         frame: CGRect,
         viewIdentifier viewId: Int64,
@@ -30,21 +31,28 @@ class FLRoktWidgetView: NSObject, FlutterPlatformView {
         roktEmbeddedView = RoktEmbeddedView()
         super.init()
     }
-    
+
     func view() -> UIView {
         return roktEmbeddedView
+    }
 
+    private func setupConstraintsIfNeeded() {
+        roktEmbeddedView.translatesAutoresizingMaskIntoConstraints = false
+        guard constraints == nil, let superview = roktEmbeddedView.superview else { return }
+        constraints = [
+            roktEmbeddedView.topAnchor.constraint(equalTo: superview.topAnchor),
+            roktEmbeddedView.trailingAnchor.constraint(equalTo: superview.trailingAnchor),
+            roktEmbeddedView.bottomAnchor.constraint(equalTo: superview.bottomAnchor),
+            roktEmbeddedView.leadingAnchor.constraint(equalTo: superview.leadingAnchor)
+        ]
+        constraints?.forEach{ $0.isActive = true }
+        superview.setNeedsLayout()
     }
-    
-    private func resizeFrame(_ newHeight: Double = 0) {
-        roktEmbeddedView.frame = CGRect(x: 0, y: 0, width: roktEmbeddedView.frame.width, height: newHeight)
-    }
-    
+
     func sendUpdatedHeight(height: Double){
         var callbackMap = [String: Any] ()
-        resizeFrame(height)
+        setupConstraintsIfNeeded()
         callbackMap["size"] = height
         channel.invokeMethod("viewHeightListener", arguments: callbackMap)
     }
 }
-
