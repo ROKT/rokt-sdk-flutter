@@ -231,6 +231,12 @@ class MethodCallHandlerImpl(
                             params["status"] = event.success.toString()
                             null
                         }
+
+                        is RoktEvent.OpenUrl -> {
+                            eventName = "OpenUrl"
+                            params["url"] = event.url
+                            event.id
+                        }
                     }
                     viewName?.let { params["viewName"] = viewName }
                     placementId?.let { params["placementId"] = it }

@@ -21,6 +21,13 @@ rootProject.allprojects {
         maven {
             url  "https://apps.rokt.com/msdk"
         }
+        maven {
+            name = "Central Portal Snapshots"
+            url = uri("https://central.sonatype.com/repository/maven-snapshots/")
+            mavenContent {
+                snapshotsOnly()
+            }
+        }
     }
 }
 
@@ -55,6 +62,6 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "com.rokt:roktsdk:4.7.0-alpha.3"
+    implementation "com.rokt:roktsdk:4.9.0-alpha.1"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.1"
 }
