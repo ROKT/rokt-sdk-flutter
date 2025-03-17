@@ -206,6 +206,10 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
         } else if let event = roktEvent as? RoktEvent.InitComplete {
             eventName = "InitComplete"
             eventParamMap["status"] = String(event.success)
+        } else if let event = roktEvent as? RoktEvent.OpenUrl {
+            eventName = "OpenUrl"
+            eventParamMap["url"] = event.url
+            placementId = event.placementId
         }
 
         eventParamMap["event"] = eventName
