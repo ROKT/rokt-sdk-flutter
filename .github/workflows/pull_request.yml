@@ -135,15 +135,6 @@ jobs:
         run: |
           flutter config --android-sdk ${ANDROID_HOME}
 
-      - name: Create and start Android Emulator
-        run: |
-          echo "no" | ${ANDROID_HOME}/tools/bin/avdmanager create avd --force --name "flutter" --package "system-images;android-30;google_apis;x86_64"
-          emulator -avd "flutter" \
-            -gpu swiftshader_indirect -noaudio -no-boot-anim \
-            -netdelay none -accel on -no-window -no-snapshot \
-            -memory 4096 -partition-size 4096 &
-          adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
-
       - name: Run Flutter Integration Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
