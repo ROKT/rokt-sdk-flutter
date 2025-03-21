@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:flutter/material.dart';
-import '../lib/main.dart' as app;
+import 'package:example/main.dart' as app;
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -37,7 +37,7 @@ void main() {
       expect(tester.getSize(roktWidget1).height, greaterThan(2.0));
 
       final scrollView = find.byType(CustomScrollView);
-      await tester.dragUntilVisible(roktWidget2, scrollView, Offset(0, -500));
+      await tester.dragUntilVisible(roktWidget2, scrollView, const Offset(0, -500));
       expect(roktWidget2, findsOneWidget);
       expect(tester.getSize(roktWidget2).height, greaterThan(2.0));
     });

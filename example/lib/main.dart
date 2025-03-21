@@ -109,7 +109,7 @@ class _MyAppState extends State<MyApp> {
                             maxLines: null),
                         const Text("Location 1"),
                         const RoktWidget(
-                            key: const ValueKey('widget1'),
+                            key: ValueKey('widget1'),
                             placeholderName: "Location1"),
                         const Text("Location 2"),
                         RoktWidget(

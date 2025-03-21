@@ -5,7 +5,7 @@ on:
 
 env:
   FLUTTER_VERSION: 3.10.0
-  RUBY_VERSION: 2.7.6
+  RUBY_VERSION: 2.5.6
 
 jobs:
   analyze:
@@ -125,7 +125,7 @@ jobs:
 
       - name: Create and start Android Emulator
         run: |
-          echo "no" | avdmanager create avd --force --name "flutter" --package "system-images;android-30;google_apis;x86_64"
+          echo "no" | ${ANDROID_HOME}/tools/bin/avdmanager create avd --force --name "flutter" --package "system-images;android-30;google_apis;x86_64"
           emulator -avd "flutter" \
             -gpu swiftshader_indirect -noaudio -no-boot-anim \
             -netdelay none -accel on -no-window -no-snapshot \
