@@ -5,8 +5,7 @@ on:
 
 env:
   FLUTTER_VERSION: 3.10.0
-  ANDROID_SDK_ROOT: /Library/Android/sdk
-  ANDROID_SDKMANAGER: /Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager
+  RUBY_VERSION: 2.7.6
 
 jobs:
   analyze:
@@ -43,8 +42,9 @@ jobs:
       - name: Setup ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.6
+          ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
+          rubygems: latest
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -64,15 +64,17 @@ jobs:
           flutter pub get
           flutter precache --ios
 
+      - uses: futureware-tech/simulator-action@v4
+        with:
+          model: 'iPhone 16'
+
       - name: Install iOS Dependencies
         working-directory: example
         run: |
-          bundle check || bundle install --path vendor/bundle
-          rbenv local 2.7.6
-          xcrun simctl boot "iPhone 15" || true
+          bundle config set --local path 'vendor/bundle'
+          bundle install
           cd ios
-          rbenv local 2.7.6
-          bundle check || bundle install --path vendor/bundle
+          bundle install
           bundle exec pod install --verbose --repo-update
 
       - name: Run Flutter Tests (iOS)
@@ -90,8 +92,9 @@ jobs:
       - name: Setup ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.6
+          ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
+          rubygems: latest
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -118,16 +121,16 @@ jobs:
 
       - name: Configure Android SDK
         run: |
-          xcrun simctl shutdown "iPhone 15" || true
-          flutter config --android-sdk ${ANDROID_SDK_ROOT}
+          flutter config --android-sdk ${ANDROID_HOME}
 
-      - name: Start Android Emulator
+      - name: Create and start Android Emulator
         run: |
+          echo "no" | avdmanager create avd --force --name "flutter" --package "system-images;android-30;google_apis;x86_64"
           emulator -avd "flutter" \
             -gpu swiftshader_indirect -noaudio -no-boot-anim \
             -netdelay none -accel on -no-window -no-snapshot \
             -memory 4096 -partition-size 4096 &
-          sleep 60
+          adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
 
       - name: Build and Test Android
         working-directory: example
