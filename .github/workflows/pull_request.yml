@@ -78,7 +78,7 @@ jobs:
           bundle exec pod install --verbose --repo-update
 
       - name: Run Flutter Tests (iOS)
-        working-directory: .
+        working-directory: example
         run: |
           bundle exec flutter test
           bundle exec flutter test integration_test/app_test.dart
@@ -119,6 +119,18 @@ jobs:
         with:
           xcode-version: "16.2"
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+  
+      - name: AVD Cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-30
+
       - name: Configure Android SDK
         run: |
           flutter config --android-sdk ${ANDROID_HOME}
@@ -132,8 +144,17 @@ jobs:
             -memory 4096 -partition-size 4096 &
           adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
 
-      - name: Build and Test Android
-        working-directory: example
-        run: |
-          flutter build apk --debug
-          flutter test integration_test/app_test.dart
+      - name: Run Flutter Integration Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          arch: x86_64
+          profile: pixel_6
+          target: google_apis
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: |
+            cd example
+            flutter build apk --debug
+            flutter test integration_test/app_test.dart
