@@ -1,0 +1,106 @@
+name: Flutter Test
+
+on:
+  push:
+
+jobs:
+  build-test-ios:
+    name: Build & Test iOS
+    runs-on: macos-latest
+    env:
+      FLUTTER_VERSION: 3.10.0
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.6
+          bundler-cache: true
+
+      - name: Setup FVM & Flutter
+        run: |
+          brew tap leoafarias/fvm || true
+          brew install fvm || true
+          fvm install ${FLUTTER_VERSION}
+          yes | fvm use ${FLUTTER_VERSION}
+
+      - name: Install iOS Dependencies
+        working-directory: example
+        run: |
+          # Ensure Ruby gems are installed
+          bundle check || bundle install --path vendor/bundle
+          rbenv local 2.7.6
+          # Boot iOS simulator (ignore error if already booted)
+          xcrun simctl boot "iPhone 15" || true
+          # Get Flutter dependencies and cache iOS artifacts
+          fvm flutter pub get
+          fvm flutter precache --ios
+          # Install CocoaPods dependencies
+          cd ios
+          rbenv local 2.7.6
+          bundle check || bundle install --path vendor/bundle
+          bundle exec pod install --verbose --repo-update
+          cd ..
+
+      - name: Run Flutter Tests (iOS)
+        working-directory: .
+        run: |
+          # Run unit tests and integration test
+          bundle exec fvm flutter test
+          bundle exec fvm flutter test integration_test/app_test.dart
+
+  build-test-android:
+    name: Build & Test Android
+    runs-on: macos-latest
+    env:
+      FLUTTER_VERSION: 3.10.0
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.6
+          bundler-cache: true
+
+      - name: Setup FVM & Flutter
+        run: |
+          brew tap leoafarias/fvm || true
+          brew install fvm || true
+          fvm install ${FLUTTER_VERSION}
+          yes | fvm use ${FLUTTER_VERSION}
+
+      - name: Setup JDK
+        uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12 #v4.7.0
+        with:
+          java-version: "17"
+          distribution: "microsoft"
+
+      - name: Configure Android SDK
+        run: |
+          # Shut down any running iOS simulators
+          xcrun simctl shutdown "iPhone 15" || true
+          # Configure Flutter with the Android SDK location
+          fvm flutter config --android-sdk ${ANDROID_SDK_ROOT}
+          # Install required Android system image and platform tools
+          yes | ${ANDROID_SDKMANAGER} 'system-images;android-29;google_apis;arm64-v8a' 'platforms;android-29'
+          yes | ${ANDROID_SDKMANAGER} --licenses
+          # Create an AVD named "flutter"
+          echo no | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/avdmanager create avd --force -n flutter -k 'system-images;android-29;google_apis;arm64-v8a'
+
+      - name: Start Android Emulator
+        run: |
+          ${ANDROID_SDK_ROOT}/emulator/emulator -avd "flutter" \
+            -gpu swiftshader_indirect -noaudio -no-boot-anim \
+            -netdelay none -accel on -no-window -no-snapshot \
+            -memory 4096 -partition-size 4096 &
+          # Wait for the emulator to fully start
+          sleep 60
+
+      - name: Build and Test Android
+        working-directory: example
+        run: |
+          fvm flutter pub get
+          fvm flutter build apk --debug
+          fvm flutter test integration_test/app_test.dart
