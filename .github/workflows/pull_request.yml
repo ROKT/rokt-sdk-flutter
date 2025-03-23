@@ -140,6 +140,7 @@ jobs:
         with:
           api-level: 30
           arch: x86_64
+          avd-name: flutter
           profile: pixel_6
           target: google_apis
           force-avd-creation: false
