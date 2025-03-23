@@ -138,7 +138,7 @@ jobs:
       - name: Run Flutter Integration Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
+          api-level: 31
           arch: x86_64
           avd-name: flutter
           profile: pixel_6
