@@ -116,6 +116,4 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
-            cd example
-            flutter build apk --debug
-            flutter test -d `flutter devices | grep android | tr ' ' '\n' | grep emulator-` integration_test/app_test.dart
+            cd example && flutter build apk --debug && flutter test -d `flutter devices | grep android | tr ' ' '\n' | grep emulator-` integration_test/app_test.dart
