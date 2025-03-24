@@ -50,7 +50,7 @@ class _MyAppState extends State<MyApp> {
             ),
             body: GestureDetector(
               onTap: () {
-                FocusScope.of(context).requestFocus(const FocusNode());
+                FocusScope.of(context).requestFocus(FocusNode());
               },
               child: CustomScrollView(shrinkWrap: true, slivers: <Widget>[
                 SliverPadding(
