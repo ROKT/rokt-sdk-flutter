@@ -60,16 +60,9 @@ jobs:
 
   build-test-android:
     name: Build & Test Android
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ env.RUBY_VERSION }}
-          bundler-cache: true
-          rubygems: latest
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -89,11 +82,6 @@ jobs:
           java-version: "17"
           distribution: "microsoft"
 
-      - name: Set up Xcode 16
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: "16.2"
-
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
   
@@ -110,6 +98,12 @@ jobs:
         run: |
           flutter config --android-sdk ${ANDROID_HOME}
 
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
       - name: Run Flutter Integration Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -124,4 +118,4 @@ jobs:
           script: |
             cd example
             flutter build apk --debug
-            flutter test integration_test/app_test.dart
+            flutter test -d `flutter devices | grep android | tr ' ' '\n' | grep emulator-` integration_test/app_test.dart
