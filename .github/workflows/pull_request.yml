@@ -40,6 +40,7 @@ jobs:
           flutter precache --ios
 
       - uses: futureware-tech/simulator-action@v4
+        id: simulator
         with:
           model: 'iPhone 16'
 
@@ -54,9 +55,13 @@ jobs:
 
       - name: Run Flutter Tests (iOS)
         working-directory: example
-        run: |
-          bundle exec flutter test
-          bundle exec flutter test integration_test/app_test.dart
+        run: bundle exec flutter test
+
+      - name: Run Flutter Integration Tests (iOS)
+        working-directory: example
+        env:
+          SIMULATOR: ${{ steps.simulator.outputs.udid }}
+        run: bundle exec flutter test integration_test/app_test.dart -d "$SIMULATOR" --dart-define=CI=true
 
   build-test-android:
     name: Build & Test Android
