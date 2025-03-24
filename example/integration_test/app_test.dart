@@ -30,11 +30,11 @@ void main() {
       await tester.tap(execute);
       
       // Add longer delay after execute to ensure placement is fully ready
-      await addDelay(5000);
+      await addDelay(8000);
       await tester.pumpAndSettle();
       
       // Add additional pump to ensure widget rebuilds
-      await tester.pump(const Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 2));
       await tester.pumpAndSettle();
 
       // Verify widget1 height

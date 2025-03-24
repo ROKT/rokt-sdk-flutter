@@ -2,6 +2,11 @@ name: Flutter Pull Request
 
 on:
   push:
+    # branches:
+    #   - main
+    #   - release*
+    #   - workstation*
+  pull_request:
 
 env:
   FLUTTER_VERSION: 3.10.0
