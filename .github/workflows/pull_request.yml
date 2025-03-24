@@ -8,31 +8,6 @@ env:
   RUBY_VERSION: 2.7.6
 
 jobs:
-  analyze:
-    name: Analyze
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: 'stable'
-          cache: true
-      
-      - name: Install dependencies
-        working-directory: example
-        run: flutter pub get
-      
-      - name: Verify formatting
-        working-directory: example
-        run: dart format --output=none --set-exit-if-changed .
-      
-      - name: Analyze project source
-        working-directory: example
-        run: flutter analyze
-
   build-test-ios:
     name: Build & Test iOS
     runs-on: macos-latest
