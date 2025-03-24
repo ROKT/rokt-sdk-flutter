@@ -8,6 +8,16 @@ env:
   RUBY_VERSION: 2.7.6
 
 jobs:
+  trunk-check:
+    name: Trunk code check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Trunk Check
+        uses: trunk-io/trunk-action@v1
+        # TODO: Add "all" command to trunk-action in seperate PRs
+
   build-test-ios:
     name: Build & Test iOS
     runs-on: macos-latest
@@ -25,7 +35,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: 'stable'
+          channel: "stable"
           cache: true
 
       - name: Set up Xcode 16
@@ -51,7 +61,7 @@ jobs:
       - uses: futureware-tech/simulator-action@v4
         id: simulator
         with:
-          model: 'iPhone 16'
+          model: "iPhone 16"
 
       - name: Run Flutter Tests (iOS)
         working-directory: example
@@ -73,7 +83,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: 'stable'
+          channel: "stable"
           cache: true
 
       - name: Get all packages Flutter
@@ -89,7 +99,7 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-  
+
       - name: AVD Cache
         uses: actions/cache@v4
         id: avd-cache
