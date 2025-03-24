@@ -39,11 +39,6 @@ jobs:
           flutter pub get
           flutter precache --ios
 
-      - uses: futureware-tech/simulator-action@v4
-        id: simulator
-        with:
-          model: 'iPhone 16'
-
       - name: Install iOS Dependencies
         working-directory: example
         run: |
@@ -52,6 +47,11 @@ jobs:
           cd ios
           bundle install
           bundle exec pod install --verbose --repo-update
+
+      - uses: futureware-tech/simulator-action@v4
+        id: simulator
+        with:
+          model: 'iPhone 16'
 
       - name: Run Flutter Tests (iOS)
         working-directory: example
