@@ -13,13 +13,17 @@ jobs:
         with:
           app-id: ${{ secrets.SDK_RELEASE_GITHUB_APP_ID }}
           private-key: ${{ secrets.SDK_RELEASE_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: |
+            sdk-android-source
 
-      - name: Checkout ROKT/sdk-android-source
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           repository: ROKT/sdk-android-source
           token: ${{ steps.generate-token.outputs.token }}
           path: sdk-android-source
+          ref: master
+          persist-credentials: false
 
       - name: Cat VERSION
         run: cat sdk-android-source/README.md
