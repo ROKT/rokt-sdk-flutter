@@ -23,9 +23,8 @@ import java.lang.ref.WeakReference
 class MethodCallHandlerImpl(
     private val messenger: BinaryMessenger,
     private val flutterAssets: FlutterAssets,
-    private val widgetFactory: RoktWidgetFactory
-) :
-    MethodChannel.MethodCallHandler {
+    private val widgetFactory: RoktWidgetFactory,
+) : MethodChannel.MethodCallHandler {
     private var channel: MethodChannel? = null
     private lateinit var activity: Activity
     private val roktCallbacks: MutableSet<Rokt.RoktCallback> = mutableSetOf()
@@ -36,7 +35,10 @@ class MethodCallHandlerImpl(
         setupEventChannel()
     }
 
-    override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+    override fun onMethodCall(
+        call: MethodCall,
+        result: MethodChannel.Result,
+    ) {
         when (call.method) {
             INIT_METHOD -> {
                 init(call, result)
@@ -71,17 +73,26 @@ class MethodCallHandlerImpl(
         }
     }
 
-    private fun logging(call: MethodCall, result: MethodChannel.Result) {
+    private fun logging(
+        call: MethodCall,
+        result: MethodChannel.Result,
+    ) {
         val enable: Boolean = call.argument<Boolean?>("enable") ?: false
         Rokt.setLoggingEnabled(enable)
         result.success("enable")
     }
 
-    private fun init(call: MethodCall, result: MethodChannel.Result) {
+    private fun init(
+        call: MethodCall,
+        result: MethodChannel.Result,
+    ) {
         val roktTagId = call.argument<String>("roktTagId")
         val appVersion = call.argument<String>("appVersion").orEmpty()
-        val fontFileMap = call.argument<HashMap<String, String>>("fontFilePathMap").orEmpty()
-            .mapValues { flutterAssets.getAssetFilePathByName(it.value) }
+        val fontFileMap =
+            call
+                .argument<HashMap<String, String>>("fontFilePathMap")
+                .orEmpty()
+                .mapValues { flutterAssets.getAssetFilePathByName(it.value) }
         roktTagId?.let { tagId ->
             Rokt.setFrameworkType(Rokt.SdkFrameworkType.Flutter)
             eventSubscriptions.clear()
@@ -96,11 +107,14 @@ class MethodCallHandlerImpl(
         } ?: result.error(
             "No_TAG_ID",
             "you must provide tag id.",
-            null
+            null,
         )
     }
 
-    private fun execute(call: MethodCall, result: MethodChannel.Result) {
+    private fun execute(
+        call: MethodCall,
+        result: MethodChannel.Result,
+    ) {
         val viewName = call.argument<String>("viewName").orEmpty()
         val attributes = call.argument<HashMap<String, String>>("attributes").orEmpty()
         val callBackId = call.argument<Int>("callbackId") ?: 0
@@ -112,9 +126,10 @@ class MethodCallHandlerImpl(
                 placeHolders[it.value] = WeakReference(widgetFactory.nativeViews[it.key])
             }
         }
-        val roktCallback = RoktCallbackImpl(channel, callBackId).also { callback ->
-            roktCallbacks.add(callback)
-        }
+        val roktCallback =
+            RoktCallbackImpl(channel, callBackId).also { callback ->
+                roktCallbacks.add(callback)
+            }
         val map: MutableMap<String, Any> = mutableMapOf()
         map["id"] = callBackId
         subscribeToEvents(Rokt.events(viewName), viewName)
@@ -123,7 +138,7 @@ class MethodCallHandlerImpl(
             attributes = attributes,
             callback = roktCallback,
             placeholders = placeHolders,
-            config = config
+            config = config,
         )
         result.success("Executed")
     }
@@ -131,7 +146,10 @@ class MethodCallHandlerImpl(
     private fun setupEventChannel() {
         EventChannel(messenger, EVENT_CHANNEL_NAME).setStreamHandler(
             object : EventChannel.StreamHandler {
-                override fun onListen(arguments: Any?, sink: EventChannel.EventSink?) {
+                override fun onListen(
+                    arguments: Any?,
+                    sink: EventChannel.EventSink?,
+                ) {
                     if (sink != null) {
                         eventListeners.add(sink)
                     }
@@ -139,17 +157,16 @@ class MethodCallHandlerImpl(
 
                 override fun onCancel(arguments: Any?) {
                 }
-            }
+            },
         )
     }
 
-    private fun String.toColorMode(): RoktConfig.ColorMode {
-        return when (this) {
+    private fun String.toColorMode(): RoktConfig.ColorMode =
+        when (this) {
             "dark" -> RoktConfig.ColorMode.DARK
             "light" -> RoktConfig.ColorMode.LIGHT
             else -> RoktConfig.ColorMode.SYSTEM
         }
-    }
 
     private fun buildRoktConfig(configMap: Map<String, Any>): RoktConfig {
         val builder = RoktConfig.Builder()
@@ -165,80 +182,91 @@ class MethodCallHandlerImpl(
         return builder.build()
     }
 
-    private fun subscribeToEvents(flow: Flow<RoktEvent>, viewName: String? = null) {
+    private fun subscribeToEvents(
+        flow: Flow<RoktEvent>,
+        viewName: String? = null,
+    ) {
         val activeJob = eventSubscriptions[viewName.orEmpty()]?.takeIf { it.isActive }
         if (activeJob != null) {
             return
         }
-        val job = (activity as? LifecycleOwner)?.lifecycleScope?.launch {
-            (activity as LifecycleOwner).lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                flow.collect { event ->
-                    val params: MutableMap<String, String> = mutableMapOf()
-                    var eventName = ""
-                    val placementId: String? = when (event) {
-                        is RoktEvent.HideLoadingIndicator -> {
-                            eventName = "HideLoadingIndicator"
-                            null
-                        }
+        val job =
+            (activity as? LifecycleOwner)?.lifecycleScope?.launch {
+                (activity as LifecycleOwner).lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                    flow.collect { event ->
+                        val params: MutableMap<String, String> = mutableMapOf()
+                        var eventName = ""
+                        val placementId: String? =
+                            when (event) {
+                                is RoktEvent.HideLoadingIndicator -> {
+                                    eventName = "HideLoadingIndicator"
+                                    null
+                                }
 
-                        is RoktEvent.FirstPositiveEngagement -> {
-                            eventName = "FirstPositiveEngagement"
-                            event.id
-                        }
+                                is RoktEvent.FirstPositiveEngagement -> {
+                                    eventName = "FirstPositiveEngagement"
+                                    event.id
+                                }
 
-                        is RoktEvent.OfferEngagement -> {
-                            eventName = "OfferEngagement"
-                            event.id
-                        }
+                                is RoktEvent.OfferEngagement -> {
+                                    eventName = "OfferEngagement"
+                                    event.id
+                                }
 
-                        is RoktEvent.PlacementClosed -> {
-                            eventName = "PlacementClosed"
-                            event.id
-                        }
+                                is RoktEvent.PlacementClosed -> {
+                                    eventName = "PlacementClosed"
+                                    event.id
+                                }
 
-                        is RoktEvent.PlacementCompleted -> {
-                            eventName = "PlacementCompleted"
-                            event.id
-                        }
+                                is RoktEvent.PlacementCompleted -> {
+                                    eventName = "PlacementCompleted"
+                                    event.id
+                                }
 
-                        is RoktEvent.PlacementFailure -> {
-                            eventName = "PlacementFailure"
-                            event.id
-                        }
+                                is RoktEvent.PlacementFailure -> {
+                                    eventName = "PlacementFailure"
+                                    event.id
+                                }
 
-                        is RoktEvent.PlacementInteractive -> {
-                            eventName = "PlacementInteractive"
-                            event.id
-                        }
+                                is RoktEvent.PlacementInteractive -> {
+                                    eventName = "PlacementInteractive"
+                                    event.id
+                                }
 
-                        is RoktEvent.PlacementReady -> {
-                            eventName = "PlacementReady"
-                            event.id
-                        }
+                                is RoktEvent.PlacementReady -> {
+                                    eventName = "PlacementReady"
+                                    event.id
+                                }
 
-                        is RoktEvent.PositiveEngagement -> {
-                            eventName = "PositiveEngagement"
-                            event.id
-                        }
+                                is RoktEvent.PositiveEngagement -> {
+                                    eventName = "PositiveEngagement"
+                                    event.id
+                                }
 
-                        RoktEvent.ShowLoadingIndicator -> {
-                            eventName = "ShowLoadingIndicator"
-                            null
-                        }
+                                RoktEvent.ShowLoadingIndicator -> {
+                                    eventName = "ShowLoadingIndicator"
+                                    null
+                                }
 
-                        is RoktEvent.InitComplete -> {
-                            eventName = "InitComplete"
-                            params["status"] = event.success.toString()
-                            null
-                        }
+                                is RoktEvent.InitComplete -> {
+                                    eventName = "InitComplete"
+                                    params["status"] = event.success.toString()
+                                    null
+                                }
+
+                                is RoktEvent.OpenUrl -> {
+                                    eventName = "OpenUrl"
+                                    params["url"] = event.url
+                                    event.id
+                                }
+                            }
+                        viewName?.let { params["viewName"] = viewName }
+                        placementId?.let { params["placementId"] = it }
+                        params["event"] = eventName
+                        eventListeners.forEach { listener -> listener.success(params) }
                     }
-                    viewName?.let { params["viewName"] = viewName }
-                    placementId?.let { params["placementId"] = it }
-                    params["event"] = eventName
-                    eventListeners.forEach { listener -> listener.success(params) }
                 }
             }
-        }
         eventSubscriptions[viewName.orEmpty()] = job
     }
 

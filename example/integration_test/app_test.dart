@@ -16,9 +16,7 @@ void main() {
       expect(find.text('Initial'), findsOneWidget);
 
       final Finder init = find.text('Initial');
-
       await tester.tap(init);
-
       await addDelay(3000);
       await tester.pumpAndSettle();
 
@@ -29,17 +27,34 @@ void main() {
       expect(tester.getSize(roktWidget2).height, equals(1));
 
       final Finder execute = find.text('Execute');
-
       await tester.tap(execute);
-      await addDelay(3000);
+      
+      // Add longer delay after execute to ensure placement is fully ready
+      await addDelay(8000);
+      await tester.pumpAndSettle();
+      
+      // Add additional pump to ensure widget rebuilds
+      await tester.pump(const Duration(seconds: 2));
       await tester.pumpAndSettle();
 
-      expect(tester.getSize(roktWidget1).height, greaterThan(2.0));
+      // Verify widget1 height
+      final widget1Height = tester.getSize(roktWidget1).height;
+      print('Widget1 height after execute: $widget1Height');
+      expect(widget1Height, greaterThan(2.0));
 
       final scrollView = find.byType(CustomScrollView);
-      await tester.dragUntilVisible(roktWidget2, scrollView, Offset(0, -500));
+      await tester.dragUntilVisible(roktWidget2, scrollView, const Offset(0, -500));
+      
+      // Add delay after scrolling
+      await addDelay(2000);
+      await tester.pumpAndSettle();
+      
       expect(roktWidget2, findsOneWidget);
-      expect(tester.getSize(roktWidget2).height, greaterThan(2.0));
+      
+      // Verify widget2 height
+      final widget2Height = tester.getSize(roktWidget2).height;
+      print('Widget2 height after scroll: $widget2Height');
+      expect(widget2Height, greaterThan(2.0));
     });
   });
 }
