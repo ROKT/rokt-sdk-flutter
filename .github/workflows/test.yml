@@ -14,14 +14,12 @@ jobs:
           app-id: ${{ secrets.SDK_RELEASE_GITHUB_APP_ID }}
           private-key: ${{ secrets.SDK_RELEASE_GITHUB_APP_PRIVATE_KEY }}
 
-      # Checkout ROKT/rokt-ux-helper-android
-      - name: Checkout ROKT/rokt-ux-helper-android
+      - name: Checkout ROKT/sdk-android-source
         uses: actions/checkout@v4
         with:
-          repository: ROKT/rokt-ux-helper-android
+          repository: ROKT/sdk-android-source
           token: ${{ steps.generate-token.outputs.token }}
-          path: rokt-ux-helper-android
+          path: sdk-android-source
 
-      # Cat / echo a file called VERSION in ux-helper-android
       - name: Cat VERSION
-        run: cat rokt-ux-helper-android/VERSION
+        run: cat sdk-android-source/README.md
