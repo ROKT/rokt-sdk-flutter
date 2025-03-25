@@ -1,0 +1,27 @@
+name: Test checkout
+
+on:
+  push:
+
+jobs:
+  demo_app_authentication:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.SDK_RELEASE_GITHUB_APP_ID }}
+          private-key: ${{ secrets.SDK_RELEASE_GITHUB_APP_PRIVATE_KEY }}
+
+      # Checkout ROKT/rokt-ux-helper-android
+      - name: Checkout ROKT/rokt-ux-helper-android
+        uses: actions/checkout@v4
+        with:
+          repository: ROKT/rokt-ux-helper-android
+          token: ${{ steps.generate-token.outputs.token }}
+          path: rokt-ux-helper-android
+
+      # Cat / echo a file called VERSION in ux-helper-android
+      - name: Cat VERSION
+        run: cat rokt-ux-helper-android/VERSION
