@@ -48,7 +48,7 @@ class RoktWidget(context: Context?, messenger: BinaryMessenger, viewId: Int) : P
         private const val VIEW_PADDING_TOP = "top"
         private const val VIEW_PADDING_RIGHT = "right"
         private const val VIEW_PADDING_BOTTOM = "bottom"
-        private const val OUT_OF_SYNC_HEIGHT_DIFF = 8
+        private const val OUT_OF_SYNC_HEIGHT_DIFF = 1
     }
 
     override fun onHeightChanged(height: Int) {
