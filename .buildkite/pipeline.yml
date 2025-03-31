@@ -7,7 +7,7 @@ env:
 
 steps:
   - name: ":hammer: Build and test iOS"
-    key: "build-test-ios"
+    key: build-test-ios
     commands:
       - . ~/.zshrc
       - yes N | rbenv install 2.7.6 || true
@@ -34,7 +34,7 @@ steps:
     timeout_in_minutes: 25
 
   - name: ":hammer: Build and test Android"
-    key: "build-test-android"
+    key: build-test-android
     commands:
       - . ~/.zshrc
       - yes N | rbenv install 2.7.6 || true
@@ -59,15 +59,15 @@ steps:
     timeout_in_minutes: 25
 
   - block: ":whale: Hold for publish"
-    key: "hold-publish"
-    prompt: "Publish package?"
+    key: hold-publish
+    prompt: Publish package?
     depends_on:
-      - "build-test-android"
-      - "build-test-ios"
+      - build-test-android
+      - build-test-ios
 
   - name: ":rocket: Publish package"
     depends_on:
-      - "hold-publish"
+      - hold-publish
     commands:
       - . ~/.zshrc
       - rbenv local 2.7.6
@@ -84,17 +84,17 @@ steps:
       - seek-oss/aws-sm#v2.0.0:
           env:
             PUB_DEV_PUBLISH_ACCESS_TOKEN:
-              secret-id: "stage-flutter-sdk-buildkite"
-              json-key: ".PUB_DEV_PUBLISH_ACCESS_TOKEN"
+              secret-id: stage-flutter-sdk-buildkite
+              json-key: .PUB_DEV_PUBLISH_ACCESS_TOKEN
             PUB_DEV_PUBLISH_REFRESH_TOKEN:
-              secret-id: "stage-flutter-sdk-buildkite"
-              json-key: ".PUB_DEV_PUBLISH_REFRESH_TOKEN"
+              secret-id: stage-flutter-sdk-buildkite
+              json-key: .PUB_DEV_PUBLISH_REFRESH_TOKEN
             PUB_DEV_PUBLISH_TOKEN_ENDPOINT:
-              secret-id: "stage-flutter-sdk-buildkite"
-              json-key: ".PUB_DEV_PUBLISH_TOKEN_ENDPOINT"
+              secret-id: stage-flutter-sdk-buildkite
+              json-key: .PUB_DEV_PUBLISH_TOKEN_ENDPOINT
             PUB_DEV_PUBLISH_EXPIRATION:
-              secret-id: "stage-flutter-sdk-buildkite"
-              json-key: ".PUB_DEV_PUBLISH_EXPIRATION"
+              secret-id: stage-flutter-sdk-buildkite
+              json-key: .PUB_DEV_PUBLISH_EXPIRATION
     agents:
       queue: ${MAC_BK_AGENT}
     timeout_in_minutes: 25

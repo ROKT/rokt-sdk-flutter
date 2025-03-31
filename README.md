@@ -6,8 +6,8 @@ The Rokt SDK for Flutter applications can be used by Rokt partners to display ov
 
 ## Resident Experts
 
-- Danial Motahari - danial.motahari@rokt.com
-- Sahil Suri - sahil.suri@rokt.com
+- Danial Motahari - <danial.motahari@rokt.com>
+- Sahil Suri - <sahil.suri@rokt.com>
 
 | Environment | Build                                                                                                                                                                                                                  |
 | ----------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -17,7 +17,7 @@ The Rokt SDK for Flutter applications can be used by Rokt partners to display ov
 
 To use this plugin, add following code in your pubspec.yaml file.
 
-```
+```yaml
 dependencies:
   flutter:
     sdk: flutter
@@ -31,7 +31,7 @@ dependencies:
 
 1. Set the minSdkVersion and enable multidex in `android/app/build.gradle:`
 
-```
+```gradle
 android {
 defaultConfig {
 minSdkVersion 21
@@ -66,7 +66,7 @@ Rokt iOS SDK supports iOS version 10 and above
 
 Initialize the Rokt SDK prior to using it. We recommend calling the initialize method in the beginning of the applications.
 
-```
+```dart
 // The following will reveal a demo integration. To view your integration:
 // 1) Replace the integration test tag ID (222) with your unique Rokt Tag ID
 // 2) Replace 1.0.0 with the application version
@@ -78,7 +78,7 @@ RoktSdk.initialize('222', appVersion: '1.0.0');
 Execute the Rokt iOS SDK in your desired view and add all appropriate customer attributes.
 The SDK provides optional callback events for when the view loads and unloads.
 
-```
+```dart
 import 'package:rokt_sdk/rokt_sdk.dart';
 
 void executeRokt() {
@@ -120,7 +120,7 @@ RoktWidget has a callback to notify when widget is created which could be utiliz
 
 ### Execute Rokt
 
-```
+```dart
 import 'package:rokt_sdk/rokt_sdk.dart';
 
 void showWidget() {
@@ -176,14 +176,14 @@ Publishing the package is possible through [CircleCi](https://app.circleci.com/p
 ## How to manually publish sdk ?
 
 1. Make sure you have following environment variables set:
-   ```
+   ```shell
    PUB_DEV_PUBLISH_ACCESS_TOKEN=
    PUB_DEV_PUBLISH_REFRESH_TOKEN=
    PUB_DEV_PUBLISH_TOKEN_ENDPOINT=
    PUB_DEV_PUBLISH_EXPIRATION=
    ```
 2. Run following command
-   ```
+   ```shell
    cd .circleci
    ./pub_login.sh
    dart pub publish -f
@@ -197,7 +197,7 @@ The SDK can be released via the [Mobile Release Pipeline](https://github.com/ROK
 
 UI test are located inside example app and you can run it by executing below command
 
-```
+```shell
 flutter test integration_test/app_test.dart
 ```
 
@@ -222,7 +222,7 @@ To update the iOS rokt sdk, make the following changes.
    s.dependency 'Rokt-Widget', '~> X.X.X'
 ```
 
-For Android, do the folliwing
+For Android, do the following
 
 ```open android/build.gradle
    implementation "com.rokt:roktsdk:X.X.X"
