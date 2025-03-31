@@ -10,20 +10,20 @@ steps:
     key: build-test-ios
     commands:
       - . ~/.zshrc
-      - yes N | rbenv install 2.7.6 || true
-      - rbenv local 2.7.6
+      - yes N | rbenv install 3.1.2 || true
+      - rbenv local 3.1.2
       - brew tap leoafarias/fvm
       - brew install fvm
       - fvm install ${FLUTTER_VERSION}
       - yes | fvm use ${FLUTTER_VERSION}
       - cd example
       - bundle check || bundle install --path vendor/bundle
-      - rbenv local 2.7.6
+      - rbenv local 3.1.2
       - xcrun simctl boot "iPhone 15" || true
       - fvm flutter pub get
       - fvm flutter precache --ios
       - cd ios
-      - rbenv local 2.7.6
+      - rbenv local 3.1.2
       - bundle check || bundle install --path vendor/bundle
       - bundle exec pod install --verbose --repo-update
       - cd -
@@ -37,8 +37,8 @@ steps:
     key: build-test-android
     commands:
       - . ~/.zshrc
-      - yes N | rbenv install 2.7.6 || true
-      - rbenv local 2.7.6
+      - yes N | rbenv install 3.1.2 || true
+      - rbenv local 3.1.2
       - brew tap leoafarias/fvm
       - brew install fvm
       - fvm install ${FLUTTER_VERSION}
@@ -70,7 +70,7 @@ steps:
       - hold-publish
     commands:
       - . ~/.zshrc
-      - rbenv local 2.7.6
+      - rbenv local 3.1.2
       - brew tap leoafarias/fvm
       - brew install fvm
       - fvm install ${FLUTTER_VERSION}
