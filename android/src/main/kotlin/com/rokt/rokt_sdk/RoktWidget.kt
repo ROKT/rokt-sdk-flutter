@@ -8,9 +8,12 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
 import kotlin.math.abs
 
-class RoktWidget(context: Context?, messenger: BinaryMessenger, viewId: Int) : PlatformView,
+class RoktWidget(
+    context: Context?,
+    messenger: BinaryMessenger,
+    viewId: Int,
+) : PlatformView,
     RoktWidgetDimensionCallBack {
-
     val widget: Widget? = if (context != null) Widget(context) else null
     private var lastHeight = 0
     private val channel: MethodChannel = MethodChannel(messenger, "rokt_widget_$viewId")
@@ -25,7 +28,12 @@ class RoktWidget(context: Context?, messenger: BinaryMessenger, viewId: Int) : P
         channel.invokeMethod(VIEW_HEIGHT_LISTENER, map)
     }
 
-    private fun sendUpdatedPadding(left: Double, top: Double, right: Double, bottom: Double) {
+    private fun sendUpdatedPadding(
+        left: Double,
+        top: Double,
+        right: Double,
+        bottom: Double,
+    ) {
         val map: MutableMap<String, Any> = mutableMapOf()
         map[VIEW_PADDING_LEFT] = left
         map[VIEW_PADDING_TOP] = top
@@ -58,7 +66,12 @@ class RoktWidget(context: Context?, messenger: BinaryMessenger, viewId: Int) : P
         }
     }
 
-    override fun onMarginChanged(start: Int, top: Int, end: Int, bottom: Int) {
+    override fun onMarginChanged(
+        start: Int,
+        top: Int,
+        end: Int,
+        bottom: Int,
+    ) {
         sendUpdatedPadding(start.toDouble(), top.toDouble(), end.toDouble(), bottom.toDouble())
     }
 }

@@ -9,7 +9,6 @@ set -eu
 # $5 New Flutter SDK version
 # $6 pubspec file location
 
-
 perl -pi -e "s/(?<=roktsdk:)(.*)(?=\")/$1/g" "$2"
 perl -pi -e "s/(?<='Rokt-Widget', ')(.*)(?=')/$3/g" "$4"
 perl -pi -e "s/(?<=  s.version          = ')(.*)(?=')/$5/g" "$4"

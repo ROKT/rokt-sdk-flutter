@@ -4,8 +4,9 @@ import com.rokt.roktsdk.Rokt
 import io.flutter.plugin.common.MethodChannel
 
 class RoktCallbackImpl(
-    private val channel: MethodChannel?, callbackId: Int): Rokt.RoktCallback {
-
+    private val channel: MethodChannel?,
+    callbackId: Int,
+) : Rokt.RoktCallback {
     private val argumentMap: MutableMap<String, Any> = mutableMapOf()
 
     init {
