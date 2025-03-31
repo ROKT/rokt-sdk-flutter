@@ -6,7 +6,7 @@ set -eu
 
 PROJECT_DIR="$(dirname "$0")/../.."
 
-cd "$PROJECT_DIR"
+cd "${PROJECT_DIR}"
 
 git config user.email "buildkite@rokt.com"
 git config user.name "Buildkite"
