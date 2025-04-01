@@ -38,3 +38,4 @@ build/
 .settings
 
 .fvm/
+example/android/app/.cxx/**
