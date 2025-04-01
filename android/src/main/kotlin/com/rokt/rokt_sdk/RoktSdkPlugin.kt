@@ -1,32 +1,36 @@
 package com.rokt.rokt_sdk
 
-import android.graphics.Typeface
 import androidx.annotation.NonNull
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterAssets
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.PluginRegistry
-
 
 /** RoktSdkPlugin */
-class RoktSdkPlugin : FlutterPlugin, ActivityAware {
+class RoktSdkPlugin :
+    FlutterPlugin,
+    ActivityAware {
     private var methodCallHandler: MethodCallHandlerImpl? = null
 
-    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onAttachedToEngine(
+        @NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding,
+    ) {
         val widgetFactory = RoktWidgetFactory(flutterPluginBinding.binaryMessenger)
         flutterPluginBinding.platformViewRegistry.registerViewFactory(
-            VIEW_TYPE, widgetFactory
+            VIEW_TYPE,
+            widgetFactory,
         )
         setupMethodChannel(
             flutterPluginBinding.binaryMessenger,
             flutterPluginBinding.flutterAssets,
-            widgetFactory
+            widgetFactory,
         )
     }
 
-    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onDetachedFromEngine(
+        @NonNull binding: FlutterPlugin.FlutterPluginBinding,
+    ) {
         teardownMethodChannel()
     }
 
@@ -46,7 +50,7 @@ class RoktSdkPlugin : FlutterPlugin, ActivityAware {
     private fun setupMethodChannel(
         messenger: BinaryMessenger,
         flutterAssets: FlutterAssets,
-        widgetFactory: RoktWidgetFactory
+        widgetFactory: RoktWidgetFactory,
     ) {
         methodCallHandler = MethodCallHandlerImpl(messenger, flutterAssets, widgetFactory)
     }
@@ -59,5 +63,4 @@ class RoktSdkPlugin : FlutterPlugin, ActivityAware {
     companion object {
         private const val VIEW_TYPE = "rokt_sdk.rokt.com/rokt_widget"
     }
-
 }

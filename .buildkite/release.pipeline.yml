@@ -7,7 +7,7 @@ env:
 
 steps:
   - name: ":git: Create git tag"
-    key: "tag"
+    key: tag
     commands:
       - . ~/.zshrc
       - yes N | rbenv install 2.7.6 || true
@@ -19,8 +19,8 @@ steps:
       queue: ${MAC_BK_AGENT}
 
   - name: ":hammer: Build and test iOS"
-    depends_on: "tag"
-    key: "build-test-ios"
+    depends_on: tag
+    key: build-test-ios
     commands:
       - . ~/.zshrc
       - yes N | rbenv install 2.7.6 || true
@@ -40,17 +40,17 @@ steps:
       - cd ios
       - rbenv local 2.7.6
       - bundle check || bundle install --path vendor/bundle
-      - bundle exec pod install --verbose --repo-update 
+      - bundle exec pod install --verbose --repo-update
       - cd -
       - bundle exec fvm flutter test
       - bundle exec fvm flutter test integration_test/app_test.dart
-    agents: 
+    agents:
       queue: ${MAC_BK_AGENT}
     timeout_in_minutes: 25
 
   - name: ":hammer: Build and test Android"
-    key: "build-test-android"
-    depends_on: "tag"
+    key: build-test-android
+    depends_on: tag
     commands:
       - . ~/.zshrc
       - yes N | rbenv install 2.7.6 || true
@@ -77,8 +77,8 @@ steps:
 
   - name: ":rocket: Publish package"
     depends_on:
-      - "build-test-android"
-      - "build-test-ios"
+      - build-test-android
+      - build-test-ios
     commands:
       - . ~/.zshrc
       - yes N | rbenv install 2.7.6 || true
@@ -99,17 +99,17 @@ steps:
           region: us-west-2
           env:
             PUB_DEV_PUBLISH_ACCESS_TOKEN:
-              secret-id: "stage-flutter-sdk-buildkite"
-              json-key: ".PUB_DEV_PUBLISH_ACCESS_TOKEN"
+              secret-id: stage-flutter-sdk-buildkite
+              json-key: .PUB_DEV_PUBLISH_ACCESS_TOKEN
             PUB_DEV_PUBLISH_REFRESH_TOKEN:
-              secret-id: "stage-flutter-sdk-buildkite"
-              json-key: ".PUB_DEV_PUBLISH_REFRESH_TOKEN"
+              secret-id: stage-flutter-sdk-buildkite
+              json-key: .PUB_DEV_PUBLISH_REFRESH_TOKEN
             PUB_DEV_PUBLISH_TOKEN_ENDPOINT:
-              secret-id: "stage-flutter-sdk-buildkite"
-              json-key: ".PUB_DEV_PUBLISH_TOKEN_ENDPOINT"
+              secret-id: stage-flutter-sdk-buildkite
+              json-key: .PUB_DEV_PUBLISH_TOKEN_ENDPOINT
             PUB_DEV_PUBLISH_EXPIRATION:
-              secret-id: "stage-flutter-sdk-buildkite"
-              json-key: ".PUB_DEV_PUBLISH_EXPIRATION"
-    agents: 
+              secret-id: stage-flutter-sdk-buildkite
+              json-key: .PUB_DEV_PUBLISH_EXPIRATION
+    agents:
       queue: ${MAC_BK_AGENT}
     timeout_in_minutes: 25
