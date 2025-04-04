@@ -6,27 +6,13 @@ env:
   ANDROID_SDKMANAGER: ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager
 
 steps:
-  - name: ":git: Create git tag"
-    key: tag
-    commands:
-      - . ~/.zshrc
-      - yes N | rbenv install 3.1.2 || true
-      - rbenv local 3.1.2
-      - ./.buildkite/bin/update_versions.sh "${ANDROID_VERSION}" android/build.gradle "${IOS_VERSION}" ios/rokt_sdk.podspec "${VERSION}" pubspec.yaml
-      - ./.buildkite/bin/update_changelog.sh CHANGELOG.md "${VERSION}" "${CHANGELOG}"
-      - ./.buildkite/bin/create_tag.sh "${VERSION}"
-    agents:
-      queue: ${MAC_BK_AGENT}
 
   - name: ":hammer: Build and test iOS"
-    depends_on: tag
     key: build-test-ios
     commands:
       - . ~/.zshrc
       - yes N | rbenv install 3.1.2 || true
       - rbenv local 3.1.2
-      - git fetch --all --tags --force
-      - git checkout "v${VERSION}"
       - brew tap leoafarias/fvm
       - brew install fvm
       - fvm install ${FLUTTER_VERSION}
@@ -50,13 +36,10 @@ steps:
 
   - name: ":hammer: Build and test Android"
     key: build-test-android
-    depends_on: tag
     commands:
       - . ~/.zshrc
       - yes N | rbenv install 3.1.2 || true
       - rbenv local 3.1.2
-      - git fetch --all --tags --force
-      - git checkout "v${VERSION}"
       - brew tap leoafarias/fvm
       - brew install fvm
       - fvm install ${FLUTTER_VERSION}
