@@ -51,7 +51,7 @@ class MethodCallHandlerImpl(
             LOGGING_METHOD -> {
                 logging(call, result)
             }
-            
+
             PURCHASE_FINALIZED_METHOD -> {
                 purchaseFinalized(call, result)
             }
@@ -97,14 +97,14 @@ class MethodCallHandlerImpl(
             Rokt.purchaseFinalized(
                 placementId = placementId,
                 catalogItemId = catalogItemId,
-                status = success
-             )
+                status = success,
+            )
             result.success("Success")
         } else {
             result.error(
                 "INVALID_PARAMS",
                 "placementId and catalogItemId are required",
-                null
+                null,
             )
         }
     }

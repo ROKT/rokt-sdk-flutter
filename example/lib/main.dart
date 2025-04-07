@@ -22,8 +22,8 @@ class _MyAppState extends State<MyApp> {
       TextEditingController(text: constants.defaultViewName);
   final attributesController =
       TextEditingController(text: constants.defaultAttributes);
-  final placementIdController = TextEditingController(text: "3188840611286745114");
-  final catalogItemIdController = TextEditingController(text: "staples.861425");
+  final placementIdController = TextEditingController(text: "");
+  final catalogItemIdController = TextEditingController(text: "");
   bool purchaseSuccess = false;
   Map<int, String> placeholders = {};
   final EventChannel roktEventChannel = EventChannel('RoktEvents');
