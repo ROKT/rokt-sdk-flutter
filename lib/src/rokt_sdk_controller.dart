@@ -58,6 +58,21 @@ class RoktSdkController {
     await _channel.invokeMethod('logging', {'enable': enable});
   }
 
+  /// Call Rokt purchaseFinalized method in Native SDK
+  /// 
+  /// Note: This method requires iOS 15+.
+  Future<void> purchaseFinalized({
+    required String placementId,
+    required String catalogItemId,
+    required bool success,
+  }) async {
+      await _channel.invokeMethod('purchaseFinalized', {
+        'placementId': placementId,
+        'catalogItemId': catalogItemId,
+        'success': success,
+      });
+  }
+
   /// Placeholders are attached to be passed to Rokt Execute
   void attachPlaceholder({required int id, required String name}) {
     // Prevent duplicate placeholders with same name

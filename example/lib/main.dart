@@ -22,6 +22,9 @@ class _MyAppState extends State<MyApp> {
       TextEditingController(text: constants.defaultViewName);
   final attributesController =
       TextEditingController(text: constants.defaultAttributes);
+  final placementIdController = TextEditingController(text: "");
+  final catalogItemIdController = TextEditingController(text: "");
+  bool purchaseSuccess = false;
   Map<int, String> placeholders = {};
   final EventChannel roktEventChannel = EventChannel('RoktEvents');
 
@@ -107,6 +110,57 @@ class _MyAppState extends State<MyApp> {
                             controller: attributesController,
                             keyboardType: TextInputType.multiline,
                             maxLines: null),
+                        const Divider(),
+                        const Text("Purchase Finalized Test", style: TextStyle(fontWeight: FontWeight.bold)),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text("Placement ID"),
+                                  TextField(controller: placementIdController),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text("Catalog Item ID"),
+                                  TextField(controller: catalogItemIdController),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Text("Success: "),
+                            Switch(
+                              value: purchaseSuccess,
+                              onChanged: (value) {
+                                setState(() {
+                                  purchaseSuccess = value;
+                                });
+                              },
+                            ),
+                            Expanded(
+                              child: TextButton(
+                                child: const Text('Call Purchase Finalized'),
+                                onPressed: () {
+                                  RoktSdk.purchaseFinalized(
+                                    placementId: placementIdController.text,
+                                    catalogItemId: catalogItemIdController.text,
+                                    success: purchaseSuccess,
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Divider(),
                         const Text("Location 1"),
                         const RoktWidget(
                             key: const ValueKey('widget1'),

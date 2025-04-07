@@ -52,6 +52,10 @@ class MethodCallHandlerImpl(
                 logging(call, result)
             }
 
+            PURCHASE_FINALIZED_METHOD -> {
+                purchaseFinalized(call, result)
+            }
+
             else -> result.notImplemented()
         }
     }
@@ -80,6 +84,29 @@ class MethodCallHandlerImpl(
         val enable: Boolean = call.argument<Boolean?>("enable") ?: false
         Rokt.setLoggingEnabled(enable)
         result.success("enable")
+    }
+
+    private fun purchaseFinalized(
+        call: MethodCall,
+        result: MethodChannel.Result,
+    ) {
+        val placementId = call.argument<String>("placementId")
+        val catalogItemId = call.argument<String>("catalogItemId")
+        val success = call.argument<Boolean>("success") ?: true
+        if (placementId != null && catalogItemId != null) {
+            Rokt.purchaseFinalized(
+                placementId = placementId,
+                catalogItemId = catalogItemId,
+                status = success,
+            )
+            result.success("Success")
+        } else {
+            result.error(
+                "INVALID_PARAMS",
+                "placementId and catalogItemId are required",
+                null,
+            )
+        }
     }
 
     private fun init(
@@ -259,6 +286,19 @@ class MethodCallHandlerImpl(
                                     params["url"] = event.url
                                     event.id
                                 }
+
+                                is RoktEvent.CartItemInstantPurchase -> {
+                                    eventName = "CartItemInstantPurchase"
+                                    params["cartItemId"] = event.cartItemId
+                                    params["catalogItemId"] = event.catalogItemId
+                                    params["currency"] = event.currency
+                                    params["description"] = event.description
+                                    params["linkedProductId"] = event.linkedProductId
+                                    params["totalPrice"] = event.totalPrice.toString()
+                                    params["quantity"] = event.quantity.toString()
+                                    params["unitPrice"] = event.unitPrice.toString()
+                                    event.placementId
+                                }
                             }
                         viewName?.let { params["viewName"] = viewName }
                         placementId?.let { params["placementId"] = it }
@@ -275,6 +315,7 @@ class MethodCallHandlerImpl(
         private const val INIT_METHOD = "initialize"
         private const val EXECUTE_METHOD = "execute"
         private const val LOGGING_METHOD = "logging"
+        private const val PURCHASE_FINALIZED_METHOD = "purchaseFinalized"
         private const val EVENT_CHANNEL_NAME = "RoktEvents"
         const val TAG = "ROKTSDK_FLUTTER"
     }

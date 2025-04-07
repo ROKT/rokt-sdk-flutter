@@ -18,6 +18,7 @@ public class SwiftRoktSdkPlugin: NSObject, FlutterPlugin {
     fileprivate let INIT_METHOD = "initialize"
     fileprivate let EXECUTE_METHOD = "execute"
     fileprivate let LOGGING_METHOD = "logging"
+    fileprivate let PURCHASE_FINALIZED_METHOD = "purchaseFinalized"
     fileprivate static let CHANNEL_NAME = "rokt_sdk"
     fileprivate static let VIEW_CALL_DELEGATE = "rokt_sdk.rokt.com/rokt_widget"
     
@@ -49,6 +50,8 @@ public class SwiftRoktSdkPlugin: NSObject, FlutterPlugin {
             handler.execute(call, result: result)
         } else if call.method == LOGGING_METHOD {
             handler.logging(call, result: result)
+        } else if call.method == PURCHASE_FINALIZED_METHOD {
+            handler.purchaseFinalized(call, result: result)
         } else {
             result("Not implemented")
         }

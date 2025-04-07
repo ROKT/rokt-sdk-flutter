@@ -116,6 +116,27 @@ class RoktSdk {
   static Future<void> setLoggingEnabled({required bool enable}) async {
     await RoktSdkController.instance.setLoggingEnabled(enable: enable);
   }
+  
+  /// Notifies Rokt that a purchase has been finalized
+  ///
+  /// Use this method to inform Rokt that a purchase has been completed or failed
+  /// - Parameters:
+  ///   - placementId: The placement ID associated with the purchase
+  ///   - catalogItemId: The catalog item ID that was purchased
+  ///   - success: Whether the purchase was successful
+  /// 
+  /// Note: This method requires iOS 15+.
+  static Future<void> purchaseFinalized({
+    required String placementId,
+    required String catalogItemId,
+    required bool success,
+  }) async {
+    await RoktSdkController.instance.purchaseFinalized(
+      placementId: placementId,
+      catalogItemId: catalogItemId,
+      success: success,
+    );
+  }
 }
 
 /// Cache configuration for the Rokt SDK
