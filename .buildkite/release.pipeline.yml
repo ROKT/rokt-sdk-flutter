@@ -19,7 +19,7 @@ steps:
       queue: ${MAC_BK_AGENT}
 
   - name: ":hammer: Build and test iOS"
-    # depends_on: tag
+    depends_on: tag
     key: build-test-ios
     commands:
       - . ~/.zshrc
