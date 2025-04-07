@@ -141,6 +141,26 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
         }
     }
 
+    public func purchaseFinalized(_ call: FlutterMethodCall,
+                                result: @escaping FlutterResult) {
+        if let args = call.arguments as? Dictionary<String, Any>,
+           let placementId = args["placementId"] as? String,
+           let catalogItemId = args["catalogItemId"] as? String,
+           let success = args["success"] as? Bool {
+
+            if #available(iOS 15.0, *) {
+                Rokt.purchaseFinalized(
+                    placementId: placementId,
+                    catalogItemId: catalogItemId, 
+                    success: success
+                )
+                result(SUCCESS)
+                return
+            }
+        }
+        result(FAIL)
+    }
+
     private func registerPartnerFonts(_ typefaces: Dictionary<String, String>) {
         let bundle = Bundle.main
         for (_, fileName) in typefaces {
@@ -209,6 +229,25 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
         } else if let event = roktEvent as? RoktEvent.OpenUrl {
             eventName = "OpenUrl"
             eventParamMap["url"] = event.url
+            placementId = event.placementId
+        } else if let event = roktEvent as? RoktEvent.CartItemInstantPurchase {
+            eventName = "CartItemInstantPurchase"
+            eventParamMap["cartItemId"] = event.cartItemId
+            eventParamMap["catalogItemId"] = event.catalogItemId
+            eventParamMap["currency"] = event.currency
+            eventParamMap["description"] = event.description
+            eventParamMap["linkedProductId"] = event.linkedProductId ?? ""
+            eventParamMap["name"] = event.name
+            eventParamMap["providerData"] = event.providerData
+            if let totalPrice = event.totalPrice {
+                eventParamMap["totalPrice"] = "\(totalPrice)"
+            }
+            if let quantity = event.quantity {
+                eventParamMap["quantity"] = "\(quantity)"
+            }
+            if let unitPrice = event.unitPrice {
+                eventParamMap["unitPrice"] = "\(unitPrice)"
+            }
             placementId = event.placementId
         }
 
