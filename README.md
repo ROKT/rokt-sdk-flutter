@@ -157,7 +157,7 @@ RoktSdk.execute(
 1. Add `RoktWidget` to your view:
 
 ```dart
-const RoktWidget(placeholderName: "RoktEmbedded1", onWidgetCreated: () { showWidget() })
+const RoktWidget(placeholderName: "RoktEmbedded1", onWidgetCreated: () { showWidget(); })
 ```
 
 ## Key Dependencies & Gotchas
