@@ -1,4 +1,4 @@
-# rokt_sdk
+# Rokt Flutter SDK
 
 The Rokt Flutter SDK enables you to integrate Rokt into your native mobile apps to drive more value from—and for—your customers. The SDK supports both iOS and Android platforms through a unified Flutter interface.
 
