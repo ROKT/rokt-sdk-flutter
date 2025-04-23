@@ -1,70 +1,112 @@
 # rokt_sdk
 
-The Rokt Flutter SDK enables you to integrate Rokt into your native mobile apps to drive more value from—and for—your customers.
+The Rokt Flutter SDK enables you to integrate Rokt into your native mobile apps to drive more value from—and for—your customers. The SDK supports both iOS and Android platforms through a unified Flutter interface.
 
-The Rokt SDK for Flutter applications can be used by Rokt partners to display overlay or embedded placements, or by Rokt advertisers to record conversions for campaigns.
+The Rokt SDK for Flutter applications can be used by Rokt partners to display overlay or embedded placements, or by Rokt advertisers to record
+conversions for campaigns.
+
+| Environment | Build                                                                                                                                                                          |
+| ----------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| release     | [![Build](https://github.com/ROKT/rokt-sdk-flutter/actions/workflows/pull_request.yml/badge.svg)](https://github.com/ROKT/rokt-sdk-flutter/actions/workflows/pull_request.yml) |
 
 ## Resident Experts
 
+- Thomson Thomas - <thomson.thomas@rokt.com>
 - Danial Motahari - <danial.motahari@rokt.com>
 - Sahil Suri - <sahil.suri@rokt.com>
 
-| Environment | Build                                                                                                                                                                                                                  |
-| ----------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| release     | [![CircleCI](https://dl.circleci.com/status-badge/img/gh/ROKT/rokt-sdk-flutter/tree/release-3%2E11%2Ex.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/ROKT/rokt-sdk-flutter/tree/release-3%2E11%2Ex) |
+## Service Architecture
 
-## Usage
+The Rokt Flutter SDK is structured as a Flutter plugin that provides a Dart interface to platform-specific native SDKs:
 
-To use this plugin, add following code in your pubspec.yaml file.
+- **Dart Interface Layer**: Located in the `lib` directory, provides the API surface for Flutter applications
+- **Platform-Specific Implementations**:
+  - `android` directory contains the Kotlin implementation using the native Android Rokt-Widget SDK
+  - `ios` directory contains the Swift implementation using the native iOS Rokt-Widget SDK
+- **Example Application**: Located in the `example` directory, demonstrates how to implement the SDK
+
+The SDK follows a bridge pattern to connect the Flutter framework with native platform capabilities, enabling seamless integration with Rokt's services.
+
+## Local Development Setup
+
+### Requirements
+
+To develop with or contribute to this SDK, you'll need:
+
+- [Flutter SDK](https://docs.flutter.dev/get-started/install/macos) properly installed and configured
+- [Android Studio](https://developer.android.com/studio) or [VS Code](https://code.visualstudio.com/) with Flutter plugins
+- For Android development:
+  - Kotlin version 1.8.0 or newer
+  - Android Gradle plugin 7.4.0 or newer
+  - Gradle version 7.5 or newer
+- For iOS development:
+  - iOS 12 or above
+  - Xcode with required dependencies
+
+### Setup Steps
+
+1. Clone the repository
+2. Run `flutter clean`
+3. Run `flutter pub get`
+4. To run the example app:
+   ```shell
+   cd example
+   flutter run
+   ```
+
+### Testing
+
+To run integration tests:
+
+```shell
+flutter test integration_test/app_test.dart
+```
+
+## Implementation Guide
+
+### Adding SDK to Your App
+
+Add the following to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
   flutter:
     sdk: flutter
 
-  rokt_sdk: ^4.0.0-alpha.3
+  rokt_sdk: ^4.0.0
 ```
 
-## Getting Started
+### Platform-Specific Setup
 
-### Android
+#### Android
 
-1. Set the minSdkVersion and enable multidex in `android/app/build.gradle:`
+1. Set the minSdkVersion and enable multidex in `android/app/build.gradle`:
 
 ```gradle
 android {
-defaultConfig {
-minSdkVersion 21
-multidexEnabled true
-
-    }
+  defaultConfig {
+    minSdkVersion 21
+    multidexEnabled true
+  }
 }
 ```
 
-This means that app will only be available for users that run Android SDK 21 or higher.
+2. Include appcompat dependency:
 
-2. Include appcompat dependency
-   `implementation 'androidx.appcompat:appcompat:x.x.x’`
-   The theme of android/app should extend from AppCompat Theme family, example:
+   ```gradle
+   implementation 'androidx.appcompat:appcompat:x.x.x'
+   ```
 
-   `<style name="NormalTheme" parent="Theme.AppCompat.DayNight.DarkActionBar"/>`
+3. The theme of android/app should extend from AppCompat Theme family:
+   ```xml
+   <style name="NormalTheme" parent="Theme.AppCompat.DayNight.DarkActionBar"/>
+   ```
 
-### iOS
+#### iOS
 
-Rokt iOS SDK supports iOS version 10 and above
+Rokt iOS SDK supports iOS version 12 and above. No additional configuration is needed.
 
-## How to update the SDK
-
-\_ Run `flutter clean`
-
-- Delete /ios/Pods
-- Delete /ios/Podfile.lock
-- Run `flutter pub get`
-- From inside ios folder, run `pod install`
-
-## Initializing the Rokt SDK
-
-Initialize the Rokt SDK prior to using it. We recommend calling the initialize method in the beginning of the applications.
+### SDK Initialization
 
 ```dart
 // The following will reveal a demo integration. To view your integration:
@@ -73,7 +115,17 @@ Initialize the Rokt SDK prior to using it. We recommend calling the initialize m
 RoktSdk.initialize('222', appVersion: '1.0.0');
 ```
 
-## Overlay placements
+### Updating the SDK
+
+- Run `flutter clean`
+- Delete /ios/Pods
+- Delete /ios/Podfile.lock
+- Run `flutter pub get`
+- From inside ios folder, run `pod install`
+
+### Implementation Types
+
+#### Overlay Placements
 
 Execute the Rokt iOS SDK in your desired view and add all appropriate customer attributes.
 The SDK provides optional callback events for when the view loads and unloads.
@@ -81,152 +133,104 @@ The SDK provides optional callback events for when the view loads and unloads.
 ```dart
 import 'package:rokt_sdk/rokt_sdk.dart';
 
-void executeRokt() {
-    // Replace RoktExperience with your viewName
-    RoktSdk.execute(
-                    viewName: "RoktExperience",
-                    attributes: {"email": "j.smith@example.com",
-                        "firstname": "Jenny",
-                        "lastname": "Smith",
-                        "mobile": "(555)867-5309",
-                        "postcode": "90210",
-                        "country": "US"},
-                    config: RoktConfig(), // Optional RoktConfig object
-                    onLoad: () {
-                        // Optional callback for when the Rokt placement loads
-                    },
-                    onUnLoad: () {
-                        // Optional callback for when the Rokt placement unloads
-                    },
-                    onShouldShowLoadingIndicator: () {
-                        // Optional callback to show a loading indicator
-                    },
-                    onShouldHideLoadingIndicator: () {
-                        // Optional callback to hide a loading indicator
-                    });
-}
+RoktSdk.execute(
+  viewName: "RoktExperience",
+  attributes: {
+    "email": "j.smith@example.com",
+    "firstname": "Jenny",
+    "lastname": "Smith",
+    "mobile": "(555)867-5309",
+    "postcode": "90210",
+    "country": "US"
+  },
+  onLoad: () {
+    // Optional callback for when the Rokt placement loads
+  },
+  onUnLoad: () {
+    // Optional callback for when the Rokt placement unloads
+  }
+);
 ```
 
-To run an placement in the sandbox environment, the list of attributes passed to Rokt needs to be updated to include `"sandbox": "true"`
+#### Embedded Placements
 
-## Embedded placements
-
-### add Rokt Widget
-
-add `const RoktWidget(placeholderName: "RoktEmbedded1")` in your view.
-please make sure that the view is created on the visible area of the screen and then call showWidget.
-RoktWidget has a callback to notify when widget is created which could be utilized.
-`RoktWidget(placeholderName: "RoktEmbedded1", onWidgetCreated: () { showWidget() })`
-
-### Execute Rokt
+1. Add `RoktWidget` to your view:
 
 ```dart
-import 'package:rokt_sdk/rokt_sdk.dart';
-
-void showWidget() {
-    // Replace RoktExperience with your viewName
-    RoktSdk.execute(
-                    viewName: "RoktExperience",
-                    attributes: {"email": "j.smith@example.com",
-                        "firstname": "Jenny",
-                        "lastname": "Smith",
-                        "mobile": "(555)867-5309",
-                        "postcode": "90210",
-                        "country": "US"},
-                    config: RoktConfig(), // Optional RoktConfig object
-                    onLoad: () {
-                        // Optional callback for when the Rokt placement loads
-                    },
-                    onUnLoad: () {
-                        // Optional callback for when the Rokt placement unloads
-                    },
-                    onShouldShowLoadingIndicator: () {
-                        // Optional callback to show a loading indicator
-                    },
-                    onShouldHideLoadingIndicator: () {
-                        // Optional callback to hide a loading indicator
-                    });
-}
+const RoktWidget(placeholderName: "RoktEmbedded1", onWidgetCreated: () { showWidget() })
 ```
 
-To run an placement in the sandbox environment, the list of attributes passed to Rokt needs to be updated to include `"sandbox": "true"`
+## Key Dependencies & Gotchas
 
-## Requirements
+### Dependencies
 
-Download [Android Studio](https://developer.android.com/studio) or [VS Code](https://code.visualstudio.com/) for editor and install [Flutter SDK](https://docs.flutter.dev/get-started/install/macos)
+- **Android**:
 
-Requirements to integrate from versions 4.0.0 onwards include:
+  - Requires `androidx.appcompat` compatibility
+  - Uses native Android Rokt-Widget SDK (currently referenced version in `android/build.gradle`)
 
-- Kotlin version 1.8.0 or newer (e.g. `ext.kotlin_version = '1.8.0'`)
-- Android Gradle plugin 7.4.0 or newer (e.g. `com.android.tools.build:gradle:7.4.0`)
-- Gradle version 7.5 or newer (e.g. `distributionUrl=https\://services.gradle.org/distributions/gradle-7.5-all.zip`)
+- **iOS**:
+  - Uses native iOS Rokt-Widget SDK (referenced in `ios/rokt_sdk.podspec`)
 
-## Project structure
+#### Updating Native SDKs
 
-This project consists of sdk Plugin which contains [lib](lib) which is the main entry for the sdk plugin, [android](android), [iOS](ios) platform specific code for the sdk plugin
-and an [example App](example) which is a sample App to run the sdk plugin.
+To update the iOS SDK:
 
-## Publishing SDK
+```yaml
+// ios/rokt_sdk.podspec
+s.version          = 'X.X.X'
+s.dependency 'Rokt-Widget', '~> X.X.X'
+```
 
-This SDK is published to [pub.dev](https://pub.dev/) [here](https://pub.dev/packages/rokt_sdk). You can publish the alpha or prod package.
-To publish the package, you need to modify pubspec.yaml and update the version field. We should append `-alpha` after version if we intend to publish
-the alpha package. Make sure you add the changes in CHANGELOG.md.
-Publishing the package is possible through [CircleCi](https://app.circleci.com/pipelines/github/ROKT/rokt-sdk-flutter) or [Buildkite](https://buildkite.com/rokt/rokt-flutter-sdk) by approving the `hold_for_publish` job.
+For Android:
 
-## How to manually publish sdk ?
+It's currently using the latest snapshot of the development build from Maven Central.
 
-1. Make sure you have following environment variables set:
+To update the SDK to a specific version:
+
+```gradle
+// android/build.gradle
+implementation "com.rokt:roktsdk:X.X.X"
+```
+
+### Gotchas
+
+- Always run `flutter clean` before updating the SDK version
+- For embedded placements, ensure the view is in the visible area of the screen before calling `execute`
+- To run in sandbox mode, add `"sandbox": "true"` to your attributes
+- When upgrading the native SDKs, you must update both the podspec version and the dependency version
+
+## Making Changes and Deployment
+
+### Branch Structure
+
+There is one **main** branch. This branch is where all development branches are merged into. Publishing the package is possible with **main** only.
+
+### Publishing the SDK
+
+This SDK is published to [pub.dev](https://pub.dev/packages/rokt_sdk).
+
+#### Automated Publishing (Recommended)
+
+The SDK can be released via the [Mobile Release Pipeline](https://github.com/ROKT/mobile-release-pipeline). Follow the instructions in the Mobile Release Pipeline repo to release.
+
+#### Manual Publishing
+
+1. Update version in `pubspec.yaml` (append `-alpha` for alpha releases)
+2. Update `CHANGELOG.md` with your changes
+3. Ensure you have the required environment variables:
    ```shell
    PUB_DEV_PUBLISH_ACCESS_TOKEN=
    PUB_DEV_PUBLISH_REFRESH_TOKEN=
    PUB_DEV_PUBLISH_TOKEN_ENDPOINT=
    PUB_DEV_PUBLISH_EXPIRATION=
    ```
-2. Run following command
+4. Run the publishing commands:
    ```shell
-   cd .circleci
+   cd .buildkite
    ./pub_login.sh
    dart pub publish -f
    ```
-
-## Automated Publishing
-
-The SDK can be released via the [Mobile Release Pipeline](https://github.com/ROKT/mobile-release-pipeline). Follow the instructions in the Mobile Release Pipeline repo to release. You can still release the SDK manually by following the steps in the previous section.
-
-## How to manually run UI Test ?
-
-UI test are located inside example app and you can run it by executing below command
-
-```shell
-flutter test integration_test/app_test.dart
-```
-
-## How to run the example app locally
-
-- Open project in Android Studio for changing the code
-- Run following commands in terminal or equivalent in Android Studio
-- Run `flutter clean`
-- Run `flutter pub get`
-- Run `flutter run`
-
-## What are the branches?
-
-There is one main branch with **release-** prefix. This branch is where all development branches are merged into. Publishing the package is possible with **release-** prefix branches only.
-
-## Update Rokt Native Sdk
-
-To update the iOS rokt sdk, make the following changes.
-
-```open ios/rokt_sdk.podspec
-   s.version          = 'X.X.X'
-   s.dependency 'Rokt-Widget', '~> X.X.X'
-```
-
-For Android, do the following
-
-```open android/build.gradle
-   implementation "com.rokt:roktsdk:X.X.X"
-```
 
 ## License
 
