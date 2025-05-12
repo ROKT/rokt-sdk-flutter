@@ -2,7 +2,7 @@
 # To learn more about the format of this file, see https://docs.trunk.io/reference/trunk-yaml
 version: 0.1
 cli:
-  version: 1.22.11
+  version: 1.22.12
 # Trunk provides extensibility via plugins. (https://docs.trunk.io/plugins)
 plugins:
   sources:
@@ -10,7 +10,7 @@ plugins:
       ref: main
       uri: https://github.com/ROKT/rokt-workflows
     - id: trunk
-      ref: v1.6.7
+      ref: v1.6.8
       uri: https://github.com/trunk-io/plugins
 # Many linters and tools depend on runtimes - configure them here. (https://docs.trunk.io/runtimes)
 runtimes:
@@ -27,20 +27,20 @@ lint:
         - "**/gradlew"
   enabled:
     - actionlint@1.7.7
-    - checkov@3.2.390
+    - checkov@3.2.416
     - git-diff-check
     - hadolint@2.12.1-beta
     - ktlint@1.5.0
     - markdownlint@0.44.0
-    - osv-scanner@2.0.0
-    - oxipng@9.1.4
+    - osv-scanner@2.0.2
+    - oxipng@9.1.5
     - prettier@3.5.3
     - shellcheck@0.10.0
     - shfmt@3.6.0
-    - trufflehog@3.88.18
-    - yamllint@1.36.2
-    - gitleaks@8.24.0
-    - trivy@0.60.0
+    - trufflehog@3.88.29
+    - yamllint@1.37.1
+    - gitleaks@8.25.1
+    - trivy@0.62.1
     - codespell@2.4.1
     - validate-actions-versions
     - taplo@0.9.3
