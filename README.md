@@ -12,8 +12,7 @@ conversions for campaigns.
 ## Resident Experts
 
 - Thomson Thomas - <thomson.thomas@rokt.com>
-- Danial Motahari - <danial.motahari@rokt.com>
-- Sahil Suri - <sahil.suri@rokt.com>
+- James Newman - <james.newman@rokt.com>
 
 ## Service Architecture
 
