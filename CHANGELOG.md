@@ -283,9 +283,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.10.0]
 
+### Added
+
+- Support word wrap for Title text.
+
 ### Changed
 
-- Updated Rokt SDKs and interfaces, support word wrap for Title text.
+- Updated Rokt SDKs and interfaces.
 
 ## [3.9.1]
 
@@ -297,13 +301,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Updated Rokt SDKs and interfaces, use default mobile browser for actions.
+- Updated Rokt SDKs and interfaces
+- Use default mobile browser for actions.
 
 ## [3.8.0]
 
+###
+
+- Bottomsheet placement
+
 ### Changed
 
-- Updated Rokt SDKs and interfaces, added Bottomsheet placement.
+- Updated Rokt SDKs and interfaces.
 
 ## [3.7.0]
 
