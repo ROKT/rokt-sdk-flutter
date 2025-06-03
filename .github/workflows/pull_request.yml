@@ -1,18 +1,13 @@
 name: Flutter Pull Request
 
 on:
-  push:
-    branches:
-      - main
-      - release*
-      - workstation*
   pull_request:
 
-permissions: read-all
-
-env:
-  FLUTTER_VERSION: 3.19.0
-  RUBY_VERSION: 3.1.2
+permissions:
+  contents: read
+  pull-requests: read
+  checks: write
+  id-token: write
 
 jobs:
   trunk-check:
@@ -29,115 +24,26 @@ jobs:
 
   build-test-ios:
     name: Build & Test iOS
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      - name: Setup ruby
-        uses: ruby/setup-ruby@1a615958ad9d422dd932dc1d5823942ee002799f #v1.227.0
-        with:
-          ruby-version: ${{ env.RUBY_VERSION }}
-          bundler-cache: true
-          rubygems: latest
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@e938fdf56512cc96ef2f93601a5a40bde3801046 #2.19.0
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
-
-      - name: Set up Xcode 16
-        uses: maxim-lobanov/setup-xcode@60606e260d2fc5762a71e64e74b2174e8ea3c8bd #v1.6.0
-        with:
-          xcode-version: 16.2
-
-      - name: Get all packages Flutter
-        working-directory: example
-        run: |
-          flutter pub get
-          flutter precache --ios
-
-      - name: Install iOS Dependencies
-        working-directory: example
-        run: |
-          bundle config set --local path 'vendor/bundle'
-          bundle install
-          cd ios
-          bundle install
-          bundle exec pod install --verbose --repo-update
-
-      - uses: futureware-tech/simulator-action@dab10d813144ef59b48d401cd95da151222ef8cd #v4
-        id: simulator
-        with:
-          model: iPhone 16
-
-      - name: Run Flutter Tests (iOS)
-        working-directory: example
-        run: bundle exec flutter test
-
-      - name: Run Flutter Integration Tests (iOS)
-        working-directory: example
-        env:
-          SIMULATOR: ${{ steps.simulator.outputs.udid }}
-        run: bundle exec flutter test integration_test/app_test.dart -d "$SIMULATOR" --dart-define=CI=true
+    needs: trunk-check
+    uses: ./.github/workflows/test-ios.yml
+    with:
+      flutter-version: ${{ vars.FLUTTER_VERSION }}
+      ruby-version: ${{ vars.RUBY_VERSION }}
+      xcode-version: ${{ vars.XCODE_VERSION }}
 
   build-test-android:
     name: Build & Test Android
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+    needs: trunk-check
+    uses: ./.github/workflows/test-android.yml
+    with:
+      flutter-version: ${{ vars.FLUTTER_VERSION }}
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@e938fdf56512cc96ef2f93601a5a40bde3801046 #2.19.0
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
-
-      - name: Get all packages Flutter
-        working-directory: example
-        run: |
-          flutter pub get
-
-      - name: Setup JDK
-        uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12 #v4.7.0
-        with:
-          java-version: 17
-          distribution: microsoft
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 #v3.2.2
-
-      - name: AVD Cache
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 #v4.2.3
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-29
-
-      - name: Configure Android SDK
-        run: |
-          flutter config --android-sdk ${ANDROID_HOME}
-
-      - name: Enable KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-
-      - name: Run Flutter Integration Tests
-        uses: reactivecircus/android-emulator-runner@62dbb605bba737720e10b196cb4220d374026a6d #v2.33.0
-        with:
-          api-level: 29
-          arch: x86_64
-          avd-name: emulator-5554
-          profile: pixel_6
-          target: google_apis
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: true
-          script: |
-            cd example && flutter build apk --debug && flutter test -d `flutter devices | grep android | tr ' ' '\n' | grep emulator-` integration_test/app_test.dart
+  pr-notify:
+    if: >
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.draft == false
+    needs: [build-test-ios, build-test-android]
+    name: Notify GChat
+    uses: ROKT/rokt-workflows/.github/workflows/oss_pr_opened_notification.yml@main
+    secrets:
+      gchat_webhook: ${{ secrets.GCHAT_PRS_WEBHOOK }}

@@ -1,0 +1,75 @@
+name: Test iOS
+
+on:
+  workflow_call:
+    inputs:
+      flutter-version:
+        required: false
+        type: string
+        default: 3.19.0
+      ruby-version:
+        required: false
+        type: string
+        default: 3.1.2
+      xcode-version:
+        required: false
+        type: string
+        default: "16.3"
+
+permissions:
+  contents: read
+
+jobs:
+  test_ios:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup ruby
+        uses: ruby/setup-ruby@1a615958ad9d422dd932dc1d5823942ee002799f #v1.227.0
+        with:
+          ruby-version: ${{ inputs.ruby-version }}
+          bundler-cache: true
+          rubygems: latest
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@e938fdf56512cc96ef2f93601a5a40bde3801046 #2.19.0
+        with:
+          flutter-version: ${{ inputs.flutter-version }}
+          channel: stable
+          cache: true
+
+      - name: Set up Xcode 16
+        uses: maxim-lobanov/setup-xcode@60606e260d2fc5762a71e64e74b2174e8ea3c8bd #v1.6.0
+        with:
+          xcode-version: ${{ inputs.xcode-version }}
+
+      - name: Get all packages Flutter
+        working-directory: example
+        run: |
+          flutter pub get
+          flutter precache --ios
+
+      - name: Install iOS Dependencies
+        working-directory: example
+        run: |
+          bundle config set --local path 'vendor/bundle'
+          bundle install
+          cd ios
+          bundle install
+          bundle exec pod install --verbose --repo-update
+
+      - uses: futureware-tech/simulator-action@dab10d813144ef59b48d401cd95da151222ef8cd #v4
+        id: simulator
+        with:
+          model: iPhone 16
+
+      - name: Run Flutter Tests (iOS)
+        working-directory: example
+        run: bundle exec flutter test
+
+      - name: Run Flutter Integration Tests (iOS)
+        working-directory: example
+        env:
+          SIMULATOR: ${{ steps.simulator.outputs.udid }}
+        run: bundle exec flutter test integration_test/app_test.dart -d "$SIMULATOR" --dart-define=CI=true
