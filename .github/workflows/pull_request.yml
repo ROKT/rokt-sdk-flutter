@@ -33,3 +33,13 @@ jobs:
     uses: ./.github/workflows/test-android.yml
     with:
       flutter-version: ${{ vars.FLUTTER_VERSION }}
+
+  pr-notify:
+    if: >
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.draft == false
+    needs: [build-test-ios, build-test-android]
+    name: Notify GChat
+    uses: ROKT/rokt-workflows/.github/workflows/oss_pr_opened_notification.yml@main
+    secrets:
+      gchat_webhook: ${{ secrets.GCHAT_PRS_WEBHOOK }}
