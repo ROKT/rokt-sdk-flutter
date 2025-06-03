@@ -3,7 +3,11 @@ name: Flutter Pull Request
 on:
   pull_request:
 
-permissions: read-all
+permissions:
+  contents: read
+  pull-requests: read
+  checks: write
+  id-token: write
 
 jobs:
   trunk-check:
