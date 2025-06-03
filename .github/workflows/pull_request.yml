@@ -3,11 +3,6 @@ name: Flutter Pull Request
 on:
   pull_request:
 
-env:
-  FLUTTER_VERSION: 3.19.0
-  RUBY_VERSION: 3.1.2
-  XCODE_VERSION: 16.3
-
 permissions: read-all
 
 jobs:
@@ -28,13 +23,13 @@ jobs:
     needs: trunk-check
     uses: ./.github/workflows/test-ios.yml
     with:
-      flutter-version: ${{ env.FLUTTER_VERSION }}
-      ruby-version: ${{ env.RUBY_VERSION }}
-      xcode-version: ${{ env.XCODE_VERSION }}
+      flutter-version: ${{ vars.FLUTTER_VERSION }}
+      ruby-version: ${{ vars.RUBY_VERSION }}
+      xcode-version: ${{ vars.XCODE_VERSION }}
 
   build-test-android:
     name: Build & Test Android
     needs: trunk-check
     uses: ./.github/workflows/test-android.yml
     with:
-      flutter-version: ${{ env.FLUTTER_VERSION }}
+      flutter-version: ${{ vars.FLUTTER_VERSION }}
