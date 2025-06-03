@@ -348,8 +348,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Introducing Rokt flutter SDK
 
-[unreleased]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.10.0...HEAD
-[4.10.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.9.0...4.10.0
+[unreleased]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.9.0...HEAD
 [4.9.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v4.8.1...4.9.0
 [4.8.1]: https://github.com/ROKT/rokt-sdk-flutter/compare/v4.8.0...v4.8.1
 [4.8.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v4.7.0...v4.8.0
