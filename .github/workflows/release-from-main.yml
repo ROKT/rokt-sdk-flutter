@@ -1,0 +1,135 @@
+name: Release SDK
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - VERSION
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-test-ios:
+    name: Build & Test iOS
+    uses: ./.github/workflows/test-ios.yml
+    with:
+      flutter-version: ${{ vars.FLUTTER_VERSION }}
+      ruby-version: ${{ vars.RUBY_VERSION }}
+      xcode-version: ${{ vars.XCODE_VERSION }}
+
+  build-test-android:
+    name: Build & Test Android
+    uses: ./.github/workflows/test-android.yml
+    with:
+      flutter-version: ${{ vars.FLUTTER_VERSION }}
+
+  setup-and-version:
+    needs: [build-test-ios, build-test-android]
+    runs-on: ubuntu-latest
+    outputs:
+      final_version: ${{ steps.version-file.outputs.release-version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Get current version
+        id: version-file
+        run: |
+          version_from_file=$(head -n 1 VERSION)
+          echo "release-version=$version_from_file" >> $GITHUB_OUTPUT
+
+  release-and-tag:
+    needs: [setup-and-version]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Pub Credentials
+        shell: bash
+        env:
+          PUB_DEV_PUBLISH_ACCESS_TOKEN: ${{ secrets.PUB_DEV_PUBLISH_ACCESS_TOKEN }}
+          PUB_DEV_PUBLISH_REFRESH_TOKEN: ${{ secrets.PUB_DEV_PUBLISH_REFRESH_TOKEN }}
+          PUB_DEV_PUBLISH_TOKEN_ENDPOINT: ${{ secrets.PUB_DEV_PUBLISH_TOKEN_ENDPOINT }}
+          PUB_DEV_PUBLISH_EXPIRATION: ${{ secrets.PUB_DEV_PUBLISH_EXPIRATION }}
+        run: |
+          sh ./pub_login.sh
+
+      - name: Publish Package
+        run: |
+          yes | flutter pub publish
+
+      - uses: ffurrer2/extract-release-notes@9989ccec43d726ef05aa1cd7b2854fb96b6df6ab # v2.2.0
+        id: extract-release-notes
+        with:
+          changelog_file: CHANGELOG.md
+          release_notes_file: ${{ needs.setup-and-version.outputs.final_version }}.md
+      - name: Changelog
+        run: echo "${{ steps.extract-release-notes.outputs.release_notes }}"
+      - name: Upload release notes
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 #v4.6.2
+        with:
+          name: release-notes
+          path: ${{ needs.setup-and-version.outputs.final_version }}.md
+
+      - name: Create Github release
+        uses: ncipollo/release-action@440c8c1cb0ed28b9f43e4d1d670870f059653174 # v1.16.0
+        with:
+          makeLatest: true
+          tag: ${{ needs.setup-and-version.outputs.final_version }}
+          body: |
+            ## Release notes:
+            ${{ steps.extract-release-notes.outputs.release_notes }}
+
+  upload-release-notes:
+    needs: [release-and-tag, setup-and-version]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@3ff1caaa28b64c9cc276ce0a02e2ff584f3900c5 # v2.0.2
+        with:
+          app-id: ${{ secrets.SDK_RELEASE_GITHUB_APP_ID }}
+          private-key: ${{ secrets.SDK_RELEASE_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: |
+            rokt-docs
+
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: ROKT/rokt-docs
+          token: ${{ steps.generate-token.outputs.token }}
+          ref: main
+          persist-credentials: false
+
+      - name: Download release notes
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: release-notes
+          path: ${{ needs.setup-and-version.outputs.final_version }}.md
+
+      - name: Move release notes to docs
+        run: |
+          mv ${{ needs.setup-and-version.outputs.final_version }}.md changelogs/flutter/${{ needs.setup-and-version.outputs.final_version }}.md
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          commit-message: Update Flutter SDK Release Notes
+          branch: update-flutter-sdk-release-notes-${{ needs.setup-and-version.outputs.final_version }}
+          title: NOJIRA - Update Flutter SDK Release Notes
+          base: main
+          body: |
+            # Update Flutter SDK Release Notes
+
+            Flutter SDK version ${{ needs.setup-and-version.outputs.final_version }} has been released.
+
+            Please review and merge the PR to update the release notes.
+          labels: |
+            chore
