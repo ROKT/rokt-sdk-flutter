@@ -59,9 +59,20 @@ jobs:
         run: |
           flutter pub publish --dry-run
 
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@3ff1caaa28b64c9cc276ce0a02e2ff584f3900c5 # v2.0.2
+        with:
+          app-id: ${{ secrets.SDK_RELEASE_GITHUB_APP_ID }}
+          private-key: ${{ secrets.SDK_RELEASE_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: |
+            rokt-sdk-flutter
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
         with:
+          token: ${{ steps.generate-token.outputs.token }}
           commit-message: "Prepare release ${{ steps.bump-version.outputs.new_version }}"
           branch: release/${{ steps.bump-version.outputs.new_version }}
           title: "Prepare release ${{ steps.bump-version.outputs.new_version }}"
