@@ -164,7 +164,6 @@ const RoktWidget(placeholderName: "RoktEmbedded1", onWidgetCreated: () { showWid
 ### Dependencies
 
 - **Android**:
-
   - Requires `androidx.appcompat` compatibility
   - Uses native Android Rokt-Widget SDK (currently referenced version in `android/build.gradle`)
 
