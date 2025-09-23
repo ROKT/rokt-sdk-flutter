@@ -27,9 +27,9 @@ lint:
         - "**/gradlew"
   enabled:
     - actionlint@1.7.7
-    - checkov@3.2.467
+    - checkov@3.2.471
     - git-diff-check
-    - hadolint@2.12.1-beta
+    - hadolint@2.14.0
     - ktlint@1.7.1
     - markdownlint@0.45.0
     - osv-scanner@2.2.2
@@ -37,10 +37,10 @@ lint:
     - prettier@3.6.2
     - shellcheck@0.11.0
     - shfmt@3.6.0
-    - trufflehog@3.90.5
+    - trufflehog@3.90.8
     - yamllint@1.37.1
     - gitleaks@8.28.0
-    - trivy@0.65.0
+    - trivy@0.66.0
     - codespell@2.4.1
     - validate-actions-versions
     - taplo@0.10.0
