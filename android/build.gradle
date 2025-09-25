@@ -2,14 +2,14 @@ group 'com.rokt.rokt_sdk'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.6.10'
+    ext.kotlin_version = '1.9.10'
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.0'
+        classpath 'com.android.tools.build:gradle:8.6.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -35,11 +35,9 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 35
 
-    if (project.android.hasProperty("namespace")) {
-        namespace = "com.rokt.roktsdk_plugin"
-    }
+    namespace = "com.rokt.roktsdk_plugin"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -55,13 +53,13 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 19 // using Hybrid composition
+        minSdkVersion 21 // using Hybrid composition
         multiDexEnabled true
     }
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "com.rokt:roktsdk:4.10.0"
+    implementation "com.rokt:roktsdk:4.11.+"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.1"
 }
