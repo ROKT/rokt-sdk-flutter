@@ -1,6 +1,7 @@
 name: Flutter Pull Request
 
 on:
+  workflow_dispatch:
   pull_request:
 
 permissions:
