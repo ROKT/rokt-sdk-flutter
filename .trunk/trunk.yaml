@@ -10,7 +10,7 @@ plugins:
       ref: main
       uri: https://github.com/ROKT/rokt-workflows
     - id: trunk
-      ref: v1.7.2
+      ref: v1.7.3
       uri: https://github.com/trunk-io/plugins
 # Many linters and tools depend on runtimes - configure them here. (https://docs.trunk.io/runtimes)
 runtimes:
@@ -26,21 +26,21 @@ lint:
       paths:
         - "**/gradlew"
   enabled:
-    - actionlint@1.7.7
-    - checkov@3.2.471
+    - actionlint@1.7.8
+    - checkov@3.2.489
     - git-diff-check
     - hadolint@2.14.0
     - ktlint@1.7.1
     - markdownlint@0.45.0
-    - osv-scanner@2.2.2
+    - osv-scanner@2.2.4
     - oxipng@9.1.5
     - prettier@3.6.2
     - shellcheck@0.11.0
     - shfmt@3.6.0
-    - trufflehog@3.90.8
+    - trufflehog@3.90.12
     - yamllint@1.37.1
     - gitleaks@8.28.0
-    - trivy@0.66.0
+    - trivy@0.67.2
     - codespell@2.4.1
     - validate-actions-versions
     - taplo@0.10.0
