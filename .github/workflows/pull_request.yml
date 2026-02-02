@@ -41,7 +41,7 @@ jobs:
     with:
       flutter-version: ${{ vars.FLUTTER_VERSION }}
       ruby-version: ${{ vars.RUBY_VERSION }}
-      xcode-version: ${{ vars.XCODE_VERSION }}
+      xcode-version: "16.4"
 
   build-test-android:
     name: Build & Test Android
