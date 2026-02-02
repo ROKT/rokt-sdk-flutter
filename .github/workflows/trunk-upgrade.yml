@@ -24,7 +24,7 @@ jobs:
           private-key: ${{ secrets.SDK_RELEASE_GITHUB_APP_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
           repositories: |
-            sdk-android-source
+            ${{ github.event.repository.name }}
 
   trunk-upgrade:
     needs: generate-and-call-upgrade
