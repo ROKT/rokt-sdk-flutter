@@ -26,7 +26,7 @@ class _MyAppState extends State<MyApp> {
   final catalogItemIdController = TextEditingController(text: "");
   bool purchaseSuccess = false;
   Map<int, String> placeholders = {};
-  final EventChannel roktEventChannel = EventChannel('RoktEvents');
+  static const EventChannel roktEventChannel = EventChannel('RoktEvents');
 
   @override
   void initState() {
@@ -111,7 +111,8 @@ class _MyAppState extends State<MyApp> {
                             keyboardType: TextInputType.multiline,
                             maxLines: null),
                         const Divider(),
-                        const Text("Purchase Finalized Test", style: TextStyle(fontWeight: FontWeight.bold)),
+                        const Text("Purchase Finalized Test",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
                         Row(
                           children: [
                             Expanded(
@@ -129,7 +130,8 @@ class _MyAppState extends State<MyApp> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text("Catalog Item ID"),
-                                  TextField(controller: catalogItemIdController),
+                                  TextField(
+                                      controller: catalogItemIdController),
                                 ],
                               ),
                             ),
@@ -163,7 +165,7 @@ class _MyAppState extends State<MyApp> {
                         const Divider(),
                         const Text("Location 1"),
                         const RoktWidget(
-                            key: const ValueKey('widget1'),
+                            key: ValueKey('widget1'),
                             placeholderName: "Location1"),
                         const Text("Location 2"),
                         RoktWidget(
