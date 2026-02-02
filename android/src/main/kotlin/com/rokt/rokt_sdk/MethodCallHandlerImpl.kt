@@ -64,7 +64,9 @@ class MethodCallHandlerImpl(
                 getSessionId(call, result)
             }
 
-            else -> result.notImplemented()
+            else -> {
+                result.notImplemented()
+            }
         }
     }
 

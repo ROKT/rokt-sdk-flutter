@@ -59,18 +59,18 @@ class RoktSdkController {
   }
 
   /// Call Rokt purchaseFinalized method in Native SDK
-  /// 
+  ///
   /// Note: This method requires iOS 15+.
   Future<void> purchaseFinalized({
     required String placementId,
     required String catalogItemId,
     required bool success,
   }) async {
-      await _channel.invokeMethod('purchaseFinalized', {
-        'placementId': placementId,
-        'catalogItemId': catalogItemId,
-        'success': success,
-      });
+    await _channel.invokeMethod('purchaseFinalized', {
+      'placementId': placementId,
+      'catalogItemId': catalogItemId,
+      'success': success,
+    });
   }
 
   /// Call Rokt setSessionId method in Native SDK
@@ -107,7 +107,8 @@ class RoktSdkController {
       'colorMode': config?.colorMode.name ?? ColorMode.system.name,
       'cacheConfig': config?.cacheConfig != null
           ? {
-              'cacheDurationInSeconds': config?.cacheConfig?.cacheDurationInSeconds,
+              'cacheDurationInSeconds':
+                  config?.cacheConfig?.cacheDurationInSeconds,
               'cacheAttributes': config?.cacheConfig?.cacheAttributes
             }
           : null
