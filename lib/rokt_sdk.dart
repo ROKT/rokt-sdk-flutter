@@ -116,7 +116,7 @@ class RoktSdk {
   static Future<void> setLoggingEnabled({required bool enable}) async {
     await RoktSdkController.instance.setLoggingEnabled(enable: enable);
   }
-  
+
   /// Notifies Rokt that a purchase has been finalized
   ///
   /// Use this method to inform Rokt that a purchase has been completed or failed
@@ -124,7 +124,7 @@ class RoktSdk {
   ///   - placementId: The placement ID associated with the purchase
   ///   - catalogItemId: The catalog item ID that was purchased
   ///   - success: Whether the purchase was successful
-  /// 
+  ///
   /// Note: This method requires iOS 15+.
   static Future<void> purchaseFinalized({
     required String placementId,
@@ -148,6 +148,7 @@ class RoktSdk {
 class CacheConfig {
   /// Duration in seconds for which the Rokt SDK should cache the experience
   final int cacheDurationInSeconds;
+
   /// Optional attributes to be used as cache key
   final Map<String, String>? cacheAttributes;
 
@@ -169,6 +170,7 @@ class CacheConfig {
 class RoktConfig {
   /// The device color mode your application is using
   final ColorMode colorMode;
+
   /// The cache configuration for the Rokt SDK
   final CacheConfig? cacheConfig;
 
@@ -177,7 +179,8 @@ class RoktConfig {
   /// - Parameters
   ///   - [ColorMode]? colorMode: preferred device color mode configuration
   ///   - [CacheConfig]? cacheConfig: cache configuration for the Rokt SDK
-  const RoktConfig({this.colorMode = ColorMode.system, this.cacheConfig = null});
+  const RoktConfig(
+      {this.colorMode = ColorMode.system, this.cacheConfig = null});
 }
 
 /// Enum representing device color modes

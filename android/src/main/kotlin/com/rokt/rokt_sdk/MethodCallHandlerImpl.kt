@@ -56,7 +56,9 @@ class MethodCallHandlerImpl(
                 purchaseFinalized(call, result)
             }
 
-            else -> result.notImplemented()
+            else -> {
+                result.notImplemented()
+            }
         }
     }
 
