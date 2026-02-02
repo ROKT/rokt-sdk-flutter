@@ -73,6 +73,16 @@ class RoktSdkController {
       });
   }
 
+  /// Call Rokt setSessionId method in Native SDK
+  Future<void> setSessionId({required String sessionId}) async {
+    await _channel.invokeMethod('setSessionId', {'sessionId': sessionId});
+  }
+
+  /// Call Rokt getSessionId method in Native SDK
+  Future<String?> getSessionId() async {
+    return _channel.invokeMethod<String?>('getSessionId');
+  }
+
   /// Placeholders are attached to be passed to Rokt Execute
   void attachPlaceholder({required int id, required String name}) {
     // Prevent duplicate placeholders with same name
