@@ -18,6 +18,7 @@ info:
     - lang-dart
     - lang-kotlin
     - lang-swift
+    - serviceTier-3
 
   x-cortex-oncall:
     opsgenie:
