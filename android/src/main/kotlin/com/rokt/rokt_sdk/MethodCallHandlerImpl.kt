@@ -56,6 +56,14 @@ class MethodCallHandlerImpl(
                 purchaseFinalized(call, result)
             }
 
+            SET_SESSION_ID_METHOD -> {
+                setSessionId(call, result)
+            }
+
+            GET_SESSION_ID_METHOD -> {
+                getSessionId(call, result)
+            }
+
             else -> {
                 result.notImplemented()
             }
@@ -109,6 +117,28 @@ class MethodCallHandlerImpl(
                 null,
             )
         }
+    }
+
+    private fun setSessionId(
+        call: MethodCall,
+        result: MethodChannel.Result,
+    ) {
+        val sessionId = call.argument<String>("sessionId")
+        sessionId?.let {
+            Rokt.setSessionId(it)
+            result.success("Success")
+        } ?: result.error(
+            "INVALID_PARAMS",
+            "sessionId is required",
+            null,
+        )
+    }
+
+    private fun getSessionId(
+        call: MethodCall,
+        result: MethodChannel.Result,
+    ) {
+        result.success(Rokt.getSessionId())
     }
 
     private fun init(
@@ -318,6 +348,8 @@ class MethodCallHandlerImpl(
         private const val EXECUTE_METHOD = "execute"
         private const val LOGGING_METHOD = "logging"
         private const val PURCHASE_FINALIZED_METHOD = "purchaseFinalized"
+        private const val SET_SESSION_ID_METHOD = "setSessionId"
+        private const val GET_SESSION_ID_METHOD = "getSessionId"
         private const val EVENT_CHANNEL_NAME = "RoktEvents"
         const val TAG = "ROKTSDK_FLUTTER"
     }

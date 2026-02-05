@@ -19,6 +19,8 @@ public class SwiftRoktSdkPlugin: NSObject, FlutterPlugin {
     fileprivate let EXECUTE_METHOD = "execute"
     fileprivate let LOGGING_METHOD = "logging"
     fileprivate let PURCHASE_FINALIZED_METHOD = "purchaseFinalized"
+    fileprivate let SET_SESSION_ID_METHOD = "setSessionId"
+    fileprivate let GET_SESSION_ID_METHOD = "getSessionId"
     fileprivate static let CHANNEL_NAME = "rokt_sdk"
     fileprivate static let VIEW_CALL_DELEGATE = "rokt_sdk.rokt.com/rokt_widget"
     
@@ -52,6 +54,10 @@ public class SwiftRoktSdkPlugin: NSObject, FlutterPlugin {
             handler.logging(call, result: result)
         } else if call.method == PURCHASE_FINALIZED_METHOD {
             handler.purchaseFinalized(call, result: result)
+        } else if call.method == SET_SESSION_ID_METHOD {
+            handler.setSessionId(call, result: result)
+        } else if call.method == GET_SESSION_ID_METHOD {
+            handler.getSessionId(call, result: result)
         } else {
             result("Not implemented")
         }
