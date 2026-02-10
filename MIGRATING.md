@@ -56,11 +56,6 @@ RoktSdk.selectPlacements(
 );
 ```
 
-### Related native migration guides
-
-- iOS SDK: `https://github.com/ROKT/rokt-sdk-ios/blob/main/MIGRATING.md`
-- Android SDK: `https://github.com/ROKT/rokt-sdk-android/blob/main/MIGRATING.md`
-
 ## Migrating from versions < 4.8.x
 
 Migration steps were not provided prior to version 4.8.x. If you're upgrading from older versions, follow the [initial integration steps](https://docs.rokt.com/developers/integration-guides/flutter/how-to/integrating-and-initializing).
