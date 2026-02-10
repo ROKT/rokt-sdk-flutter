@@ -18,8 +18,6 @@ import Rokt_Widget
 class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
     fileprivate let SUCCESS = "success"
     fileprivate let FAIL = "fail"
-    fileprivate let ARGS = "args"
-    fileprivate let CALL_LISTENER = "callListener"
     fileprivate let EVENT_CHANNEL = "RoktEvents"
 
     let channel: FlutterMethodChannel
@@ -66,8 +64,8 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
         }
     }
 
-    public func execute(_ call: FlutterMethodCall,
-                        result: @escaping FlutterResult) {
+    public func selectPlacements(_ call: FlutterMethodCall,
+                                 result: @escaping FlutterResult) {
 
         if let args = call.arguments as? Dictionary<String, Any>,
            let viewName = args["viewName"] as? String,
@@ -87,54 +85,21 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
             let configMap = args["config"] as? [String: Any] ?? [String: Any] ()
             let config = configMap.isEmpty ? nil : buildRoktConfig(configMap)
 
-            let callBackId = args["callbackId"] as? Int ?? 0
-            var callbackMap = [String: Any] ()
-            callbackMap["id"] = callBackId
-            Rokt.events(viewName: viewName, onEvent: { roktEvent in
-                self.handleEvents(roktEvent, viewName: viewName)
-            })
-            Rokt.execute(viewName: viewName, attributes: attributes, placements: placements, config: config, onLoad: {
-                // Optional callback for when the Rokt placement loads
-                callbackMap[self.ARGS] = "load"
-                self.channel.invokeMethod(self.CALL_LISTENER, arguments: callbackMap)
-            }, onUnLoad: {
-                // Optional callback for when the Rokt placement unloads
-                callbackMap[self.ARGS] = "unload"
-                self.channel.invokeMethod(self.CALL_LISTENER, arguments: callbackMap)
-            }, onShouldShowLoadingIndicator: {
-                // Optional callback to show a loading indicator
-                callbackMap[self.ARGS] = "onShouldShowLoadingIndicator"
-                self.channel.invokeMethod(self.CALL_LISTENER, arguments: callbackMap)
-            }, onShouldHideLoadingIndicator: {
-                // Optional callback to hide a loading indicator
-                callbackMap[self.ARGS] = "onShouldHideLoadingIndicator"
-                self.channel.invokeMethod(self.CALL_LISTENER, arguments: callbackMap)
-            },
-             onEmbeddedSizeChange: { selectedPlacement, widgetHeight in
-                // Optional callback to get selectedPlacement and height required by the placement every time the height of the placement changes
-                if let placeholders = args["placeholders"] as? [Int: String] {
-                    for (placeholderId, placeholderName) in placeholders {
-                        for (id, flutterView) in self.factory.platformViews {
-                            if id == placeholderId && placeholderName == selectedPlacement {
-                                flutterView.sendUpdatedHeight(height: widgetHeight)
-                            }
-                        }
-                    }
+            let placeholders = args["placeholders"] as? [Int: String]
+            Rokt.selectPlacements(
+                identifier: viewName,
+                attributes: attributes,
+                placements: placements,
+                config: config,
+                onEvent: { roktEvent in
+                    self.handleEvents(
+                        roktEvent,
+                        viewName: viewName,
+                        placeholders: placeholders
+                    )
                 }
-            })
+            )
 
-            result(SUCCESS)
-        } else {
-            result(FAIL)
-        }
-    }
-
-    public func logging(_ call: FlutterMethodCall,
-                           result: @escaping FlutterResult) {
-
-        if let args = call.arguments as? Dictionary<String, Any>{
-            let enable = args["enable"] as? Bool ?? false
-            Rokt.setLoggingEnabled(enable: enable)
             result(SUCCESS)
         } else {
             result(FAIL)
@@ -150,7 +115,7 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
 
             if #available(iOS 15.0, *) {
                 Rokt.purchaseFinalized(
-                    placementId: placementId,
+                    identifier: placementId,
                     catalogItemId: catalogItemId, 
                     success: success
                 )
@@ -159,20 +124,6 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
             }
         }
         result(FAIL)
-    }
-
-    public func setSessionId(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        if let args = call.arguments as? Dictionary<String, Any>,
-           let sessionId = args["sessionId"] as? String {
-            Rokt.setSessionId(sessionId: sessionId)
-            result(SUCCESS)
-        } else {
-            result(FAIL)
-        }
-    }
-
-    public func getSessionId(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        result(Rokt.getSessionId())
     }
 
     private func registerPartnerFonts(_ typefaces: Dictionary<String, String>) {
@@ -205,7 +156,11 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
         return builder.build()
     }
 
-    private func handleEvents(_ roktEvent: RoktEvent, viewName: String? = nil) {
+    private func handleEvents(
+        _ roktEvent: RoktEvent,
+        viewName: String? = nil,
+        placeholders: [Int: String]? = nil
+    ) {
         var eventParamMap = [String: String] ()
         var eventName = ""
         var placementId: String?
@@ -263,6 +218,19 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
                 eventParamMap["unitPrice"] = "\(unitPrice)"
             }
             placementId = event.placementId
+        } else if let event = roktEvent as? RoktEvent.EmbeddedSizeChanged {
+            eventName = "EmbeddedSizeChanged"
+            placementId = event.placementId
+            eventParamMap["updatedHeight"] = "\(event.updatedHeight)"
+            if let placeholders = placeholders {
+                for (placeholderId, placeholderName) in placeholders {
+                    for (id, flutterView) in self.factory.platformViews {
+                        if id == placeholderId && placeholderName == event.placementId {
+                            flutterView.sendUpdatedHeight(height: Double(event.updatedHeight))
+                        }
+                    }
+                }
+            }
         }
 
         eventParamMap["event"] = eventName
