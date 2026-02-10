@@ -1,5 +1,5 @@
 const String defaultTagId = "2754655826098840951";
-const String defaultViewName = "testTwoEmbedded";
+const String defaultViewName = "MSDKEmbeddedLayout";
 const String defaultAttributes = """{"email": "j.smithasd123@example.com",
 "firstname": "Jenny",
 "lastname": "Smith",
