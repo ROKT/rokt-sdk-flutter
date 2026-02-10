@@ -39,7 +39,7 @@ To develop with or contribute to this SDK, you'll need:
   - Android Gradle plugin 7.4.0 or newer
   - Gradle version 7.5 or newer
 - For iOS development:
-  - iOS 12 or above
+  - iOS 15 or above
   - Xcode with required dependencies
 
 ### Setup Steps
@@ -103,7 +103,7 @@ android {
 
 #### iOS
 
-Rokt iOS SDK supports iOS version 12 and above. No additional configuration is needed.
+Rokt iOS SDK supports iOS version 15 and above. No additional configuration is needed.
 
 ### SDK Initialization
 
