@@ -27,7 +27,6 @@ class MethodCallHandlerImpl(
 ) : MethodChannel.MethodCallHandler {
     private var channel: MethodChannel? = null
     private lateinit var activity: Activity
-    private val roktCallbacks: MutableSet<Rokt.RoktCallback> = mutableSetOf()
     private val eventListeners = mutableSetOf<EventChannel.EventSink>()
     private val eventSubscriptions = mutableMapOf<String, Job?>()
 
@@ -44,24 +43,12 @@ class MethodCallHandlerImpl(
                 init(call, result)
             }
 
-            EXECUTE_METHOD -> {
-                execute(call, result)
-            }
-
-            LOGGING_METHOD -> {
-                logging(call, result)
+            SELECT_PLACEMENTS_METHOD -> {
+                selectPlacements(call, result)
             }
 
             PURCHASE_FINALIZED_METHOD -> {
                 purchaseFinalized(call, result)
-            }
-
-            SET_SESSION_ID_METHOD -> {
-                setSessionId(call, result)
-            }
-
-            GET_SESSION_ID_METHOD -> {
-                getSessionId(call, result)
             }
 
             else -> {
@@ -80,20 +67,10 @@ class MethodCallHandlerImpl(
     }
 
     fun stopListening() {
-        roktCallbacks.clear()
         channel?.let { methodChannel ->
             methodChannel.setMethodCallHandler(null)
             channel = null
         }
-    }
-
-    private fun logging(
-        call: MethodCall,
-        result: MethodChannel.Result,
-    ) {
-        val enable: Boolean = call.argument<Boolean?>("enable") ?: false
-        Rokt.setLoggingEnabled(enable)
-        result.success("enable")
     }
 
     private fun purchaseFinalized(
@@ -105,7 +82,7 @@ class MethodCallHandlerImpl(
         val success = call.argument<Boolean>("success") ?: true
         if (placementId != null && catalogItemId != null) {
             Rokt.purchaseFinalized(
-                placementId = placementId,
+                identifier = placementId,
                 catalogItemId = catalogItemId,
                 status = success,
             )
@@ -117,28 +94,6 @@ class MethodCallHandlerImpl(
                 null,
             )
         }
-    }
-
-    private fun setSessionId(
-        call: MethodCall,
-        result: MethodChannel.Result,
-    ) {
-        val sessionId = call.argument<String>("sessionId")
-        sessionId?.let {
-            Rokt.setSessionId(it)
-            result.success("Success")
-        } ?: result.error(
-            "INVALID_PARAMS",
-            "sessionId is required",
-            null,
-        )
-    }
-
-    private fun getSessionId(
-        call: MethodCall,
-        result: MethodChannel.Result,
-    ) {
-        result.success(Rokt.getSessionId())
     }
 
     private fun init(
@@ -170,13 +125,12 @@ class MethodCallHandlerImpl(
         )
     }
 
-    private fun execute(
+    private fun selectPlacements(
         call: MethodCall,
         result: MethodChannel.Result,
     ) {
         val viewName = call.argument<String>("viewName").orEmpty()
         val attributes = call.argument<HashMap<String, String>>("attributes").orEmpty()
-        val callBackId = call.argument<Int>("callbackId") ?: 0
         val placeHolders: MutableMap<String, WeakReference<Widget>> = mutableMapOf()
         val configMap = call.argument<HashMap<String, Any>>("config")
         val config = configMap?.let { buildRoktConfig(it) }
@@ -185,21 +139,14 @@ class MethodCallHandlerImpl(
                 placeHolders[it.value] = WeakReference(widgetFactory.nativeViews[it.key])
             }
         }
-        val roktCallback =
-            RoktCallbackImpl(channel, callBackId).also { callback ->
-                roktCallbacks.add(callback)
-            }
-        val map: MutableMap<String, Any> = mutableMapOf()
-        map["id"] = callBackId
         subscribeToEvents(Rokt.events(viewName), viewName)
-        Rokt.execute(
-            viewName = viewName,
+        Rokt.selectPlacements(
+            identifier = viewName,
             attributes = attributes,
-            callback = roktCallback,
             placeholders = placeHolders,
             config = config,
         )
-        result.success("Executed")
+        result.success("Selected placements")
     }
 
     private fun setupEventChannel() {
@@ -345,11 +292,8 @@ class MethodCallHandlerImpl(
     companion object {
         private const val CHANNEL_NAME = "rokt_sdk"
         private const val INIT_METHOD = "initialize"
-        private const val EXECUTE_METHOD = "execute"
-        private const val LOGGING_METHOD = "logging"
+        private const val SELECT_PLACEMENTS_METHOD = "selectPlacements"
         private const val PURCHASE_FINALIZED_METHOD = "purchaseFinalized"
-        private const val SET_SESSION_ID_METHOD = "setSessionId"
-        private const val GET_SESSION_ID_METHOD = "getSessionId"
         private const val EVENT_CHANNEL_NAME = "RoktEvents"
         const val TAG = "ROKTSDK_FLUTTER"
     }

@@ -71,7 +71,6 @@ class _MyAppState extends State<MyApp> {
                               TextButton(
                                 child: const Text('Initial'),
                                 onPressed: () {
-                                  RoktSdk.setLoggingEnabled(enable: true);
                                   RoktSdk.initialize(tagIdController.text,
                                       appVersion: '1.0.0');
                                 },
@@ -85,25 +84,11 @@ class _MyAppState extends State<MyApp> {
                                       controller: viewNameController,
                                       textAlign: TextAlign.center)),
                               TextButton(
-                                  child: const Text('Execute'),
+                                  child: const Text('Select Placements'),
                                   onPressed: () {
-                                    RoktSdk.execute(
+                                    RoktSdk.selectPlacements(
                                         viewName: viewNameController.text,
-                                        attributes: getAttributes(),
-                                        onLoad: () {
-                                          debugPrint("rokt_sdk loaded");
-                                        },
-                                        onUnLoad: () {
-                                          debugPrint("rokt_sdk unloaded");
-                                        },
-                                        onShouldShowLoadingIndicator: () {
-                                          debugPrint(
-                                              "rokt_sdk onShouldShowLoadingIndicator");
-                                        },
-                                        onShouldHideLoadingIndicator: () {
-                                          debugPrint(
-                                              "rokt_sdk onShouldHideLoadingIndicator");
-                                        });
+                                        attributes: getAttributes());
                                   })
                             ]),
                         TextField(

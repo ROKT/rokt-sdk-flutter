@@ -12,53 +12,10 @@ import 'package:rokt_sdk/src/widget_controller.dart';
 
 part 'src/rokt_widget.dart';
 
-/// callback for the rokt sdk
-typedef RoktCallback = void Function();
-
 /// The main interface to Rokt SDK
 ///
 /// Use the member methods to interact with the Rokt SDK
 class RoktSdk {
-  static const _load = 'load';
-  static const _unload = 'unload';
-  static const _shouldShowLoadingIndicator = 'onShouldShowLoadingIndicator';
-  static const _shouldHideLoadingIndicator = 'onShouldHideLoadingIndicator';
-
-  static void _defaultRoktCallBackInternal(dynamic msg) {
-    switch (msg) {
-      case _load:
-        {
-          _onLoad?.call();
-          break;
-        }
-      case _unload:
-        {
-          _onUnLoad?.call();
-          break;
-        }
-      case _shouldShowLoadingIndicator:
-        {
-          _onShouldShowLoadingIndicator?.call();
-          break;
-        }
-      case _shouldHideLoadingIndicator:
-        {
-          _onShouldHideLoadingIndicator?.call();
-          break;
-        }
-    }
-  }
-
-  static void _defaultRoktCallBack() {}
-
-  static RoktCallback? _onLoad;
-
-  static RoktCallback? _onUnLoad;
-
-  static RoktCallback? _onShouldShowLoadingIndicator;
-
-  static RoktCallback? _onShouldHideLoadingIndicator;
-
   /// Initializes Rokt SDK
   ///
   /// Initialize the Rokt SDK prior to using it.
@@ -76,45 +33,22 @@ class RoktSdk {
         fontFilePathMap: fontFilePathMap);
   }
 
-  /// Execute Rokt widget
+  /// Select Rokt placements
   ///
-  /// This is the entry point to display a widget to the consumer.
-  /// The Rokt widget view displays after a short delay, configurable via the Rokt platform.
-  /// The SDK provides optional callback events for when the view loads and unloads.
+  /// This is the entry point to select and display placements for a given view.
   /// Your app dictates which consumer attributes are passed through to Rokt
   /// - Parameters:
   ///   - viewName: The name that should be displayed in the widget
   ///   - attributes: A string map containing the parameters that should be displayed in the widget
   ///   - roktConfig: Rokt SDK configuration object
-  ///   - onLoad: Function to execute right after the widget is successfully loaded and displayed
-  ///   - onUnLoad: Function to execute right after widget is unloaded, there is no widget or there is an exception
-  ///   - onShouldShowLoadingIndicator: Function to execute when the loading indicator should be shown
-  ///   - onShouldHideLoadingIndicator: Function to execute when the loading indicator should be hidden
-  static Future<void> execute(
+  static Future<void> selectPlacements(
       {required String viewName,
       Map<String, String> attributes = const {},
-      RoktConfig? roktConfig,
-      RoktCallback onLoad = _defaultRoktCallBack,
-      RoktCallback onUnLoad = _defaultRoktCallBack,
-      RoktCallback onShouldShowLoadingIndicator = _defaultRoktCallBack,
-      RoktCallback onShouldHideLoadingIndicator = _defaultRoktCallBack}) async {
-    _onLoad = onLoad;
-    _onUnLoad = onUnLoad;
-    _onShouldShowLoadingIndicator = onShouldShowLoadingIndicator;
-    _onShouldHideLoadingIndicator = onShouldHideLoadingIndicator;
-
-    await RoktSdkController.instance.execute(
+      RoktConfig? roktConfig}) async {
+    await RoktSdkController.instance.selectPlacements(
         viewName: viewName,
         attributes: attributes,
-        config: roktConfig,
-        callback: _defaultRoktCallBackInternal);
-  }
-
-  /// Enable or disable debug logging from the library
-  /// - Parameters:
-  ///   - enable: enables or disables debug logging
-  static Future<void> setLoggingEnabled({required bool enable}) async {
-    await RoktSdkController.instance.setLoggingEnabled(enable: enable);
+        config: roktConfig);
   }
 
   /// Notifies Rokt that a purchase has been finalized
@@ -138,25 +72,6 @@ class RoktSdk {
     );
   }
 
-  /// Set the session id to use for the next execute call.
-  ///
-  /// This is useful for cases where you have a session id from a non-native integration,
-  /// e.g. WebView, and you want the session to be consistent across integrations.
-  ///
-  /// - Note: Empty strings are ignored and will not update the session.
-  ///
-  /// - Parameters:
-  ///   - sessionId: The session id to be set. Must be a non-empty string.
-  static Future<void> setSessionId(String sessionId) async {
-    await RoktSdkController.instance.setSessionId(sessionId: sessionId);
-  }
-
-  /// Get the session id to use within a non-native integration e.g. WebView
-  ///
-  /// - Returns: The session id or null if no session is present.
-  static Future<String?> getSessionId() async {
-    return RoktSdkController.instance.getSessionId();
-  }
 }
 
 /// Cache configuration for the Rokt SDK

@@ -126,13 +126,12 @@ RoktSdk.initialize('222', appVersion: '1.0.0');
 
 #### Overlay Placements
 
-Execute the Rokt iOS SDK in your desired view and add all appropriate customer attributes.
-The SDK provides optional callback events for when the view loads and unloads.
+Select placements in your desired view and add all appropriate customer attributes.
 
 ```dart
 import 'package:rokt_sdk/rokt_sdk.dart';
 
-RoktSdk.execute(
+RoktSdk.selectPlacements(
   viewName: "RoktExperience",
   attributes: {
     "email": "j.smith@example.com",
@@ -141,12 +140,6 @@ RoktSdk.execute(
     "mobile": "(555)867-5309",
     "postcode": "90210",
     "country": "US"
-  },
-  onLoad: () {
-    // Optional callback for when the Rokt placement loads
-  },
-  onUnLoad: () {
-    // Optional callback for when the Rokt placement unloads
   }
 );
 ```
@@ -194,7 +187,7 @@ implementation "com.rokt:roktsdk:X.X.X"
 ### Gotchas
 
 - Always run `flutter clean` before updating the SDK version
-- For embedded placements, ensure the view is in the visible area of the screen before calling `execute`
+- For embedded placements, ensure the view is in the visible area of the screen before calling `selectPlacements`
 - To run in sandbox mode, add `"sandbox": "true"` to your attributes
 - When upgrading the native SDKs, you must update both the podspec version and the dependency version
 
