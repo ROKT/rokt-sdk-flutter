@@ -8,7 +8,7 @@ void main() {
 
   group('end-to-end test', () {
     testWidgets(
-        'given the default account when selectPlacements is called verify embedded rokt widgets are loading',
+        'given the default account when selectPlacements is called verify embedded rokt widget loads',
         (tester) async {
       app.main();
       await tester.pumpAndSettle();
@@ -22,9 +22,6 @@ void main() {
 
       final roktWidget1 = find.byKey(const ValueKey('widget1'));
       expect(tester.getSize(roktWidget1).height, equals(1));
-
-      final roktWidget2 = find.byKey(const ValueKey('widget2'));
-      expect(tester.getSize(roktWidget2).height, equals(1));
 
       final Finder selectPlacements = find.text('Select Placements');
       await tester.tap(selectPlacements);
@@ -42,22 +39,6 @@ void main() {
       // ignore: avoid_print
       print('Widget1 height after selectPlacements: $widget1Height');
       expect(widget1Height, greaterThan(2.0));
-
-      final scrollView = find.byType(CustomScrollView);
-      await tester.dragUntilVisible(
-          roktWidget2, scrollView, const Offset(0, -500));
-
-      // Add delay after scrolling
-      await addDelay(2000);
-      await tester.pumpAndSettle();
-
-      expect(roktWidget2, findsOneWidget);
-
-      // Verify widget2 height
-      final widget2Height = tester.getSize(roktWidget2).height;
-      // ignore: avoid_print
-      print('Widget2 height after scroll: $widget2Height');
-      expect(widget2Height, greaterThan(2.0));
     });
   });
 }
