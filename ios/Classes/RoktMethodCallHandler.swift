@@ -126,6 +126,20 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
         result(FAIL)
     }
 
+    public func setSessionId(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        if let args = call.arguments as? Dictionary<String, Any>,
+           let sessionId = args["sessionId"] as? String {
+            Rokt.setSessionId(sessionId: sessionId)
+            result(SUCCESS)
+        } else {
+            result(FAIL)
+        }
+    }
+
+    public func getSessionId(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        result(Rokt.getSessionId())
+    }
+
     private func registerPartnerFonts(_ typefaces: Dictionary<String, String>) {
         let bundle = Bundle.main
         for (_, fileName) in typefaces {

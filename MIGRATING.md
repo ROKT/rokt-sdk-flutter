@@ -14,7 +14,6 @@ This document provides guidance on migrating to newer versions of the Rokt Flutt
   - `onShouldHideLoadingIndicator`
   - native embedded size callback path (`onEmbeddedSizeChange`)
 - `setLoggingEnabled()` was removed.
-- `setSessionId()` and `getSessionId()` were removed.
 - `onInitComplete`-style callback flow is superseded by events.
 - Integrations should now rely on the `RoktEvents` stream (for example: `InitComplete`, `ShowLoadingIndicator`, `PlacementReady`, `PlacementFailure`, `EmbeddedSizeChanged`).
 
@@ -26,7 +25,6 @@ This document provides guidance on migrating to newer versions of the Rokt Flutt
 RoktSdk.initialize('YOUR_TAG_ID', appVersion: '1.0.0');
 
 RoktSdk.setLoggingEnabled(enable: true);
-await RoktSdk.setSessionId('my-session-id');
 
 RoktSdk.execute(
   viewName: "checkout",
