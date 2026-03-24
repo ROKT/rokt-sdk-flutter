@@ -41,7 +41,6 @@ lint:
     - trufflehog@3.92.5
     - yamllint@1.38.0
     - gitleaks@8.30.0
-    - trivy@0.69.0
     - codespell@2.4.1
     - validate-actions-versions
     - taplo@0.10.0
