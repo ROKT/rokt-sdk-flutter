@@ -77,11 +77,10 @@ void main() {
         'firstname': 'John',
       });
 
-      final config =
-          log.first.arguments['config'] as Map<Object?, Object?>;
+      final config = log.first.arguments['config'] as Map<Object?, Object?>;
       expect(config['colorMode'], 'dark');
 
-      final cacheConfig = config['cacheConfig'] as Map<Object?, Object?>;
+      final cacheConfig = config['cacheConfig']! as Map<Object?, Object?>;
       expect(cacheConfig['cacheDurationInSeconds'], 3600);
     });
   });
@@ -106,8 +105,7 @@ void main() {
       expect(log.first.arguments['viewName'], 'ConfirmationPage');
       expect(log.first.arguments['attributes'], {'email': 'test@example.com'});
 
-      final config =
-          log.first.arguments['config'] as Map<Object?, Object?>;
+      final config = log.first.arguments['config'] as Map<Object?, Object?>;
       expect(config['colorMode'], 'light');
     });
   });

@@ -46,9 +46,7 @@ class RoktSdk {
       Map<String, String> attributes = const {},
       RoktConfig? roktConfig}) async {
     await RoktSdkController.instance.selectPlacements(
-        viewName: viewName,
-        attributes: attributes,
-        config: roktConfig);
+        viewName: viewName, attributes: attributes, config: roktConfig);
   }
 
   /// Display a Shoppable Ads overlay placement.
@@ -139,7 +137,6 @@ class RoktSdk {
   static Future<String?> getSessionId() async {
     return RoktSdkController.instance.getSessionId();
   }
-
 }
 
 /// Cache configuration for the Rokt SDK

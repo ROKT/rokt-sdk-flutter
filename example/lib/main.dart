@@ -119,7 +119,8 @@ class _MyAppState extends State<MyApp> {
                                     'stripeKey': stripeKeyController.text
                                   },
                                 );
-                                debugPrint("rokt_sdk payment extension registered");
+                                debugPrint(
+                                    "rokt_sdk payment extension registered");
                               },
                             ),
                           ],
