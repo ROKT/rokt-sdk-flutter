@@ -106,6 +106,56 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
         }
     }
 
+    public func selectShoppableAds(_ call: FlutterMethodCall,
+                                   result: @escaping FlutterResult) {
+
+        if let args = call.arguments as? Dictionary<String, Any>,
+           let viewName = args["viewName"] as? String,
+           let attributes = args["attributes"] as? [String: String] {
+
+            let configMap = args["config"] as? [String: Any] ?? [String: Any]()
+            let config = configMap.isEmpty ? nil : buildRoktConfig(configMap)
+
+            Rokt.selectShoppableAds(
+                identifier: viewName,
+                attributes: attributes,
+                config: config,
+                onEvent: { roktEvent in
+                    self.handleEvents(roktEvent, viewName: viewName)
+                }
+            )
+
+            result(SUCCESS)
+        } else {
+            result(FAIL)
+        }
+    }
+
+    public func registerPaymentExtension(_ call: FlutterMethodCall,
+                                         result: @escaping FlutterResult) {
+
+        guard let args = call.arguments as? Dictionary<String, Any>,
+              let extensionType = args["extensionType"] as? String else {
+            result(FAIL)
+            return
+        }
+
+        let config = args["config"] as? [String: String] ?? [:]
+
+        guard let extensionClass = NSClassFromString(extensionClassName(for: extensionType)) as? NSObject.Type,
+              let paymentExtension = extensionClass.init() as? PaymentExtension else {
+            result(FlutterError(
+                code: "EXTENSION_NOT_FOUND",
+                message: "Payment extension '\(extensionType)' not found. Ensure the native dependency is included.",
+                details: nil
+            ))
+            return
+        }
+
+        Rokt.registerPaymentExtension(paymentExtension, config: config)
+        result(SUCCESS)
+    }
+
     public func purchaseFinalized(_ call: FlutterMethodCall,
                                 result: @escaping FlutterResult) {
         if let args = call.arguments as? Dictionary<String, Any>,
@@ -113,17 +163,15 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
            let catalogItemId = args["catalogItemId"] as? String,
            let success = args["success"] as? Bool {
 
-            if #available(iOS 15.0, *) {
-                Rokt.purchaseFinalized(
-                    identifier: placementId,
-                    catalogItemId: catalogItemId, 
-                    success: success
-                )
-                result(SUCCESS)
-                return
-            }
+            Rokt.purchaseFinalized(
+                identifier: placementId,
+                catalogItemId: catalogItemId,
+                success: success
+            )
+            result(SUCCESS)
+        } else {
+            result(FAIL)
         }
-        result(FAIL)
     }
 
     public func setSessionId(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -138,6 +186,15 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
 
     public func getSessionId(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         result(Rokt.getSessionId())
+    }
+
+    private func extensionClassName(for extensionType: String) -> String {
+        switch extensionType {
+        case "stripe":
+            return "RoktStripePaymentExtension.RoktStripePaymentExtension"
+        default:
+            return extensionType
+        }
     }
 
     private func registerPartnerFonts(_ typefaces: Dictionary<String, String>) {
@@ -180,39 +237,39 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
         var placementId: String?
         if let event = roktEvent as? RoktEvent.FirstPositiveEngagement {
             eventName = "FirstPositiveEngagement"
-            placementId = event.placementId
-        } else if let event = roktEvent as? RoktEvent.ShowLoadingIndicator {
+            placementId = event.identifier
+        } else if roktEvent is RoktEvent.ShowLoadingIndicator {
             eventName = "ShowLoadingIndicator"
-        } else if let event = roktEvent as? RoktEvent.HideLoadingIndicator {
+        } else if roktEvent is RoktEvent.HideLoadingIndicator {
             eventName = "HideLoadingIndicator"
         } else if let event = roktEvent as? RoktEvent.OfferEngagement {
             eventName = "OfferEngagement"
-            placementId = event.placementId
+            placementId = event.identifier
         } else if let event = roktEvent as? RoktEvent.PositiveEngagement {
             eventName = "PositiveEngagement"
-            placementId = event.placementId
+            placementId = event.identifier
         } else if let event = roktEvent as? RoktEvent.PlacementReady {
             eventName = "PlacementReady"
-            placementId = event.placementId
+            placementId = event.identifier
         } else if let event = roktEvent as? RoktEvent.PlacementInteractive {
             eventName = "PlacementInteractive"
-            placementId = event.placementId
+            placementId = event.identifier
         } else if let event = roktEvent as? RoktEvent.PlacementFailure {
             eventName = "PlacementFailure"
-            placementId = event.placementId
+            placementId = event.identifier
         } else if let event = roktEvent as? RoktEvent.PlacementCompleted {
             eventName = "PlacementCompleted"
-            placementId = event.placementId
+            placementId = event.identifier
         } else if let event = roktEvent as? RoktEvent.PlacementClosed {
             eventName = "PlacementClosed"
-            placementId = event.placementId
+            placementId = event.identifier
         } else if let event = roktEvent as? RoktEvent.InitComplete {
             eventName = "InitComplete"
             eventParamMap["status"] = String(event.success)
         } else if let event = roktEvent as? RoktEvent.OpenUrl {
             eventName = "OpenUrl"
             eventParamMap["url"] = event.url
-            placementId = event.placementId
+            placementId = event.identifier
         } else if let event = roktEvent as? RoktEvent.CartItemInstantPurchase {
             eventName = "CartItemInstantPurchase"
             eventParamMap["cartItemId"] = event.cartItemId
@@ -231,15 +288,35 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
             if let unitPrice = event.unitPrice {
                 eventParamMap["unitPrice"] = "\(unitPrice)"
             }
-            placementId = event.placementId
+            placementId = event.identifier
+        } else if let event = roktEvent as? RoktEvent.CartItemInstantPurchaseInitiated {
+            eventName = "CartItemInstantPurchaseInitiated"
+            eventParamMap["catalogItemId"] = event.catalogItemId
+            eventParamMap["cartItemId"] = event.cartItemId
+            placementId = event.identifier
+        } else if let event = roktEvent as? RoktEvent.CartItemInstantPurchaseFailure {
+            eventName = "CartItemInstantPurchaseFailure"
+            eventParamMap["catalogItemId"] = event.catalogItemId
+            eventParamMap["cartItemId"] = event.cartItemId
+            eventParamMap["error"] = event.error ?? ""
+            placementId = event.identifier
+        } else if let event = roktEvent as? RoktEvent.InstantPurchaseDismissal {
+            eventName = "InstantPurchaseDismissal"
+            placementId = event.identifier
+        } else if let event = roktEvent as? RoktEvent.CartItemDevicePay {
+            eventName = "CartItemDevicePay"
+            eventParamMap["catalogItemId"] = event.catalogItemId
+            eventParamMap["cartItemId"] = event.cartItemId
+            eventParamMap["paymentProvider"] = event.paymentProvider
+            placementId = event.identifier
         } else if let event = roktEvent as? RoktEvent.EmbeddedSizeChanged {
             eventName = "EmbeddedSizeChanged"
-            placementId = event.placementId
+            placementId = event.identifier
             eventParamMap["updatedHeight"] = "\(event.updatedHeight)"
             if let placeholders = placeholders {
                 for (placeholderId, placeholderName) in placeholders {
                     for (id, flutterView) in self.factory.platformViews {
-                        if id == placeholderId && placeholderName == event.placementId {
+                        if id == placeholderId && placeholderName == event.identifier {
                             flutterView.sendUpdatedHeight(height: Double(event.updatedHeight))
                         }
                     }
@@ -262,7 +339,7 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
 }
 
 fileprivate extension String {
-    func toColorMode() -> RoktConfig.ColorMode {
+    func toColorMode() -> RoktColorMode {
         return switch self {
             case "light": .light
             case "dark": .dark
@@ -270,5 +347,3 @@ fileprivate extension String {
         }
     }
 }
-
-

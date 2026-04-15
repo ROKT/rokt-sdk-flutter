@@ -17,6 +17,8 @@ import UIKit
 public class SwiftRoktSdkPlugin: NSObject, FlutterPlugin {
     fileprivate let INIT_METHOD = "initialize"
     fileprivate let SELECT_PLACEMENTS_METHOD = "selectPlacements"
+    fileprivate let SELECT_SHOPPABLE_ADS_METHOD = "selectShoppableAds"
+    fileprivate let REGISTER_PAYMENT_EXTENSION_METHOD = "registerPaymentExtension"
     fileprivate let PURCHASE_FINALIZED_METHOD = "purchaseFinalized"
     fileprivate let SET_SESSION_ID_METHOD = "setSessionId"
     fileprivate let GET_SESSION_ID_METHOD = "getSessionId"
@@ -49,6 +51,10 @@ public class SwiftRoktSdkPlugin: NSObject, FlutterPlugin {
             handler.initialize(call, result: result)
         } else if call.method == SELECT_PLACEMENTS_METHOD {
             handler.selectPlacements(call, result: result)
+        } else if call.method == SELECT_SHOPPABLE_ADS_METHOD {
+            handler.selectShoppableAds(call, result: result)
+        } else if call.method == REGISTER_PAYMENT_EXTENSION_METHOD {
+            handler.registerPaymentExtension(call, result: result)
         } else if call.method == PURCHASE_FINALIZED_METHOD {
             handler.purchaseFinalized(call, result: result)
         } else if call.method == SET_SESSION_ID_METHOD {
