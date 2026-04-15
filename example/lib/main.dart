@@ -22,6 +22,9 @@ class _MyAppState extends State<MyApp> {
       TextEditingController(text: constants.defaultViewName);
   final attributesController =
       TextEditingController(text: constants.defaultAttributes);
+  final shoppableViewNameController =
+      TextEditingController(text: "ShoppablePage");
+  final stripeKeyController = TextEditingController(text: "");
   final placementIdController = TextEditingController(text: "");
   final catalogItemIdController = TextEditingController(text: "");
   bool purchaseSuccess = false;
@@ -95,6 +98,53 @@ class _MyAppState extends State<MyApp> {
                             controller: attributesController,
                             keyboardType: TextInputType.multiline,
                             maxLines: null),
+                        const Divider(),
+                        const Text("Shoppable Ads (iOS only)",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: stripeKeyController,
+                                decoration: const InputDecoration(
+                                    hintText: "Stripe Key (pk_...)"),
+                              ),
+                            ),
+                            TextButton(
+                              child: const Text('Register'),
+                              onPressed: () {
+                                RoktSdk.registerPaymentExtension(
+                                  extensionType: 'stripe',
+                                  config: {
+                                    'stripeKey': stripeKeyController.text
+                                  },
+                                );
+                                debugPrint("rokt_sdk payment extension registered");
+                              },
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: shoppableViewNameController,
+                                decoration: const InputDecoration(
+                                    hintText: "Shoppable View Name"),
+                              ),
+                            ),
+                            TextButton(
+                              child: const Text('Shoppable Ads'),
+                              onPressed: () {
+                                RoktSdk.selectShoppableAds(
+                                  viewName: shoppableViewNameController.text,
+                                  attributes: getAttributes(),
+                                );
+                                debugPrint("rokt_sdk shoppable ads triggered");
+                              },
+                            ),
+                          ],
+                        ),
                         const Divider(),
                         const Text("Purchase Finalized Test",
                             style: TextStyle(fontWeight: FontWeight.bold)),

@@ -9,6 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.0.0]
+
+### Added
+
+- Added `selectShoppableAds()` for Shoppable Ads overlay placements (iOS only)
+- Added `registerPaymentExtension()` for payment provider registration (iOS only)
+- Added shoppable event types: `CartItemInstantPurchaseInitiated`, `CartItemInstantPurchaseFailure`, `InstantPurchaseDismissal`, `CartItemDevicePay`
+- Added `EmbeddedSizeChanged` event for embedded placement height changes
+
+### Changed
+
+- Renamed `execute()` to `selectPlacements()`
+- Updated Rokt native SDK versions: iOS 5.0.0, Android 5.0.0
+- Minimum iOS version raised to 15.0
+- All placement lifecycle events are now delivered via the `RoktEvents` EventChannel
+
+### Removed
+
+- Removed `execute()` (replaced by `selectPlacements()`)
+- Removed `setLoggingEnabled()`
+- Removed execute-style callbacks: `onLoad`, `onUnLoad`, `onShouldShowLoadingIndicator`, `onShouldHideLoadingIndicator`
+
 ## [4.11.0] - 2025-09-25
 
 ### Changed
@@ -356,7 +378,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Introducing Rokt flutter SDK
 
-[unreleased]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.11.0...HEAD
+[unreleased]: https://github.com/ROKT/rokt-sdk-flutter/compare/5.0.0...HEAD
+[5.0.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.11.0...5.0.0
 [4.11.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.10.0...4.11.0
 [4.10.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.9.0...4.10.0
 [4.9.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v4.8.1...4.9.0

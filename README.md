@@ -152,6 +152,54 @@ RoktSdk.selectPlacements(
 const RoktWidget(placeholderName: "RoktEmbedded1", onWidgetCreated: () { showWidget(); })
 ```
 
+#### Shoppable Ads (iOS only)
+
+Shoppable Ads allow users to make instant purchases directly from ad placements. This feature requires a payment extension to be registered before displaying shoppable ads.
+
+1. Add the native payment extension to your iOS project (e.g. in your `Podfile`):
+
+```ruby
+pod 'RoktStripePaymentExtension'
+```
+
+2. Register the payment extension and display shoppable ads:
+
+```dart
+import 'package:rokt_sdk/rokt_sdk.dart';
+
+// Register payment extension (call once after initialize)
+RoktSdk.registerPaymentExtension(
+  extensionType: 'stripe',
+  config: {'stripeKey': 'pk_live_abc123'},
+);
+
+// Display shoppable ads (always overlay)
+RoktSdk.selectShoppableAds(
+  viewName: "ConfirmationPage",
+  attributes: {
+    "email": "j.smith@example.com",
+    "firstname": "Jenny",
+    "lastname": "Smith",
+    "confirmationref": "ORDER-12345",
+  },
+);
+```
+
+3. Handle shoppable events via the `RoktEvents` EventChannel:
+
+```dart
+const EventChannel roktEventChannel = EventChannel('RoktEvents');
+
+roktEventChannel.receiveBroadcastStream().listen((dynamic event) {
+  final eventName = event['event'];
+  if (eventName == 'CartItemInstantPurchase') {
+    print("Purchase completed: ${event['catalogItemId']}");
+  } else if (eventName == 'CartItemInstantPurchaseFailure') {
+    print("Purchase failed: ${event['error']}");
+  }
+});
+```
+
 ## Key Dependencies & Gotchas
 
 ### Dependencies

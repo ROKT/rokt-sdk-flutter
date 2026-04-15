@@ -54,6 +54,68 @@ RoktSdk.selectPlacements(
 );
 ```
 
+### Shoppable Ads (New in 5.0.0, iOS only)
+
+Shoppable Ads allow users to make instant purchases directly from ad placements. This feature is currently available on iOS only.
+
+#### Payment Extension Registration
+
+Before displaying shoppable ads, register a payment extension. The host app must include the native payment extension dependency (e.g. `RoktStripePaymentExtension` pod for iOS).
+
+```dart
+RoktSdk.registerPaymentExtension(
+  extensionType: 'stripe',
+  config: {'stripeKey': 'pk_live_abc123'},
+);
+```
+
+#### Displaying Shoppable Ads
+
+```dart
+RoktSdk.selectShoppableAds(
+  viewName: "ConfirmationPage",
+  attributes: {
+    "email": "user@example.com",
+    "firstname": "John",
+    "lastname": "Doe",
+    "confirmationref": "ORDER-12345",
+  },
+);
+```
+
+#### Shoppable Ads Events
+
+Shoppable Ads lifecycle events are delivered via the `RoktEvents` EventChannel:
+
+| Event | Description |
+|-------|-------------|
+| `CartItemInstantPurchaseInitiated` | User tapped "Buy", before payment processing |
+| `CartItemInstantPurchase` | Purchase completed successfully |
+| `CartItemInstantPurchaseFailure` | Purchase failed |
+| `InstantPurchaseDismissal` | User dismissed the instant purchase overlay |
+| `CartItemDevicePay` | Device payment (e.g. Apple Pay) triggered |
+
+#### Purchase Finalization
+
+After a purchase completes, notify the SDK:
+
+```dart
+RoktSdk.purchaseFinalized(
+  placementId: "placement-id",
+  catalogItemId: "catalog-item-id",
+  success: true,
+);
+```
+
+### Platform Availability
+
+| Feature | iOS | Android |
+|---------|-----|---------|
+| `selectPlacements` | 5.0.0 | 5.0.0 |
+| `selectShoppableAds` | 5.0.0 | Not yet supported |
+| `registerPaymentExtension` | 5.0.0 | Not yet supported |
+| `purchaseFinalized` | 5.0.0 | 5.0.0 |
+
 ## Migrating from versions < 4.8.x
 
 Migration steps were not provided prior to version 4.8.x. If you're upgrading from older versions, follow the [initial integration steps](https://docs.rokt.com/developers/integration-guides/flutter/how-to/integrating-and-initializing).
