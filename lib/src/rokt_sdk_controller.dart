@@ -40,6 +40,30 @@ class RoktSdkController {
     });
   }
 
+  /// Call Rokt selectShoppableAds method in Native SDK (iOS only)
+  Future<void> selectShoppableAds({
+    required String viewName,
+    required Map<String, String> attributes,
+    RoktConfig? config,
+  }) async {
+    await _channel.invokeMethod('selectShoppableAds', {
+      'viewName': viewName,
+      'attributes': attributes,
+      'config': _roktConfigToMap(config: config),
+    });
+  }
+
+  /// Call Rokt registerPaymentExtension method in Native SDK (iOS only)
+  Future<void> registerPaymentExtension({
+    required String extensionType,
+    required Map<String, String> config,
+  }) async {
+    await _channel.invokeMethod('registerPaymentExtension', {
+      'extensionType': extensionType,
+      'config': config,
+    });
+  }
+
   /// Call Rokt purchaseFinalized method in Native SDK
   ///
   /// Note: This method requires iOS 15+.

@@ -51,6 +51,54 @@ class RoktSdk {
         config: roktConfig);
   }
 
+  /// Display a Shoppable Ads overlay placement.
+  ///
+  /// Always renders as an overlay -- no embedded views.
+  /// Requires [registerPaymentExtension] to be called first if payment is needed.
+  /// Lifecycle and purchase events are delivered via the `RoktEvents` EventChannel.
+  ///
+  /// Currently supported on iOS only. On Android this is a no-op until the
+  /// native SDK adds shoppable ads support.
+  ///
+  /// - Parameters:
+  ///   - viewName: The identifier for the view/page where you're displaying the placement
+  ///   - attributes: A string map containing user attributes for targeting
+  ///   - roktConfig: Optional Rokt SDK configuration object
+  static Future<void> selectShoppableAds({
+    required String viewName,
+    Map<String, String> attributes = const {},
+    RoktConfig? roktConfig,
+  }) async {
+    await RoktSdkController.instance.selectShoppableAds(
+      viewName: viewName,
+      attributes: attributes,
+      config: roktConfig,
+    );
+  }
+
+  /// Register a payment extension for Shoppable Ads.
+  ///
+  /// The payment extension handles device payment flows (e.g. Apple Pay via Stripe).
+  /// Must be called before [selectShoppableAds].
+  ///
+  /// The host app must include the corresponding native dependency
+  /// (e.g. `RoktStripePaymentExtension` pod for iOS).
+  ///
+  /// Currently supported on iOS only.
+  ///
+  /// - Parameters:
+  ///   - extensionType: The extension identifier (e.g. "stripe")
+  ///   - config: Configuration dictionary (e.g. {"stripeKey": "pk_live_..."})
+  static Future<void> registerPaymentExtension({
+    required String extensionType,
+    Map<String, String> config = const {},
+  }) async {
+    await RoktSdkController.instance.registerPaymentExtension(
+      extensionType: extensionType,
+      config: config,
+    );
+  }
+
   /// Notifies Rokt that a purchase has been finalized
   ///
   /// Use this method to inform Rokt that a purchase has been completed or failed
