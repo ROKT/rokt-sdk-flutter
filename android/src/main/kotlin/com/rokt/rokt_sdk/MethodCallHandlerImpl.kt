@@ -92,7 +92,7 @@ class MethodCallHandlerImpl(
             Rokt.purchaseFinalized(
                 identifier = placementId,
                 catalogItemId = catalogItemId,
-                status = success,
+                success = success,
             )
             result.success("Success")
         } else {
@@ -238,42 +238,42 @@ class MethodCallHandlerImpl(
 
                                 is RoktEvent.FirstPositiveEngagement -> {
                                     eventName = "FirstPositiveEngagement"
-                                    event.id
+                                    event.identifier
                                 }
 
                                 is RoktEvent.OfferEngagement -> {
                                     eventName = "OfferEngagement"
-                                    event.id
+                                    event.identifier
                                 }
 
                                 is RoktEvent.PlacementClosed -> {
                                     eventName = "PlacementClosed"
-                                    event.id
+                                    event.identifier
                                 }
 
                                 is RoktEvent.PlacementCompleted -> {
                                     eventName = "PlacementCompleted"
-                                    event.id
+                                    event.identifier
                                 }
 
                                 is RoktEvent.PlacementFailure -> {
                                     eventName = "PlacementFailure"
-                                    event.id
+                                    event.identifier
                                 }
 
                                 is RoktEvent.PlacementInteractive -> {
                                     eventName = "PlacementInteractive"
-                                    event.id
+                                    event.identifier
                                 }
 
                                 is RoktEvent.PlacementReady -> {
                                     eventName = "PlacementReady"
-                                    event.id
+                                    event.identifier
                                 }
 
                                 is RoktEvent.PositiveEngagement -> {
                                     eventName = "PositiveEngagement"
-                                    event.id
+                                    event.identifier
                                 }
 
                                 RoktEvent.ShowLoadingIndicator -> {
@@ -290,7 +290,7 @@ class MethodCallHandlerImpl(
                                 is RoktEvent.OpenUrl -> {
                                     eventName = "OpenUrl"
                                     params["url"] = event.url
-                                    event.id
+                                    event.identifier
                                 }
 
                                 is RoktEvent.CartItemInstantPurchase -> {
@@ -303,7 +303,7 @@ class MethodCallHandlerImpl(
                                     params["totalPrice"] = event.totalPrice.toString()
                                     params["quantity"] = event.quantity.toString()
                                     params["unitPrice"] = event.unitPrice.toString()
-                                    event.placementId
+                                    event.identifier
                                 }
                             }
                         viewName?.let { params["viewName"] = viewName }

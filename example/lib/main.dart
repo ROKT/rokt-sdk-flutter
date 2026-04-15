@@ -38,9 +38,14 @@ class _MyAppState extends State<MyApp> {
   }
 
   void receiveRoktEvent() {
-    roktEventChannel.receiveBroadcastStream().listen((dynamic event) {
-      debugPrint("rokt_sdk _receiveRoktEvent $event ");
-    });
+    roktEventChannel.receiveBroadcastStream().listen(
+      (dynamic event) {
+        debugPrint("rokt_sdk _receiveRoktEvent $event ");
+      },
+      onError: (error) {
+        debugPrint("rokt_sdk event channel error: $error");
+      },
+    );
   }
 
   Map<String, String> getAttributes() {
