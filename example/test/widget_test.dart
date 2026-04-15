@@ -13,8 +13,6 @@ void main() {
       (MethodCall methodCall) async => 'success',
     );
 
-    // Mock the EventChannel's internal MethodChannel to prevent
-    // MissingPluginException during receiveBroadcastStream().
     binding.defaultBinaryMessenger.setMockMethodCallHandler(
       const MethodChannel('RoktEvents'),
       (MethodCall methodCall) async => null,
@@ -22,13 +20,9 @@ void main() {
 
     await tester.pumpWidget(const MyApp());
 
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) =>
-            widget is Text && widget.data!.startsWith('Location 1'),
-      ),
-      findsOneWidget,
-    );
+    expect(find.text('Plugin example app'), findsOneWidget);
+    expect(find.text('Initial'), findsOneWidget);
+    expect(find.text('Select Placements'), findsOneWidget);
 
     binding.defaultBinaryMessenger.setMockMethodCallHandler(
       const MethodChannel('rokt_sdk'),
