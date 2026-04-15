@@ -65,7 +65,7 @@ Before displaying shoppable ads, register a payment extension. The host app must
 ```dart
 RoktSdk.registerPaymentExtension(
   extensionType: 'stripe',
-  config: {'stripeKey': 'pk_live_abc123'},
+  config: {'stripeKey': 'YOUR_STRIPE_PUBLISHABLE_KEY'},
 );
 ```
 
@@ -87,13 +87,13 @@ RoktSdk.selectShoppableAds(
 
 Shoppable Ads lifecycle events are delivered via the `RoktEvents` EventChannel:
 
-| Event | Description |
-|-------|-------------|
+| Event                              | Description                                  |
+| ---------------------------------- | -------------------------------------------- |
 | `CartItemInstantPurchaseInitiated` | User tapped "Buy", before payment processing |
-| `CartItemInstantPurchase` | Purchase completed successfully |
-| `CartItemInstantPurchaseFailure` | Purchase failed |
-| `InstantPurchaseDismissal` | User dismissed the instant purchase overlay |
-| `CartItemDevicePay` | Device payment (e.g. Apple Pay) triggered |
+| `CartItemInstantPurchase`          | Purchase completed successfully              |
+| `CartItemInstantPurchaseFailure`   | Purchase failed                              |
+| `InstantPurchaseDismissal`         | User dismissed the instant purchase overlay  |
+| `CartItemDevicePay`                | Device payment (e.g. Apple Pay) triggered    |
 
 #### Purchase Finalization
 
@@ -109,12 +109,12 @@ RoktSdk.purchaseFinalized(
 
 ### Platform Availability
 
-| Feature | iOS | Android |
-|---------|-----|---------|
-| `selectPlacements` | 5.0.0 | 5.0.0 |
-| `selectShoppableAds` | 5.0.0 | Not yet supported |
+| Feature                    | iOS   | Android           |
+| -------------------------- | ----- | ----------------- |
+| `selectPlacements`         | 5.0.0 | 5.0.0             |
+| `selectShoppableAds`       | 5.0.0 | Not yet supported |
 | `registerPaymentExtension` | 5.0.0 | Not yet supported |
-| `purchaseFinalized` | 5.0.0 | 5.0.0 |
+| `purchaseFinalized`        | 5.0.0 | 5.0.0             |
 
 ## Migrating from versions < 4.8.x
 

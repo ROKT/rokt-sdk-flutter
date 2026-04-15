@@ -170,7 +170,7 @@ import 'package:rokt_sdk/rokt_sdk.dart';
 // Register payment extension (call once after initialize)
 RoktSdk.registerPaymentExtension(
   extensionType: 'stripe',
-  config: {'stripeKey': 'pk_live_abc123'},
+  config: {'stripeKey': 'YOUR_STRIPE_PUBLISHABLE_KEY'},
 );
 
 // Display shoppable ads (always overlay)
