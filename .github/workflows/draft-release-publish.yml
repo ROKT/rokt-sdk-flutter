@@ -52,7 +52,7 @@ jobs:
         env:
           NEW_VERSION: ${{ steps.bump-version.outputs.new_version }}
         run: |
-          sed -i "s/version: .*/version: ${NEW_VERSION}/" pubspec.yaml
+          sed -i "s|^version: .*|version: ${NEW_VERSION}|" pubspec.yaml
 
       - name: Setup Flutter
         uses: subosito/flutter-action@fd55f4c5af5b953cc57a2be44cb082c8f6635e8e #2.21.0

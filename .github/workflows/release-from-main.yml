@@ -80,7 +80,7 @@ jobs:
         with:
           changelog_file: CHANGELOG.md
           release_notes_file: ${{ needs.setup-and-version.outputs.final_version }}.md
-      - name: Changelog
+      - name: Print release notes (debug)
         env:
           RELEASE_NOTES: ${{ steps.extract-release-notes.outputs.release_notes }}
         run: printf '%s\n' "$RELEASE_NOTES"

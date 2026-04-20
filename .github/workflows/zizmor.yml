@@ -34,10 +34,13 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-          fetch-depth: 1
+          fetch-depth: 1 # zizmor only needs the tree at HEAD
       - name: Run zizmor
         uses: zizmorcore/zizmor-action@71321a20a9ded102f6e9ce5718a2fcec2c4f70d8 # v0.5.2
-        continue-on-error: true # Permanent — reports findings without blocking PRs
+        # Permanent advisory mode — zizmor is rolled out across Rokt repos as a
+        # reporter, not a gate. Findings surface as PR annotations so owners
+        # can triage incrementally without blocking unrelated changes.
+        continue-on-error: true
         with:
-          advanced-security: false
-          annotations: true
+          advanced-security: false # no SARIF upload (GHAS not enabled on private repo)
+          annotations: true # inline PR annotations (GitHub caps at 10/run)
