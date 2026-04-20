@@ -81,7 +81,9 @@ jobs:
           changelog_file: CHANGELOG.md
           release_notes_file: ${{ needs.setup-and-version.outputs.final_version }}.md
       - name: Changelog
-        run: echo "${{ steps.extract-release-notes.outputs.release_notes }}"
+        env:
+          RELEASE_NOTES: ${{ steps.extract-release-notes.outputs.release_notes }}
+        run: printf '%s\n' "$RELEASE_NOTES"
       - name: Upload release notes
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 #v4.6.2
         with:
@@ -125,8 +127,10 @@ jobs:
           path: ${{ needs.setup-and-version.outputs.final_version }}.md
 
       - name: Move release notes to docs
+        env:
+          FINAL_VERSION: ${{ needs.setup-and-version.outputs.final_version }}
         run: |
-          mv ${{ needs.setup-and-version.outputs.final_version }}.md changelogs/flutter/${{ needs.setup-and-version.outputs.final_version }}.md
+          mv "${FINAL_VERSION}.md" "changelogs/flutter/${FINAL_VERSION}.md"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
