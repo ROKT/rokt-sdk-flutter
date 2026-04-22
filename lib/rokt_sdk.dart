@@ -1,6 +1,7 @@
 library rokt_sdk;
 
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -67,6 +68,7 @@ class RoktSdk {
     Map<String, String> attributes = const {},
     RoktConfig? roktConfig,
   }) async {
+    if (!Platform.isIOS) return;
     await RoktSdkController.instance.selectShoppableAds(
       viewName: viewName,
       attributes: attributes,
@@ -95,6 +97,7 @@ class RoktSdk {
     required String extensionType,
     Map<String, String> config = const {},
   }) async {
+    if (!Platform.isIOS) return;
     await RoktSdkController.instance.registerPaymentExtension(
       extensionType: extensionType,
       config: config,

@@ -22,7 +22,9 @@ class _MyAppState extends State<MyApp> {
       TextEditingController(text: constants.defaultViewName);
   final attributesController =
       TextEditingController(text: constants.defaultAttributes);
-  final stripeKeyController = TextEditingController(text: "");
+  final stripeKeyController = TextEditingController(
+      text:
+          "pk_test_51IAmSrCXN0Yfj1ZyasihW0GWytRkTdKCRZXp9b2t7HMrcJrY87Brmn0Ahe5kkDd2yfpqBIeuEAuPN1V2CXrefePl00SuzXxRoH");
   Map<int, String> placeholders = {};
   static const EventChannel roktEventChannel = EventChannel('RoktEvents');
 
