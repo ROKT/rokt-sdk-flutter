@@ -24,7 +24,7 @@ class _MyAppState extends State<MyApp> {
       TextEditingController(text: constants.defaultAttributes);
   final shoppableViewNameController =
       TextEditingController(text: "ShoppablePage");
-  final publishableKeyController = TextEditingController(text: "");
+  final stripeKeyController = TextEditingController(text: "");
   final placementIdController = TextEditingController(text: "");
   final catalogItemIdController = TextEditingController(text: "");
   bool purchaseSuccess = false;
@@ -114,9 +114,9 @@ class _MyAppState extends State<MyApp> {
                           children: [
                             Expanded(
                               child: TextField(
-                                controller: publishableKeyController,
+                                controller: stripeKeyController,
                                 decoration: const InputDecoration(
-                                    hintText: "Publishable Key"),
+                                    hintText: "Stripe Key (pk_...)"),
                               ),
                             ),
                             TextButton(
@@ -125,7 +125,7 @@ class _MyAppState extends State<MyApp> {
                                 RoktSdk.registerPaymentExtension(
                                   extensionType: 'stripe',
                                   config: {
-                                    'stripeKey': publishableKeyController.text
+                                    'stripeKey': stripeKeyController.text
                                   },
                                 );
                                 debugPrint(
