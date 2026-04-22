@@ -68,7 +68,9 @@ class RoktSdk {
     Map<String, String> attributes = const {},
     RoktConfig? roktConfig,
   }) async {
-    if (!Platform.isIOS) return;
+    if (!Platform.isIOS) {
+      return;
+    }
     await RoktSdkController.instance.selectShoppableAds(
       viewName: viewName,
       attributes: attributes,
@@ -97,7 +99,9 @@ class RoktSdk {
     required String extensionType,
     Map<String, String> config = const {},
   }) async {
-    if (!Platform.isIOS) return;
+    if (!Platform.isIOS) {
+      return;
+    }
     await RoktSdkController.instance.registerPaymentExtension(
       extensionType: extensionType,
       config: config,
