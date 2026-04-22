@@ -59,6 +59,11 @@ class MethodCallHandlerImpl(
                 getSessionId(result)
             }
 
+            SELECT_SHOPPABLE_ADS_METHOD,
+            REGISTER_PAYMENT_EXTENSION_METHOD -> {
+                result.success("success")
+            }
+
             else -> {
                 result.notImplemented()
             }
@@ -323,6 +328,8 @@ class MethodCallHandlerImpl(
         private const val PURCHASE_FINALIZED_METHOD = "purchaseFinalized"
         private const val SET_SESSION_ID_METHOD = "setSessionId"
         private const val GET_SESSION_ID_METHOD = "getSessionId"
+        private const val SELECT_SHOPPABLE_ADS_METHOD = "selectShoppableAds"
+        private const val REGISTER_PAYMENT_EXTENSION_METHOD = "registerPaymentExtension"
         private const val EVENT_CHANNEL_NAME = "RoktEvents"
         const val TAG = "ROKTSDK_FLUTTER"
     }
