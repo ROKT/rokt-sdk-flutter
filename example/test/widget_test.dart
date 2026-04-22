@@ -20,7 +20,7 @@ void main() {
     await tester.pumpWidget(const MyApp());
 
     expect(find.text('Plugin example app'), findsOneWidget);
-    expect(find.text('Initial'), findsOneWidget);
+    expect(find.text('Initialize'), findsOneWidget);
     expect(find.text('Select Placements'), findsOneWidget);
 
     binding.defaultBinaryMessenger.setMockMethodCallHandler(

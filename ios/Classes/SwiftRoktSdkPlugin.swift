@@ -13,8 +13,14 @@
 
 import Flutter
 import UIKit
+import Rokt_Widget
 
 public class SwiftRoktSdkPlugin: NSObject, FlutterPlugin {
+    /// Host apps set this closure in AppDelegate to provide payment extension instances.
+    /// The factory receives the extension type (e.g. "stripe") and a config dictionary,
+    /// and returns a fully constructed `PaymentExtension` or `nil`.
+    public static var paymentExtensionFactory: ((_ type: String, _ config: [String: String]) -> PaymentExtension?)?
+
     fileprivate let INIT_METHOD = "initialize"
     fileprivate let SELECT_PLACEMENTS_METHOD = "selectPlacements"
     fileprivate let SELECT_SHOPPABLE_ADS_METHOD = "selectShoppableAds"

@@ -13,9 +13,9 @@ void main() {
       app.main();
       await tester.pumpAndSettle();
 
-      expect(find.text('Initial'), findsOneWidget);
+      expect(find.text('Initialize'), findsOneWidget);
 
-      final Finder init = find.text('Initial');
+      final Finder init = find.text('Initialize');
       await tester.tap(init);
       await addDelay(3000);
       await tester.pumpAndSettle();

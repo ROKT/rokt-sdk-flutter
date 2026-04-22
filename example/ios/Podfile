@@ -32,6 +32,8 @@ target 'Runner' do
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
+  pod 'RoktStripePaymentExtension', :git => 'https://github.com/ROKT/rokt-payment-extension-ios.git', :tag => '0.1.2'
 end
 
 post_install do |installer|

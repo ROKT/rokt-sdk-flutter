@@ -142,11 +142,10 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
 
         let config = args["config"] as? [String: String] ?? [:]
 
-        guard let extensionClass = NSClassFromString(extensionClassName(for: extensionType)) as? NSObject.Type,
-              let paymentExtension = extensionClass.init() as? PaymentExtension else {
+        guard let paymentExtension = SwiftRoktSdkPlugin.paymentExtensionFactory?(extensionType, config) else {
             result(FlutterError(
                 code: "EXTENSION_NOT_FOUND",
-                message: "Payment extension '\(extensionType)' not found. Ensure the native dependency is included.",
+                message: "Payment extension '\(extensionType)' not found. Set SwiftRoktSdkPlugin.paymentExtensionFactory in your AppDelegate.",
                 details: nil
             ))
             return
@@ -186,15 +185,6 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
 
     public func getSessionId(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         result(Rokt.getSessionId())
-    }
-
-    private func extensionClassName(for extensionType: String) -> String {
-        switch extensionType {
-        case "stripe":
-            return "RoktPaymentExtension.RoktPaymentExtension"
-        default:
-            return extensionType
-        }
     }
 
     private func registerPartnerFonts(_ typefaces: Dictionary<String, String>) {

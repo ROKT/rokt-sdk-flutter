@@ -60,12 +60,44 @@ Shoppable Ads allow users to make instant purchases directly from ad placements.
 
 #### Payment Extension Registration
 
-Before displaying shoppable ads, register a payment extension. The host app must include the native payment extension dependency (e.g. `RoktPaymentExtension` pod for iOS).
+Before displaying shoppable ads, register a payment extension. The host app must:
+
+1. Add the native payment extension dependency to your iOS `Podfile`:
+
+```ruby
+pod 'RoktStripePaymentExtension', '~> 0.1'
+```
+
+2. Set the payment extension factory in your `AppDelegate.swift`:
+
+```swift
+import RoktStripePaymentExtension
+import rokt_sdk
+
+// In application(_:didFinishLaunchingWithOptions:), after GeneratedPluginRegistrant.register:
+SwiftRoktSdkPlugin.paymentExtensionFactory = { type, config in
+    switch type {
+    case "stripe":
+        guard let merchantId = config["applePayMerchantId"] else { return nil }
+        return RoktStripePaymentExtension(
+            applePayMerchantId: merchantId,
+            countryCode: config["countryCode"] ?? "US"
+        )
+    default:
+        return nil
+    }
+}
+```
+
+3. Register from Dart (call once after `initialize`, before `selectShoppableAds`):
 
 ```dart
 RoktSdk.registerPaymentExtension(
   extensionType: 'stripe',
-  config: {'stripeKey': 'YOUR_STRIPE_PUBLISHABLE_KEY'},
+  config: {
+    'stripeKey': 'YOUR_STRIPE_PUBLISHABLE_KEY',
+    'applePayMerchantId': 'merchant.com.yourapp.rokt',
+  },
 );
 ```
 

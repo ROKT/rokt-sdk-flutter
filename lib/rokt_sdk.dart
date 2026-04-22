@@ -79,14 +79,18 @@ class RoktSdk {
   /// The payment extension handles device payment flows (e.g. Apple Pay via Stripe).
   /// Must be called before [selectShoppableAds].
   ///
-  /// The host app must include the corresponding native dependency
-  /// (e.g. `RoktPaymentExtension` pod for iOS).
+  /// **iOS setup required:** The host app must:
+  /// 1. Add `pod 'RoktStripePaymentExtension'` to its Podfile.
+  /// 2. Set `SwiftRoktSdkPlugin.paymentExtensionFactory` in AppDelegate to
+  ///    construct the native extension from the provided [config] map.
   ///
   /// Currently supported on iOS only.
   ///
   /// - Parameters:
   ///   - extensionType: The extension identifier (e.g. "stripe")
-  ///   - config: Configuration dictionary (e.g. {"stripeKey": "pk_live_..."})
+  ///   - config: Configuration dictionary passed to the native factory and
+  ///     to the extension's `onRegister` (e.g. {"stripeKey": "pk_live_...",
+  ///     "applePayMerchantId": "merchant.com.yourapp.rokt"})
   static Future<void> registerPaymentExtension({
     required String extensionType,
     Map<String, String> config = const {},
