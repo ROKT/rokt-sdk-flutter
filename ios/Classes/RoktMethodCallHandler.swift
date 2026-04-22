@@ -191,7 +191,7 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
     private func extensionClassName(for extensionType: String) -> String {
         switch extensionType {
         case "stripe":
-            return "RoktStripePaymentExtension.RoktStripePaymentExtension"
+            return "RoktPaymentExtension.RoktPaymentExtension"
         default:
             return extensionType
         }

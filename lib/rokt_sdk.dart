@@ -80,7 +80,7 @@ class RoktSdk {
   /// Must be called before [selectShoppableAds].
   ///
   /// The host app must include the corresponding native dependency
-  /// (e.g. `RoktStripePaymentExtension` pod for iOS).
+  /// (e.g. `RoktPaymentExtension` pod for iOS).
   ///
   /// Currently supported on iOS only.
   ///

@@ -159,7 +159,7 @@ Shoppable Ads allow users to make instant purchases directly from ad placements.
 1. Add the native payment extension to your iOS project (e.g. in your `Podfile`):
 
 ```ruby
-pod 'RoktStripePaymentExtension'
+pod 'RoktPaymentExtension'
 ```
 
 2. Register the payment extension and display shoppable ads:

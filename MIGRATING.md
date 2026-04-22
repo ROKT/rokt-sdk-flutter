@@ -60,7 +60,7 @@ Shoppable Ads allow users to make instant purchases directly from ad placements.
 
 #### Payment Extension Registration
 
-Before displaying shoppable ads, register a payment extension. The host app must include the native payment extension dependency (e.g. `RoktStripePaymentExtension` pod for iOS).
+Before displaying shoppable ads, register a payment extension. The host app must include the native payment extension dependency (e.g. `RoktPaymentExtension` pod for iOS).
 
 ```dart
 RoktSdk.registerPaymentExtension(
