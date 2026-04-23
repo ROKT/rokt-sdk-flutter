@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.0.0] - 2026-04-23
+
 ## [4.11.0] - 2025-09-25
 
 ### Changed
@@ -356,7 +358,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Introducing Rokt flutter SDK
 
-[unreleased]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.11.0...HEAD
+[unreleased]: https://github.com/ROKT/rokt-sdk-flutter/compare/5.0.0...HEAD
+[5.0.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.11.0...5.0.0
 [4.11.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.10.0...4.11.0
 [4.10.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.9.0...4.10.0
 [4.9.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v4.8.1...4.9.0
