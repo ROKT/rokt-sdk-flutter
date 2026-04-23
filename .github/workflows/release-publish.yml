@@ -1,4 +1,4 @@
-name: Release SDK
+name: Release – Publish
 
 on:
   push:
@@ -13,6 +13,7 @@ concurrency:
 
 permissions:
   contents: write
+  id-token: write
 
 jobs:
   build-test-ios:
@@ -48,6 +49,9 @@ jobs:
   release-and-tag:
     needs: [setup-and-version]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
@@ -61,19 +65,8 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Setup Pub Credentials
-        shell: bash
-        env:
-          PUB_DEV_PUBLISH_ACCESS_TOKEN: ${{ secrets.PUB_DEV_PUBLISH_ACCESS_TOKEN }}
-          PUB_DEV_PUBLISH_REFRESH_TOKEN: ${{ secrets.PUB_DEV_PUBLISH_REFRESH_TOKEN }}
-          PUB_DEV_PUBLISH_TOKEN_ENDPOINT: ${{ secrets.PUB_DEV_PUBLISH_TOKEN_ENDPOINT }}
-          PUB_DEV_PUBLISH_EXPIRATION: ${{ secrets.PUB_DEV_PUBLISH_EXPIRATION }}
-        run: |
-          sh ./pub_login.sh
-
       - name: Publish Package
-        run: |
-          yes | flutter pub publish
+        run: flutter pub publish --force
 
       - uses: ffurrer2/extract-release-notes@cae32133495112d23e3569ad04fef240ba4e7bc8 # v2.3.0
         id: extract-release-notes
