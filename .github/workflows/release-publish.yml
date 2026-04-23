@@ -47,6 +47,15 @@ jobs:
           channel: stable
           cache: true
 
+      - name: Debug OIDC availability
+        run: |
+          if [ -n "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]; then
+            echo "OIDC token available: YES"
+          else
+            echo "OIDC token available: NO - id-token:write permission may not be active"
+          fi
+          echo "ACTIONS_ID_TOKEN_REQUEST_URL: $ACTIONS_ID_TOKEN_REQUEST_URL"
+
       - name: Publish Package
         run: flutter pub publish --force
 
