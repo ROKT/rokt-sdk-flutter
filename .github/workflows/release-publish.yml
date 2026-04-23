@@ -1,11 +1,9 @@
-name: Release SDK
+name: Release – Publish
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - VERSION
+    tags:
+      - v*
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -13,6 +11,7 @@ concurrency:
 
 permissions:
   contents: write
+  id-token: write
 
 jobs:
   build-test-ios:
@@ -29,25 +28,12 @@ jobs:
     with:
       flutter-version: ${{ vars.FLUTTER_VERSION }}
 
-  setup-and-version:
+  release-and-tag:
     needs: [build-test-ios, build-test-android]
     runs-on: ubuntu-latest
-    outputs:
-      final_version: ${{ steps.version-file.outputs.release-version }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-        with:
-          persist-credentials: false
-      - name: Get current version
-        id: version-file
-        run: |
-          version_from_file=$(head -n 1 VERSION)
-          echo "release-version=$version_from_file" >> $GITHUB_OUTPUT
-
-  release-and-tag:
-    needs: [setup-and-version]
-    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
@@ -61,25 +47,14 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Setup Pub Credentials
-        shell: bash
-        env:
-          PUB_DEV_PUBLISH_ACCESS_TOKEN: ${{ secrets.PUB_DEV_PUBLISH_ACCESS_TOKEN }}
-          PUB_DEV_PUBLISH_REFRESH_TOKEN: ${{ secrets.PUB_DEV_PUBLISH_REFRESH_TOKEN }}
-          PUB_DEV_PUBLISH_TOKEN_ENDPOINT: ${{ secrets.PUB_DEV_PUBLISH_TOKEN_ENDPOINT }}
-          PUB_DEV_PUBLISH_EXPIRATION: ${{ secrets.PUB_DEV_PUBLISH_EXPIRATION }}
-        run: |
-          sh ./pub_login.sh
-
       - name: Publish Package
-        run: |
-          yes | flutter pub publish
+        run: flutter pub publish --force
 
       - uses: ffurrer2/extract-release-notes@cae32133495112d23e3569ad04fef240ba4e7bc8 # v2.3.0
         id: extract-release-notes
         with:
           changelog_file: CHANGELOG.md
-          release_notes_file: ${{ needs.setup-and-version.outputs.final_version }}.md
+          release_notes_file: ${{ github.ref_name }}.md
       - name: Print release notes (debug)
         env:
           RELEASE_NOTES: ${{ steps.extract-release-notes.outputs.release_notes }}
@@ -88,19 +63,19 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 #v4.6.2
         with:
           name: release-notes
-          path: ${{ needs.setup-and-version.outputs.final_version }}.md
+          path: ${{ github.ref_name }}.md
 
       - name: Create Github release
         uses: ncipollo/release-action@440c8c1cb0ed28b9f43e4d1d670870f059653174 # v1.16.0
         with:
           makeLatest: true
-          tag: ${{ needs.setup-and-version.outputs.final_version }}
+          tag: ${{ github.ref_name }}
           body: |
             ## Release notes:
             ${{ steps.extract-release-notes.outputs.release_notes }}
 
   upload-release-notes:
-    needs: [release-and-tag, setup-and-version]
+    needs: [release-and-tag]
     runs-on: ubuntu-latest
     steps:
       - name: Generate a token
@@ -124,11 +99,11 @@ jobs:
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: release-notes
-          path: ${{ needs.setup-and-version.outputs.final_version }}.md
+          path: ${{ github.ref_name }}.md
 
       - name: Move release notes to docs
         env:
-          FINAL_VERSION: ${{ needs.setup-and-version.outputs.final_version }}
+          FINAL_VERSION: ${{ github.ref_name }}
         run: |
           mv "${FINAL_VERSION}.md" "changelogs/flutter/${FINAL_VERSION}.md"
 
@@ -137,13 +112,13 @@ jobs:
         with:
           token: ${{ steps.generate-token.outputs.token }}
           commit-message: Update Flutter SDK Release Notes
-          branch: update-flutter-sdk-release-notes-${{ needs.setup-and-version.outputs.final_version }}
+          branch: update-flutter-sdk-release-notes-${{ github.ref_name }}
           title: NOJIRA - Update Flutter SDK Release Notes
           base: main
           body: |
             # Update Flutter SDK Release Notes
 
-            Flutter SDK version ${{ needs.setup-and-version.outputs.final_version }} has been released.
+            Flutter SDK version ${{ github.ref_name }} has been released.
 
             Please review and merge the PR to update the release notes.
           labels: |
