@@ -1,6 +1,17 @@
 const String defaultTagId = "2754655826098840951";
 const String defaultViewName = "MSDKEmbeddedLayout";
-const String defaultAttributes = """{
+
+const String androidAttributes = """{
+  "email": "j.smith@example.com",
+  "firstname": "Jenny",
+  "lastname": "Smith",
+  "mobile": "(555)867-5309",
+  "postcode": "90210",
+  "country": "US",
+  "sandbox": "true"
+}""";
+
+const String iOSAttributes = """{
   "email": "jenny.smith@example.com",
   "firstname": "Jenny",
   "lastname": "Smith",

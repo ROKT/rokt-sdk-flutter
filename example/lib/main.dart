@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
@@ -20,11 +22,11 @@ class _MyAppState extends State<MyApp> {
   final tagIdController = TextEditingController(text: constants.defaultTagId);
   final viewNameController =
       TextEditingController(text: constants.defaultViewName);
-  final attributesController =
-      TextEditingController(text: constants.defaultAttributes);
-  final stripeKeyController = TextEditingController(
-      text:
-          "pk_test_51IAmSrCXN0Yfj1ZyasihW0GWytRkTdKCRZXp9b2t7HMrcJrY87Brmn0Ahe5kkDd2yfpqBIeuEAuPN1V2CXrefePl00SuzXxRoH");
+  final attributesController = TextEditingController(
+      text: Platform.isIOS
+          ? constants.iOSAttributes
+          : constants.androidAttributes);
+  final stripeKeyController = TextEditingController(text: "");
   Map<int, String> placeholders = {};
   static const EventChannel roktEventChannel = EventChannel('RoktEvents');
 
