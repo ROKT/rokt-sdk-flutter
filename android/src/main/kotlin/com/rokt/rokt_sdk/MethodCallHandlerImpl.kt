@@ -27,7 +27,6 @@ class MethodCallHandlerImpl(
 ) : MethodChannel.MethodCallHandler {
     private var channel: MethodChannel? = null
     private lateinit var activity: Activity
-    private val roktCallbacks: MutableSet<Rokt.RoktCallback> = mutableSetOf()
     private val eventListeners = mutableSetOf<EventChannel.EventSink>()
     private val eventSubscriptions = mutableMapOf<String, Job?>()
 
@@ -44,19 +43,25 @@ class MethodCallHandlerImpl(
                 init(call, result)
             }
 
-            EXECUTE_METHOD -> {
-                execute(call, result)
-            }
-
-            LOGGING_METHOD -> {
-                logging(call, result)
+            SELECT_PLACEMENTS_METHOD -> {
+                selectPlacements(call, result)
             }
 
             PURCHASE_FINALIZED_METHOD -> {
                 purchaseFinalized(call, result)
             }
 
-            else -> result.notImplemented()
+            SET_SESSION_ID_METHOD -> {
+                setSessionId(call, result)
+            }
+
+            GET_SESSION_ID_METHOD -> {
+                getSessionId(result)
+            }
+
+            else -> {
+                result.notImplemented()
+            }
         }
     }
 
@@ -70,20 +75,10 @@ class MethodCallHandlerImpl(
     }
 
     fun stopListening() {
-        roktCallbacks.clear()
         channel?.let { methodChannel ->
             methodChannel.setMethodCallHandler(null)
             channel = null
         }
-    }
-
-    private fun logging(
-        call: MethodCall,
-        result: MethodChannel.Result,
-    ) {
-        val enable: Boolean = call.argument<Boolean?>("enable") ?: false
-        Rokt.setLoggingEnabled(enable)
-        result.success("enable")
     }
 
     private fun purchaseFinalized(
@@ -95,9 +90,9 @@ class MethodCallHandlerImpl(
         val success = call.argument<Boolean>("success") ?: true
         if (placementId != null && catalogItemId != null) {
             Rokt.purchaseFinalized(
-                placementId = placementId,
+                identifier = placementId,
                 catalogItemId = catalogItemId,
-                status = success,
+                success = success,
             )
             result.success("Success")
         } else {
@@ -107,6 +102,25 @@ class MethodCallHandlerImpl(
                 null,
             )
         }
+    }
+
+    private fun setSessionId(
+        call: MethodCall,
+        result: MethodChannel.Result,
+    ) {
+        val sessionId = call.argument<String>("sessionId")
+        sessionId?.let {
+            Rokt.setSessionId(it)
+            result.success("Success")
+        } ?: result.error(
+            "INVALID_PARAMS",
+            "sessionId is required",
+            null,
+        )
+    }
+
+    private fun getSessionId(result: MethodChannel.Result) {
+        result.success(Rokt.getSessionId())
     }
 
     private fun init(
@@ -138,13 +152,12 @@ class MethodCallHandlerImpl(
         )
     }
 
-    private fun execute(
+    private fun selectPlacements(
         call: MethodCall,
         result: MethodChannel.Result,
     ) {
         val viewName = call.argument<String>("viewName").orEmpty()
         val attributes = call.argument<HashMap<String, String>>("attributes").orEmpty()
-        val callBackId = call.argument<Int>("callbackId") ?: 0
         val placeHolders: MutableMap<String, WeakReference<Widget>> = mutableMapOf()
         val configMap = call.argument<HashMap<String, Any>>("config")
         val config = configMap?.let { buildRoktConfig(it) }
@@ -153,21 +166,14 @@ class MethodCallHandlerImpl(
                 placeHolders[it.value] = WeakReference(widgetFactory.nativeViews[it.key])
             }
         }
-        val roktCallback =
-            RoktCallbackImpl(channel, callBackId).also { callback ->
-                roktCallbacks.add(callback)
-            }
-        val map: MutableMap<String, Any> = mutableMapOf()
-        map["id"] = callBackId
         subscribeToEvents(Rokt.events(viewName), viewName)
-        Rokt.execute(
-            viewName = viewName,
+        Rokt.selectPlacements(
+            identifier = viewName,
             attributes = attributes,
-            callback = roktCallback,
             placeholders = placeHolders,
             config = config,
         )
-        result.success("Executed")
+        result.success("Selected placements")
     }
 
     private fun setupEventChannel() {
@@ -232,42 +238,42 @@ class MethodCallHandlerImpl(
 
                                 is RoktEvent.FirstPositiveEngagement -> {
                                     eventName = "FirstPositiveEngagement"
-                                    event.id
+                                    event.identifier
                                 }
 
                                 is RoktEvent.OfferEngagement -> {
                                     eventName = "OfferEngagement"
-                                    event.id
+                                    event.identifier
                                 }
 
                                 is RoktEvent.PlacementClosed -> {
                                     eventName = "PlacementClosed"
-                                    event.id
+                                    event.identifier
                                 }
 
                                 is RoktEvent.PlacementCompleted -> {
                                     eventName = "PlacementCompleted"
-                                    event.id
+                                    event.identifier
                                 }
 
                                 is RoktEvent.PlacementFailure -> {
                                     eventName = "PlacementFailure"
-                                    event.id
+                                    event.identifier
                                 }
 
                                 is RoktEvent.PlacementInteractive -> {
                                     eventName = "PlacementInteractive"
-                                    event.id
+                                    event.identifier
                                 }
 
                                 is RoktEvent.PlacementReady -> {
                                     eventName = "PlacementReady"
-                                    event.id
+                                    event.identifier
                                 }
 
                                 is RoktEvent.PositiveEngagement -> {
                                     eventName = "PositiveEngagement"
-                                    event.id
+                                    event.identifier
                                 }
 
                                 RoktEvent.ShowLoadingIndicator -> {
@@ -284,7 +290,7 @@ class MethodCallHandlerImpl(
                                 is RoktEvent.OpenUrl -> {
                                     eventName = "OpenUrl"
                                     params["url"] = event.url
-                                    event.id
+                                    event.identifier
                                 }
 
                                 is RoktEvent.CartItemInstantPurchase -> {
@@ -297,7 +303,7 @@ class MethodCallHandlerImpl(
                                     params["totalPrice"] = event.totalPrice.toString()
                                     params["quantity"] = event.quantity.toString()
                                     params["unitPrice"] = event.unitPrice.toString()
-                                    event.placementId
+                                    event.identifier
                                 }
                             }
                         viewName?.let { params["viewName"] = viewName }
@@ -313,9 +319,10 @@ class MethodCallHandlerImpl(
     companion object {
         private const val CHANNEL_NAME = "rokt_sdk"
         private const val INIT_METHOD = "initialize"
-        private const val EXECUTE_METHOD = "execute"
-        private const val LOGGING_METHOD = "logging"
+        private const val SELECT_PLACEMENTS_METHOD = "selectPlacements"
         private const val PURCHASE_FINALIZED_METHOD = "purchaseFinalized"
+        private const val SET_SESSION_ID_METHOD = "setSessionId"
+        private const val GET_SESSION_ID_METHOD = "getSessionId"
         private const val EVENT_CHANNEL_NAME = "RoktEvents"
         const val TAG = "ROKTSDK_FLUTTER"
     }

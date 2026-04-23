@@ -21,7 +21,7 @@ jobs:
     with:
       flutter-version: ${{ vars.FLUTTER_VERSION }}
       ruby-version: ${{ vars.RUBY_VERSION }}
-      xcode-version: ${{ vars.XCODE_VERSION }}
+      xcode-version: "16.4"
 
   build-test-android:
     name: Build & Test Android
@@ -37,6 +37,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
       - name: Get current version
         id: version-file
         run: |
@@ -49,6 +51,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
 
       - name: Setup Flutter
         uses: subosito/flutter-action@fd55f4c5af5b953cc57a2be44cb082c8f6635e8e #2.21.0
@@ -76,8 +80,10 @@ jobs:
         with:
           changelog_file: CHANGELOG.md
           release_notes_file: ${{ needs.setup-and-version.outputs.final_version }}.md
-      - name: Changelog
-        run: echo "${{ steps.extract-release-notes.outputs.release_notes }}"
+      - name: Print release notes (debug)
+        env:
+          RELEASE_NOTES: ${{ steps.extract-release-notes.outputs.release_notes }}
+        run: printf '%s\n' "$RELEASE_NOTES"
       - name: Upload release notes
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 #v4.6.2
         with:
@@ -121,8 +127,10 @@ jobs:
           path: ${{ needs.setup-and-version.outputs.final_version }}.md
 
       - name: Move release notes to docs
+        env:
+          FINAL_VERSION: ${{ needs.setup-and-version.outputs.final_version }}
         run: |
-          mv ${{ needs.setup-and-version.outputs.final_version }}.md changelogs/flutter/${{ needs.setup-and-version.outputs.final_version }}.md
+          mv "${FINAL_VERSION}.md" "changelogs/flutter/${FINAL_VERSION}.md"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@84ae59a2cdc2258d6fa0732dd66352dddae2a412 # v7.0.9
