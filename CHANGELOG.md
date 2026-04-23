@@ -11,6 +11,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [5.0.0] - 2026-04-23
 
+### Added
+
+- Shoppable Ads support via `selectShoppableAds()` API (iOS only)
+- Payment extension registration via `registerPaymentExtension()` API (iOS only)
+- Purchase finalization via `purchaseFinalized()` API
+- Session ID management via `setSessionId()` and `getSessionId()` APIs
+- Shoppable Ads events: `CartItemInstantPurchaseInitiated`, `CartItemInstantPurchase`, `CartItemInstantPurchaseFailure`, `InstantPurchaseDismissal`, `CartItemDevicePay`
+- Migration guide (`MIGRATING.md`)
+
+### Changed
+
+- Update Rokt native SDK versions: iOS 5.0.0, Android 5.0.0
+- Minimum iOS deployment target raised to iOS 15.0
+- `execute()` renamed to `selectPlacements()`
+- Callback-based event handling replaced with `RoktEvents` EventChannel stream
+
+### Removed
+
+- `execute()` method (use `selectPlacements()` instead)
+- `setLoggingEnabled()` method
+- Execute-style callbacks: `onLoad`, `onUnLoad`, `onShouldShowLoadingIndicator`, `onShouldHideLoadingIndicator`, `onEmbeddedSizeChange`
+- `onInitComplete`-style callback flow (use `RoktEvents` stream instead)
+
 ## [4.11.0] - 2025-09-25
 
 ### Changed
