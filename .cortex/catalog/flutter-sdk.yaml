@@ -18,11 +18,7 @@ info:
     - lang-dart
     - lang-kotlin
     - lang-swift
-
-  x-cortex-oncall:
-    opsgenie:
-      type: SCHEDULE
-      id: Mobile Integrations_schedule
+    - serviceTier-3
 
   x-cortex-ci-cd:
     buildkite:
