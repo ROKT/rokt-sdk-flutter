@@ -1,6 +1,7 @@
 library rokt_sdk;
 
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -12,53 +13,10 @@ import 'package:rokt_sdk/src/widget_controller.dart';
 
 part 'src/rokt_widget.dart';
 
-/// callback for the rokt sdk
-typedef RoktCallback = void Function();
-
 /// The main interface to Rokt SDK
 ///
 /// Use the member methods to interact with the Rokt SDK
 class RoktSdk {
-  static const _load = 'load';
-  static const _unload = 'unload';
-  static const _shouldShowLoadingIndicator = 'onShouldShowLoadingIndicator';
-  static const _shouldHideLoadingIndicator = 'onShouldHideLoadingIndicator';
-
-  static void _defaultRoktCallBackInternal(dynamic msg) {
-    switch (msg) {
-      case _load:
-        {
-          _onLoad?.call();
-          break;
-        }
-      case _unload:
-        {
-          _onUnLoad?.call();
-          break;
-        }
-      case _shouldShowLoadingIndicator:
-        {
-          _onShouldShowLoadingIndicator?.call();
-          break;
-        }
-      case _shouldHideLoadingIndicator:
-        {
-          _onShouldHideLoadingIndicator?.call();
-          break;
-        }
-    }
-  }
-
-  static void _defaultRoktCallBack() {}
-
-  static RoktCallback? _onLoad;
-
-  static RoktCallback? _onUnLoad;
-
-  static RoktCallback? _onShouldShowLoadingIndicator;
-
-  static RoktCallback? _onShouldHideLoadingIndicator;
-
   /// Initializes Rokt SDK
   ///
   /// Initialize the Rokt SDK prior to using it.
@@ -76,45 +34,78 @@ class RoktSdk {
         fontFilePathMap: fontFilePathMap);
   }
 
-  /// Execute Rokt widget
+  /// Select Rokt placements
   ///
-  /// This is the entry point to display a widget to the consumer.
-  /// The Rokt widget view displays after a short delay, configurable via the Rokt platform.
-  /// The SDK provides optional callback events for when the view loads and unloads.
+  /// This is the entry point to select and display placements for a given view.
   /// Your app dictates which consumer attributes are passed through to Rokt
   /// - Parameters:
   ///   - viewName: The name that should be displayed in the widget
   ///   - attributes: A string map containing the parameters that should be displayed in the widget
   ///   - roktConfig: Rokt SDK configuration object
-  ///   - onLoad: Function to execute right after the widget is successfully loaded and displayed
-  ///   - onUnLoad: Function to execute right after widget is unloaded, there is no widget or there is an exception
-  ///   - onShouldShowLoadingIndicator: Function to execute when the loading indicator should be shown
-  ///   - onShouldHideLoadingIndicator: Function to execute when the loading indicator should be hidden
-  static Future<void> execute(
+  static Future<void> selectPlacements(
       {required String viewName,
       Map<String, String> attributes = const {},
-      RoktConfig? roktConfig,
-      RoktCallback onLoad = _defaultRoktCallBack,
-      RoktCallback onUnLoad = _defaultRoktCallBack,
-      RoktCallback onShouldShowLoadingIndicator = _defaultRoktCallBack,
-      RoktCallback onShouldHideLoadingIndicator = _defaultRoktCallBack}) async {
-    _onLoad = onLoad;
-    _onUnLoad = onUnLoad;
-    _onShouldShowLoadingIndicator = onShouldShowLoadingIndicator;
-    _onShouldHideLoadingIndicator = onShouldHideLoadingIndicator;
-
-    await RoktSdkController.instance.execute(
-        viewName: viewName,
-        attributes: attributes,
-        config: roktConfig,
-        callback: _defaultRoktCallBackInternal);
+      RoktConfig? roktConfig}) async {
+    await RoktSdkController.instance.selectPlacements(
+        viewName: viewName, attributes: attributes, config: roktConfig);
   }
 
-  /// Enable or disable debug logging from the library
+  /// Display a Shoppable Ads overlay placement.
+  ///
+  /// Always renders as an overlay -- no embedded views.
+  /// Requires [registerPaymentExtension] to be called first if payment is needed.
+  /// Lifecycle and purchase events are delivered via the `RoktEvents` EventChannel.
+  ///
+  /// Currently supported on iOS only. On Android this is a no-op until the
+  /// native SDK adds shoppable ads support.
+  ///
   /// - Parameters:
-  ///   - enable: enables or disables debug logging
-  static Future<void> setLoggingEnabled({required bool enable}) async {
-    await RoktSdkController.instance.setLoggingEnabled(enable: enable);
+  ///   - viewName: The identifier for the view/page where you're displaying the placement
+  ///   - attributes: A string map containing user attributes for targeting
+  ///   - roktConfig: Optional Rokt SDK configuration object
+  static Future<void> selectShoppableAds({
+    required String viewName,
+    Map<String, String> attributes = const {},
+    RoktConfig? roktConfig,
+  }) async {
+    if (!Platform.isIOS) {
+      return;
+    }
+    await RoktSdkController.instance.selectShoppableAds(
+      viewName: viewName,
+      attributes: attributes,
+      config: roktConfig,
+    );
+  }
+
+  /// Register a payment extension for Shoppable Ads.
+  ///
+  /// The payment extension handles device payment flows (e.g. Apple Pay via Stripe).
+  /// Must be called before [selectShoppableAds].
+  ///
+  /// **iOS setup required:** The host app must:
+  /// 1. Add `pod 'RoktStripePaymentExtension'` to its Podfile.
+  /// 2. Set `SwiftRoktSdkPlugin.paymentExtensionFactory` in AppDelegate to
+  ///    construct the native extension from the provided [config] map.
+  ///
+  /// Currently supported on iOS only.
+  ///
+  /// - Parameters:
+  ///   - extensionType: The extension identifier (e.g. "stripe")
+  ///   - config: Configuration dictionary passed to the native factory and
+  ///     to the extension's `onRegister` (e.g. {"stripeKey": "pk_live_...",
+  ///     "applePayMerchantId": "merchant.com.yourapp.rokt"})
+  static Future<void> registerPaymentExtension({
+    required String extensionType,
+    Map<String, String> config = const {},
+  }) async {
+    if (!Platform.isIOS) {
+      return;
+    }
+    await RoktSdkController.instance.registerPaymentExtension(
+      extensionType: extensionType,
+      config: config,
+    );
   }
 
   /// Notifies Rokt that a purchase has been finalized
@@ -138,7 +129,7 @@ class RoktSdk {
     );
   }
 
-  /// Set the session id to use for the next execute call.
+  /// Set the session id to use for the next select placements call.
   ///
   /// This is useful for cases where you have a session id from a non-native integration,
   /// e.g. WebView, and you want the session to be consistent across integrations.
@@ -151,7 +142,7 @@ class RoktSdk {
     await RoktSdkController.instance.setSessionId(sessionId: sessionId);
   }
 
-  /// Get the session id to use within a non-native integration e.g. WebView
+  /// Get the session id to use within a non-native integration e.g. WebView.
   ///
   /// - Returns: The session id or null if no session is present.
   static Future<String?> getSessionId() async {

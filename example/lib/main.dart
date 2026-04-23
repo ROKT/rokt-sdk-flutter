@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
@@ -20,11 +22,11 @@ class _MyAppState extends State<MyApp> {
   final tagIdController = TextEditingController(text: constants.defaultTagId);
   final viewNameController =
       TextEditingController(text: constants.defaultViewName);
-  final attributesController =
-      TextEditingController(text: constants.defaultAttributes);
-  final placementIdController = TextEditingController(text: "");
-  final catalogItemIdController = TextEditingController(text: "");
-  bool purchaseSuccess = false;
+  final attributesController = TextEditingController(
+      text: Platform.isIOS
+          ? constants.iOSAttributes
+          : constants.androidAttributes);
+  final stripeKeyController = TextEditingController(text: "");
   Map<int, String> placeholders = {};
   static const EventChannel roktEventChannel = EventChannel('RoktEvents');
 
@@ -35,9 +37,18 @@ class _MyAppState extends State<MyApp> {
   }
 
   void receiveRoktEvent() {
-    roktEventChannel.receiveBroadcastStream().listen((dynamic event) {
-      debugPrint("rokt_sdk _receiveRoktEvent $event ");
-    });
+    try {
+      roktEventChannel.receiveBroadcastStream().listen(
+        (dynamic event) {
+          debugPrint("rokt_sdk _receiveRoktEvent $event ");
+        },
+        onError: (error) {
+          debugPrint("rokt_sdk event channel error: $error");
+        },
+      );
+    } catch (e) {
+      debugPrint("rokt_sdk event channel setup failed: $e");
+    }
   }
 
   Map<String, String> getAttributes() {
@@ -69,98 +80,70 @@ class _MyAppState extends State<MyApp> {
                                       controller: tagIdController,
                                       textAlign: TextAlign.center)),
                               TextButton(
-                                child: const Text('Initial'),
+                                child: const Text('Initialize'),
                                 onPressed: () {
-                                  RoktSdk.setLoggingEnabled(enable: true);
                                   RoktSdk.initialize(tagIdController.text,
                                       appVersion: '1.0.0');
                                 },
                               )
                             ]),
+                        TextField(
+                            controller: attributesController,
+                            keyboardType: TextInputType.multiline,
+                            maxLines: null),
                         Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Expanded(
                                   child: TextField(
                                       controller: viewNameController,
-                                      textAlign: TextAlign.center)),
+                                      textAlign: TextAlign.center,
+                                      decoration: const InputDecoration(
+                                          hintText: "View Name"))),
                               TextButton(
-                                  child: const Text('Execute'),
+                                  child: const Text('Select Placements'),
                                   onPressed: () {
-                                    RoktSdk.execute(
+                                    RoktSdk.selectPlacements(
                                         viewName: viewNameController.text,
-                                        attributes: getAttributes(),
-                                        onLoad: () {
-                                          debugPrint("rokt_sdk loaded");
-                                        },
-                                        onUnLoad: () {
-                                          debugPrint("rokt_sdk unloaded");
-                                        },
-                                        onShouldShowLoadingIndicator: () {
-                                          debugPrint(
-                                              "rokt_sdk onShouldShowLoadingIndicator");
-                                        },
-                                        onShouldHideLoadingIndicator: () {
-                                          debugPrint(
-                                              "rokt_sdk onShouldHideLoadingIndicator");
-                                        });
+                                        attributes: getAttributes());
                                   })
                             ]),
-                        TextField(
-                            controller: attributesController,
-                            keyboardType: TextInputType.multiline,
-                            maxLines: null),
                         const Divider(),
-                        const Text("Purchase Finalized Test",
+                        const Text("Shoppable Ads (iOS only)",
                             style: TextStyle(fontWeight: FontWeight.bold)),
                         Row(
                           children: [
                             Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("Placement ID"),
-                                  TextField(controller: placementIdController),
-                                ],
+                              child: TextField(
+                                controller: stripeKeyController,
+                                decoration: const InputDecoration(
+                                    hintText: "Stripe Key (pk_...)"),
                               ),
                             ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("Catalog Item ID"),
-                                  TextField(
-                                      controller: catalogItemIdController),
-                                ],
-                              ),
+                            TextButton(
+                              child: const Text('Register'),
+                              onPressed: () {
+                                RoktSdk.registerPaymentExtension(
+                                  extensionType: 'stripe',
+                                  config: {
+                                    'stripeKey': stripeKeyController.text,
+                                  },
+                                );
+                                debugPrint(
+                                    "rokt_sdk payment extension registered");
+                              },
                             ),
                           ],
                         ),
-                        Row(
-                          children: [
-                            const Text("Success: "),
-                            Switch(
-                              value: purchaseSuccess,
-                              onChanged: (value) {
-                                setState(() {
-                                  purchaseSuccess = value;
-                                });
-                              },
-                            ),
-                            Expanded(
-                              child: TextButton(
-                                child: const Text('Call Purchase Finalized'),
-                                onPressed: () {
-                                  RoktSdk.purchaseFinalized(
-                                    placementId: placementIdController.text,
-                                    catalogItemId: catalogItemIdController.text,
-                                    success: purchaseSuccess,
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
+                        TextButton(
+                          child: const Text('Shoppable Ads'),
+                          onPressed: () {
+                            RoktSdk.selectShoppableAds(
+                              viewName: viewNameController.text,
+                              attributes: getAttributes(),
+                            );
+                            debugPrint("rokt_sdk shoppable ads triggered");
+                          },
                         ),
                         const Divider(),
                         const Text("Location 1"),

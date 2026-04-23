@@ -1,27 +1,35 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility that Flutter provides. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:rokt_sdk_example/main.dart';
 
 void main() {
   testWidgets('Verify Platform version', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+    final binding = TestWidgetsFlutterBinding.ensureInitialized();
+
+    binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('rokt_sdk'),
+      (MethodCall methodCall) async => 'success',
+    );
+
+    binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('RoktEvents'),
+      (MethodCall methodCall) async => null,
+    );
+
     await tester.pumpWidget(const MyApp());
 
-    // Verify that platform version is retrieved.
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) =>
-            widget is Text && widget.data!.startsWith('Location 1'),
-      ),
-      findsOneWidget,
+    expect(find.text('Plugin example app'), findsOneWidget);
+    expect(find.text('Initialize'), findsOneWidget);
+    expect(find.text('Select Placements'), findsOneWidget);
+
+    binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('rokt_sdk'),
+      null,
+    );
+    binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('RoktEvents'),
+      null,
     );
   });
 }

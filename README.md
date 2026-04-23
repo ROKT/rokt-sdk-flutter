@@ -39,7 +39,7 @@ To develop with or contribute to this SDK, you'll need:
   - Android Gradle plugin 7.4.0 or newer
   - Gradle version 7.5 or newer
 - For iOS development:
-  - iOS 12 or above
+  - iOS 15 or above
   - Xcode with required dependencies
 
 ### Setup Steps
@@ -103,7 +103,7 @@ android {
 
 #### iOS
 
-Rokt iOS SDK supports iOS version 12 and above. No additional configuration is needed.
+Rokt iOS SDK supports iOS version 15 and above. No additional configuration is needed.
 
 ### SDK Initialization
 
@@ -126,13 +126,12 @@ RoktSdk.initialize('222', appVersion: '1.0.0');
 
 #### Overlay Placements
 
-Execute the Rokt iOS SDK in your desired view and add all appropriate customer attributes.
-The SDK provides optional callback events for when the view loads and unloads.
+Select placements in your desired view and add all appropriate customer attributes.
 
 ```dart
 import 'package:rokt_sdk/rokt_sdk.dart';
 
-RoktSdk.execute(
+RoktSdk.selectPlacements(
   viewName: "RoktExperience",
   attributes: {
     "email": "j.smith@example.com",
@@ -141,12 +140,6 @@ RoktSdk.execute(
     "mobile": "(555)867-5309",
     "postcode": "90210",
     "country": "US"
-  },
-  onLoad: () {
-    // Optional callback for when the Rokt placement loads
-  },
-  onUnLoad: () {
-    // Optional callback for when the Rokt placement unloads
   }
 );
 ```
@@ -157,6 +150,78 @@ RoktSdk.execute(
 
 ```dart
 const RoktWidget(placeholderName: "RoktEmbedded1", onWidgetCreated: () { showWidget(); })
+```
+
+#### Shoppable Ads (iOS only)
+
+Shoppable Ads allow users to make instant purchases directly from ad placements. This feature requires a payment extension to be registered before displaying shoppable ads.
+
+1. Add the native payment extension to your iOS project (e.g. in your `Podfile`):
+
+```ruby
+pod 'RoktStripePaymentExtension', '~> 0.1'
+```
+
+2. Set the payment extension factory in your `AppDelegate.swift`:
+
+```swift
+import RoktStripePaymentExtension
+import rokt_sdk
+
+// In application(_:didFinishLaunchingWithOptions:), after GeneratedPluginRegistrant.register:
+SwiftRoktSdkPlugin.paymentExtensionFactory = { type, config in
+    switch type {
+    case "stripe":
+        guard let merchantId = config["applePayMerchantId"] else { return nil }
+        return RoktStripePaymentExtension(
+            applePayMerchantId: merchantId,
+            countryCode: config["countryCode"] ?? "US"
+        )
+    default:
+        return nil
+    }
+}
+```
+
+3. Register the payment extension and display shoppable ads:
+
+```dart
+import 'package:rokt_sdk/rokt_sdk.dart';
+
+// Register payment extension (call once after initialize)
+RoktSdk.registerPaymentExtension(
+  extensionType: 'stripe',
+  config: {
+    'stripeKey': 'YOUR_STRIPE_PUBLISHABLE_KEY',
+    'applePayMerchantId': 'merchant.com.yourapp.rokt',
+  },
+);
+
+// Display shoppable ads (always overlay)
+RoktSdk.selectShoppableAds(
+  viewName: "ConfirmationPage",
+  attributes: {
+    "email": "j.smith@example.com",
+    "firstname": "Jenny",
+    "lastname": "Smith",
+    "confirmationref": "ORDER-12345",
+  },
+);
+```
+
+3. Handle shoppable events via the `RoktEvents` EventChannel:
+
+```dart
+const EventChannel roktEventChannel = EventChannel('RoktEvents');
+
+roktEventChannel.receiveBroadcastStream().listen((dynamic event) {
+  final eventName = event['event'];
+  if (eventName == 'CartItemInstantPurchase') {
+    print("Purchase completed: ${event['catalogItemId']}");
+  } else if (eventName == 'CartItemInstantPurchaseFailure') {
+    print("Purchase failed: ${event['error']}");
+  }
+});
 ```
 
 ## Key Dependencies & Gotchas
@@ -194,7 +259,7 @@ implementation "com.rokt:roktsdk:X.X.X"
 ### Gotchas
 
 - Always run `flutter clean` before updating the SDK version
-- For embedded placements, ensure the view is in the visible area of the screen before calling `execute`
+- For embedded placements, ensure the view is in the visible area of the screen before calling `selectPlacements`
 - To run in sandbox mode, add `"sandbox": "true"` to your attributes
 - When upgrading the native SDKs, you must update both the podspec version and the dependency version
 

@@ -13,11 +13,18 @@
 
 import Flutter
 import UIKit
+import Rokt_Widget
 
 public class SwiftRoktSdkPlugin: NSObject, FlutterPlugin {
+    /// Host apps set this closure in AppDelegate to provide payment extension instances.
+    /// The factory receives the extension type (e.g. "stripe") and a config dictionary,
+    /// and returns a fully constructed `PaymentExtension` or `nil`.
+    public static var paymentExtensionFactory: ((_ type: String, _ config: [String: String]) -> PaymentExtension?)?
+
     fileprivate let INIT_METHOD = "initialize"
-    fileprivate let EXECUTE_METHOD = "execute"
-    fileprivate let LOGGING_METHOD = "logging"
+    fileprivate let SELECT_PLACEMENTS_METHOD = "selectPlacements"
+    fileprivate let SELECT_SHOPPABLE_ADS_METHOD = "selectShoppableAds"
+    fileprivate let REGISTER_PAYMENT_EXTENSION_METHOD = "registerPaymentExtension"
     fileprivate let PURCHASE_FINALIZED_METHOD = "purchaseFinalized"
     fileprivate let SET_SESSION_ID_METHOD = "setSessionId"
     fileprivate let GET_SESSION_ID_METHOD = "getSessionId"
@@ -48,10 +55,12 @@ public class SwiftRoktSdkPlugin: NSObject, FlutterPlugin {
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         if call.method == INIT_METHOD {
             handler.initialize(call, result: result)
-        } else if call.method == EXECUTE_METHOD {
-            handler.execute(call, result: result)
-        } else if call.method == LOGGING_METHOD {
-            handler.logging(call, result: result)
+        } else if call.method == SELECT_PLACEMENTS_METHOD {
+            handler.selectPlacements(call, result: result)
+        } else if call.method == SELECT_SHOPPABLE_ADS_METHOD {
+            handler.selectShoppableAds(call, result: result)
+        } else if call.method == REGISTER_PAYMENT_EXTENSION_METHOD {
+            handler.registerPaymentExtension(call, result: result)
         } else if call.method == PURCHASE_FINALIZED_METHOD {
             handler.purchaseFinalized(call, result: result)
         } else if call.method == SET_SESSION_ID_METHOD {
