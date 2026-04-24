@@ -28,7 +28,7 @@ jobs:
     with:
       flutter-version: ${{ vars.FLUTTER_VERSION }}
 
-  release-and-tag:
+  publish-and-release:
     needs: [build-test-ios, build-test-android]
     runs-on: ubuntu-latest
     permissions:
@@ -78,7 +78,7 @@ jobs:
             ${{ steps.extract-release-notes.outputs.release_notes }}
 
   upload-release-notes:
-    needs: [release-and-tag]
+    needs: [publish-and-release]
     runs-on: ubuntu-latest
     steps:
       - name: Generate a token
