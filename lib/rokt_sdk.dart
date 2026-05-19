@@ -34,6 +34,19 @@ class RoktSdk {
         fontFilePathMap: fontFilePathMap);
   }
 
+  /// Routes all Rokt SDK requests through a custom CNAME domain.
+  ///
+  /// Must be called before [initialize]. Non-HTTPS URLs or URLs with a
+  /// missing/empty host are rejected by the native SDK with a warning. Any
+  /// path, query, or fragment on the URL is ignored — only the scheme, host,
+  /// and port are used.
+  ///
+  /// - Parameters:
+  ///   - url: The custom HTTPS base URL (e.g. `https://rkt.example.com`).
+  static Future<void> setCustomBaseURL(String url) async {
+    await RoktSdkController.instance.setCustomBaseURL(url: url);
+  }
+
   /// Select Rokt placements
   ///
   /// This is the entry point to select and display placements for a given view.

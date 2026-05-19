@@ -27,6 +27,8 @@ class _MyAppState extends State<MyApp> {
           ? constants.iOSAttributes
           : constants.androidAttributes);
   final stripeKeyController = TextEditingController(text: "");
+  final customBaseUrlController =
+      TextEditingController(text: constants.defaultCustomBaseUrl);
   Map<int, String> placeholders = {};
   static const EventChannel roktEventChannel = EventChannel('RoktEvents');
 
@@ -55,12 +57,52 @@ class _MyAppState extends State<MyApp> {
     return Map<String, String>.from(json.decode(attributesController.text));
   }
 
+  Future<void> _showCustomBaseUrlDialog(BuildContext context) async {
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Set Custom Base URL'),
+          content: TextField(
+            controller: customBaseUrlController,
+            decoration:
+                const InputDecoration(hintText: "https://rkt.partner.com"),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(dialogContext).pop(),
+            ),
+            TextButton(
+              child: const Text('Set'),
+              onPressed: () {
+                RoktSdk.setCustomBaseURL(customBaseUrlController.text);
+                debugPrint(
+                    "rokt_sdk custom base URL set to ${customBaseUrlController.text}");
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
             appBar: AppBar(
               title: const Text('Plugin example app'),
+              actions: <Widget>[
+                Builder(
+                  builder: (BuildContext appBarContext) => IconButton(
+                    icon: const Icon(Icons.dns_outlined),
+                    tooltip: 'Set Custom Base URL (CNAME)',
+                    onPressed: () => _showCustomBaseUrlDialog(appBarContext),
+                  ),
+                ),
+              ],
             ),
             body: GestureDetector(
               onTap: () {

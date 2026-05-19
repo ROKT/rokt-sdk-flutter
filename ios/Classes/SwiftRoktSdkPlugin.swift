@@ -22,6 +22,7 @@ public class SwiftRoktSdkPlugin: NSObject, FlutterPlugin {
     public static var paymentExtensionFactory: ((_ type: String, _ config: [String: String]) -> PaymentExtension?)?
 
     fileprivate let INIT_METHOD = "initialize"
+    fileprivate let SET_CUSTOM_BASE_URL_METHOD = "setCustomBaseURL"
     fileprivate let SELECT_PLACEMENTS_METHOD = "selectPlacements"
     fileprivate let SELECT_SHOPPABLE_ADS_METHOD = "selectShoppableAds"
     fileprivate let REGISTER_PAYMENT_EXTENSION_METHOD = "registerPaymentExtension"
@@ -55,6 +56,8 @@ public class SwiftRoktSdkPlugin: NSObject, FlutterPlugin {
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         if call.method == INIT_METHOD {
             handler.initialize(call, result: result)
+        } else if call.method == SET_CUSTOM_BASE_URL_METHOD {
+            handler.setCustomBaseURL(call, result: result)
         } else if call.method == SELECT_PLACEMENTS_METHOD {
             handler.selectPlacements(call, result: result)
         } else if call.method == SELECT_SHOPPABLE_ADS_METHOD {

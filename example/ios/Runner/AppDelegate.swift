@@ -1,7 +1,7 @@
 import UIKit
 import Flutter
 import rokt_sdk
-import RoktStripePaymentExtension
+import RoktPaymentExtension
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -14,7 +14,7 @@ import RoktStripePaymentExtension
     SwiftRoktSdkPlugin.paymentExtensionFactory = { type, config in
       switch type {
       case "stripe":
-        return RoktStripePaymentExtension(
+        return RoktPaymentExtension(
           applePayMerchantId: "merchant.com.runner.rokt"
         )
       default:
