@@ -27,6 +27,8 @@ class _MyAppState extends State<MyApp> {
           ? constants.iOSAttributes
           : constants.androidAttributes);
   final stripeKeyController = TextEditingController(text: "");
+  final customBaseUrlController =
+      TextEditingController(text: constants.defaultCustomBaseUrl);
   Map<int, String> placeholders = {};
   static const EventChannel roktEventChannel = EventChannel('RoktEvents');
 
@@ -72,6 +74,25 @@ class _MyAppState extends State<MyApp> {
                   sliver: SliverList(
                     delegate: SliverChildListDelegate(
                       <Widget>[
+                        Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                  child: TextField(
+                                      controller: customBaseUrlController,
+                                      textAlign: TextAlign.center,
+                                      decoration: const InputDecoration(
+                                          hintText: "Custom Base URL"))),
+                              TextButton(
+                                child: const Text('Set CNAME'),
+                                onPressed: () {
+                                  RoktSdk.setCustomBaseURL(
+                                      customBaseUrlController.text);
+                                  debugPrint(
+                                      "rokt_sdk custom base URL set to ${customBaseUrlController.text}");
+                                },
+                              )
+                            ]),
                         Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [

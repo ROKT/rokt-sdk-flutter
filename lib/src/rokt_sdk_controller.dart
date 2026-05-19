@@ -27,6 +27,11 @@ class RoktSdkController {
     });
   }
 
+  /// Call Rokt setCustomBaseURL method in Native SDK
+  Future<void> setCustomBaseURL({required String url}) async {
+    await _channel.invokeMethod('setCustomBaseURL', {'url': url});
+  }
+
   /// Call Rokt selectPlacements method in Native SDK
   Future<void> selectPlacements(
       {required String viewName,

@@ -51,6 +51,16 @@ void main() {
     });
   });
 
+  group('setCustomBaseURL', () {
+    test('sends url to native', () async {
+      await RoktSdk.setCustomBaseURL('https://rkt.example.com');
+
+      expect(log, hasLength(1));
+      expect(log.first.method, 'setCustomBaseURL');
+      expect(log.first.arguments['url'], 'https://rkt.example.com');
+    });
+  });
+
   group('selectPlacements', () {
     test('sends correct arguments with defaults', () async {
       await RoktSdk.selectPlacements(viewName: 'TestView');

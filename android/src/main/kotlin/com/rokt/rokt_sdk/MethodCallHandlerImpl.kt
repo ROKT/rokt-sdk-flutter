@@ -19,6 +19,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
+import java.net.MalformedURLException
+import java.net.URL
 
 class MethodCallHandlerImpl(
     private val messenger: BinaryMessenger,
@@ -41,6 +43,10 @@ class MethodCallHandlerImpl(
         when (call.method) {
             INIT_METHOD -> {
                 init(call, result)
+            }
+
+            SET_CUSTOM_BASE_URL_METHOD -> {
+                setCustomBaseURL(call, result)
             }
 
             SELECT_PLACEMENTS_METHOD -> {
@@ -121,6 +127,31 @@ class MethodCallHandlerImpl(
 
     private fun getSessionId(result: MethodChannel.Result) {
         result.success(Rokt.getSessionId())
+    }
+
+    private fun setCustomBaseURL(
+        call: MethodCall,
+        result: MethodChannel.Result,
+    ) {
+        val urlString = call.argument<String>("url")
+        if (urlString.isNullOrEmpty()) {
+            result.error(
+                "INVALID_PARAMS",
+                "url is required",
+                null,
+            )
+            return
+        }
+        try {
+            Rokt.setCustomBaseURL(URL(urlString))
+            result.success("Success")
+        } catch (e: MalformedURLException) {
+            result.error(
+                "INVALID_URL",
+                "Malformed URL: ${e.message}",
+                null,
+            )
+        }
     }
 
     private fun init(
@@ -319,6 +350,7 @@ class MethodCallHandlerImpl(
     companion object {
         private const val CHANNEL_NAME = "rokt_sdk"
         private const val INIT_METHOD = "initialize"
+        private const val SET_CUSTOM_BASE_URL_METHOD = "setCustomBaseURL"
         private const val SELECT_PLACEMENTS_METHOD = "selectPlacements"
         private const val PURCHASE_FINALIZED_METHOD = "purchaseFinalized"
         private const val SET_SESSION_ID_METHOD = "setSessionId"

@@ -44,6 +44,18 @@ class RoktMethodCallHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 
+    public func setCustomBaseURL(_ call: FlutterMethodCall,
+                                 result: @escaping FlutterResult) {
+        if let args = call.arguments as? Dictionary<String, Any>,
+           let urlString = args["url"] as? String,
+           let url = URL(string: urlString) {
+            Rokt.setCustomBaseURL(url)
+            result(SUCCESS)
+        } else {
+            result(FAIL)
+        }
+    }
+
     public func initialize(_ call: FlutterMethodCall,
                            result: @escaping FlutterResult) {
 

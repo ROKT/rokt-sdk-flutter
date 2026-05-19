@@ -1,5 +1,9 @@
 const String defaultTagId = "2754655826098840951";
 const String defaultViewName = "MSDKEmbeddedLayout";
+// Replace with a partner CNAME (e.g. https://rkt.partner.com) to route SDK
+// traffic through a first-party domain. Default points at the standard Rokt
+// host so the example works without any CNAME configured.
+const String defaultCustomBaseUrl = "https://apps.rokt.com";
 
 const String androidAttributes = """{
   "email": "j.smith@example.com",
