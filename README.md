@@ -232,10 +232,10 @@ roktEventChannel.receiveBroadcastStream().listen((dynamic event) {
 
 This Flutter plugin bundles the following native SDK versions:
 
-| Platform | Native dependency | Version |
-| -------- | ----------------- | ------- |
-| Android  | `com.rokt:roktsdk` | 6.0.1 |
-| iOS      | `Rokt-Widget` | 5.3.0 |
+| Platform | Native dependency  | Version |
+| -------- | ------------------ | ------- |
+| Android  | `com.rokt:roktsdk` | 6.0.1   |
+| iOS      | `Rokt-Widget`      | 5.3.0   |
 
 ### Dependencies
 
