@@ -14,7 +14,7 @@ on:
       xcode-version:
         required: false
         type: string
-        default: "16.4"
+        default: "26.3"
 
 permissions:
   contents: read
@@ -64,7 +64,9 @@ jobs:
       - uses: futureware-tech/simulator-action@dab10d813144ef59b48d401cd95da151222ef8cd #v4
         id: simulator
         with:
-          model: iPhone 16
+          model: iPhone 17 Pro
+          os_version: ">=26.0"
+          wait_for_boot: true
 
       - name: Run Flutter Tests (iOS)
         working-directory: example
