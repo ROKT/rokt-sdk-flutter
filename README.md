@@ -20,8 +20,8 @@ The Rokt Flutter SDK is structured as a Flutter plugin that provides a Dart inte
 
 - **Dart Interface Layer**: Located in the `lib` directory, provides the API surface for Flutter applications
 - **Platform-Specific Implementations**:
-  - `android` directory contains the Kotlin implementation using the native Android Rokt-Widget SDK
-  - `ios` directory contains the Swift implementation using the native iOS Rokt-Widget SDK
+  - `android` directory contains the Kotlin implementation using the native Android Rokt SDK (`com.rokt:roktsdk`)
+  - `ios` directory contains the Swift implementation using the native iOS Rokt SDK (`Rokt-Widget`)
 - **Example Application**: Located in the `example` directory, demonstrates how to implement the SDK
 
 The SDK follows a bridge pattern to connect the Flutter framework with native platform capabilities, enabling seamless integration with Rokt's services.
@@ -35,9 +35,10 @@ To develop with or contribute to this SDK, you'll need:
 - [Flutter SDK](https://docs.flutter.dev/get-started/install/macos) properly installed and configured
 - [Android Studio](https://developer.android.com/studio) or [VS Code](https://code.visualstudio.com/) with Flutter plugins
 - For Android development:
-  - Kotlin version 1.8.0 or newer
-  - Android Gradle plugin 7.4.0 or newer
-  - Gradle version 7.5 or newer
+  - Kotlin 2.1.20 or newer (required by Rokt Android SDK 6.x)
+  - Android Gradle Plugin 8.6.0 or newer
+  - Gradle 8.9 or newer
+  - Android API level 23+ (minSdk)
 - For iOS development:
   - iOS 15 or above
   - Xcode with required dependencies
@@ -72,19 +73,21 @@ dependencies:
   flutter:
     sdk: flutter
 
-  rokt_sdk: ^4.0.0
+  rokt_sdk: ^5.0.0
 ```
 
 ### Platform-Specific Setup
 
 #### Android
 
+Requires Android API level 23+ (Android 6.0 Marshmallow or above).
+
 1. Set the minSdkVersion and enable multidex in `android/app/build.gradle`:
 
 ```gradle
 android {
   defaultConfig {
-    minSdkVersion 21
+    minSdkVersion 23
     multidexEnabled true
   }
 }
@@ -93,7 +96,7 @@ android {
 2. Include appcompat dependency:
 
    ```gradle
-   implementation 'androidx.appcompat:appcompat:x.x.x'
+   implementation 'androidx.appcompat:appcompat:1.4.1'
    ```
 
 3. The theme of android/app should extend from AppCompat Theme family:
@@ -159,13 +162,13 @@ Shoppable Ads allow users to make instant purchases directly from ad placements.
 1. Add the native payment extension to your iOS project (e.g. in your `Podfile`):
 
 ```ruby
-pod 'RoktStripePaymentExtension', '~> 0.1'
+pod 'RoktPaymentExtension', :git => 'https://github.com/ROKT/rokt-payment-extension-ios.git', :tag => '2.0.3'
 ```
 
 2. Set the payment extension factory in your `AppDelegate.swift`:
 
 ```swift
-import RoktStripePaymentExtension
+import RoktPaymentExtension
 import rokt_sdk
 
 // In application(_:didFinishLaunchingWithOptions:), after GeneratedPluginRegistrant.register:
@@ -173,9 +176,8 @@ SwiftRoktSdkPlugin.paymentExtensionFactory = { type, config in
     switch type {
     case "stripe":
         guard let merchantId = config["applePayMerchantId"] else { return nil }
-        return RoktStripePaymentExtension(
-            applePayMerchantId: merchantId,
-            countryCode: config["countryCode"] ?? "US"
+        return RoktPaymentExtension(
+            applePayMerchantId: merchantId
         )
     default:
         return nil
@@ -209,7 +211,7 @@ RoktSdk.selectShoppableAds(
 );
 ```
 
-3. Handle shoppable events via the `RoktEvents` EventChannel:
+4. Handle shoppable events via the `RoktEvents` EventChannel:
 
 ```dart
 const EventChannel roktEventChannel = EventChannel('RoktEvents');
@@ -226,42 +228,50 @@ roktEventChannel.receiveBroadcastStream().listen((dynamic event) {
 
 ## Key Dependencies & Gotchas
 
+### Native SDK Versions
+
+This Flutter plugin bundles the following native SDK versions:
+
+| Platform | Native dependency | Version |
+| -------- | ----------------- | ------- |
+| Android  | `com.rokt:roktsdk` | 6.0.1 |
+| iOS      | `Rokt-Widget` | 5.3.0 |
+
 ### Dependencies
 
 - **Android**:
   - Requires `androidx.appcompat` compatibility
-  - Uses native Android Rokt-Widget SDK (currently referenced version in `android/build.gradle`)
+  - Uses `com.rokt:roktsdk` from Maven Central (see `android/build.gradle`)
+  - Requires minSdk 23 and Kotlin 2.1.20+ when building the plugin locally
 
 - **iOS**:
-  - Uses native iOS Rokt-Widget SDK (referenced in `ios/rokt_sdk.podspec`)
+  - Uses `Rokt-Widget` from CocoaPods (see `ios/rokt_sdk.podspec`)
+  - Requires iOS 15.0+
 
 #### Updating Native SDKs
 
-To update the iOS SDK:
+To update the iOS SDK, edit `ios/rokt_sdk.podspec`:
 
-```yaml
-// ios/rokt_sdk.podspec
-s.version          = 'X.X.X'
-s.dependency 'Rokt-Widget', '~> X.X.X'
+```ruby
+s.dependency 'Rokt-Widget', '~> 5.3.0'
 ```
 
-For Android:
-
-It's currently using the latest snapshot of the development build from Maven Central.
-
-To update the SDK to a specific version:
+For Android, edit `android/build.gradle`:
 
 ```gradle
-// android/build.gradle
-implementation "com.rokt:roktsdk:X.X.X"
+implementation "com.rokt:roktsdk:6.0.1"
 ```
+
+See `CHANGELOG.md` for release notes when bumping native SDK versions.
 
 ### Gotchas
 
 - Always run `flutter clean` before updating the SDK version
+- Android apps must target API level 23+ to use this plugin (required by Rokt Android SDK 6.x)
 - For embedded placements, ensure the view is in the visible area of the screen before calling `selectPlacements`
 - To run in sandbox mode, add `"sandbox": "true"` to your attributes
-- When upgrading the native SDKs, you must update both the podspec version and the dependency version
+- When upgrading the native SDKs, update `android/build.gradle` and `ios/rokt_sdk.podspec`, then document changes in `CHANGELOG.md`
+- Shoppable Ads (`selectShoppableAds`, `registerPaymentExtension`) are iOS-only; Android calls are no-ops
 
 ## Making Changes and Deployment
 

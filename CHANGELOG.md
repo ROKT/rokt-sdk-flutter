@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Update Rokt native SDK versions: iOS 5.2.1, Android 5.1.0
+- Update Rokt native SDK versions: iOS 5.3.0, Android 6.0.1
+- Raise Android `minSdkVersion` to 23 to match Rokt Android SDK 6.x requirements
 
 ## [5.0.0] - 2026-04-23
 
