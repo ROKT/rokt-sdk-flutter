@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.0.0] - 2026-07-22
+
 ### Added
 
 - `RoktSdk.setCustomBaseURL()` API to route SDK traffic through a custom CNAME domain. Must be called before `initialize()`. HTTPS-only; path/query/fragment are stripped, port is preserved.
@@ -391,7 +393,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Introducing Rokt flutter SDK
 
-[unreleased]: https://github.com/ROKT/rokt-sdk-flutter/compare/5.0.0...HEAD
+[unreleased]: https://github.com/ROKT/rokt-sdk-flutter/compare/6.0.0...HEAD
+[6.0.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/5.0.0...6.0.0
 [5.0.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.11.0...5.0.0
 [4.11.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.10.0...4.11.0
 [4.10.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.9.0...4.10.0
