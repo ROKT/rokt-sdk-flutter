@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Swift Package Manager (SPM) support for the iOS plugin alongside existing CocoaPods integration
 - `RoktSdk.setCustomBaseURL()` API to route SDK traffic through a custom CNAME domain. Must be called before `initialize()`. HTTPS-only; path/query/fragment are stripped, port is preserved.
 
 ### Changed

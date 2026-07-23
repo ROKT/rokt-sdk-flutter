@@ -1,4 +1,4 @@
-#import "RoktSdkPlugin.h"
+#import "./include/rokt_sdk/RoktSdkPlugin.h"
 #if __has_include(<rokt_sdk/rokt_sdk-Swift.h>)
 #import <rokt_sdk/rokt_sdk-Swift.h>
 #else
