@@ -39,3 +39,6 @@ build/
 
 .fvm/
 example/android/app/.cxx/**
+
+.build/
+.swiftpm/
