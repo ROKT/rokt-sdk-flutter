@@ -65,7 +65,7 @@ jobs:
           bundle install
           bundle exec pod install --verbose --repo-update
 
-      - uses: futureware-tech/simulator-action@dab10d813144ef59b48d401cd95da151222ef8cd #v4
+      - uses: futureware-tech/simulator-action@e89aa8f93d3aec35083ff49d2854d07f7186f7f5 #v5
         id: simulator
         with:
           model: iPhone 17 Pro
