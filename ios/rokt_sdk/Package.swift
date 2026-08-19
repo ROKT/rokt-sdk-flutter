@@ -13,7 +13,7 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "FlutterFramework", path: "../FlutterFramework"),
-        .package(name: "Rokt-Widget", url: "https://github.com/ROKT/rokt-sdk-ios.git", .upToNextMajor(from: "5.3.0")),
+        .package(name: "Rokt-Widget", url: "https://github.com/ROKT/rokt-sdk-ios.git", .upToNextMajor(from: "5.3.4")),
     ],
     targets: [
         .target(

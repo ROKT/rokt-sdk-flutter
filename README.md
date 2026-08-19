@@ -230,12 +230,11 @@ roktEventChannel.receiveBroadcastStream().listen((dynamic event) {
 
 ### Native SDK Versions
 
-This Flutter plugin bundles the following native SDK versions:
+This Flutter plugin bundles native Rokt SDKs. Current versions are defined in the platform manifests:
 
-| Platform | Native dependency  | Version |
-| -------- | ------------------ | ------- |
-| Android  | `com.rokt:roktsdk` | 6.0.1   |
-| iOS      | `Rokt-Widget`      | 5.3.0   |
+- Android: `android/build.gradle` (`com.rokt:roktsdk`)
+- iOS CocoaPods: `ios/rokt_sdk.podspec` (`Rokt-Widget`)
+- iOS Swift Package Manager: `ios/rokt_sdk/Package.swift` (`Rokt-Widget`)
 
 ### Dependencies
 
@@ -245,22 +244,14 @@ This Flutter plugin bundles the following native SDK versions:
   - Requires minSdk 23 and Kotlin 2.1.20+ when building the plugin locally
 
 - **iOS**:
-  - Uses `Rokt-Widget` from CocoaPods (see `ios/rokt_sdk.podspec`)
+  - Uses `Rokt-Widget` from CocoaPods (`ios/rokt_sdk.podspec`) or Swift Package Manager (`ios/rokt_sdk/Package.swift`)
   - Requires iOS 15.0+
 
 #### Updating Native SDKs
 
-To update the iOS SDK, edit `ios/rokt_sdk.podspec`:
+To update the iOS SDK, change the `Rokt-Widget` constraint in `ios/rokt_sdk.podspec` and `ios/rokt_sdk/Package.swift`.
 
-```ruby
-s.dependency 'Rokt-Widget', '~> 5.3.0'
-```
-
-For Android, edit `android/build.gradle`:
-
-```gradle
-implementation "com.rokt:roktsdk:6.0.1"
-```
+For Android, change the `com.rokt:roktsdk` version in `android/build.gradle`.
 
 See `CHANGELOG.md` for release notes when bumping native SDK versions.
 
@@ -270,7 +261,7 @@ See `CHANGELOG.md` for release notes when bumping native SDK versions.
 - Android apps must target API level 23+ to use this plugin (required by Rokt Android SDK 6.x)
 - For embedded placements, ensure the view is in the visible area of the screen before calling `selectPlacements`
 - To run in sandbox mode, add `"sandbox": "true"` to your attributes
-- When upgrading the native SDKs, update `android/build.gradle` and `ios/rokt_sdk.podspec`, then document changes in `CHANGELOG.md`
+- When upgrading the native SDKs, update `android/build.gradle`, `ios/rokt_sdk.podspec`, and `ios/rokt_sdk/Package.swift`, then document changes in `CHANGELOG.md`
 - Shoppable Ads (`selectShoppableAds`, `registerPaymentExtension`) are iOS-only; Android calls are no-ops
 
 ## Making Changes and Deployment
