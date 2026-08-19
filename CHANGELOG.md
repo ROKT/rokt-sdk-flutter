@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.1.1] - 2026-08-19
+
 ### Changed
 
 - Raise the minimum `Rokt-Widget` iOS SDK to `5.3.4`.
@@ -398,7 +400,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Introducing Rokt flutter SDK
 
-[unreleased]: https://github.com/ROKT/rokt-sdk-flutter/compare/5.1.0...HEAD
+[unreleased]: https://github.com/ROKT/rokt-sdk-flutter/compare/5.1.1...HEAD
+[5.1.1]: https://github.com/ROKT/rokt-sdk-flutter/compare/5.1.0...5.1.1
 [5.1.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/5.0.0...5.1.0
 [5.0.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.11.0...5.0.0
 [4.11.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.10.0...4.11.0
