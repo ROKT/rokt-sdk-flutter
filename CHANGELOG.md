@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Raise the minimum `Rokt-Widget` iOS SDK to `5.3.4` (CocoaPods `~> 5.3.4`, SPM `.upToNextMajor(from: "5.3.4")`), excluding earlier `5.3.x` versions affected by a crash during placement selection.
+- Raise the minimum `Rokt-Widget` iOS SDK to `5.3.4`.
 
 ## [5.1.0] - 2026-07-24
 
