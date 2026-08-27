@@ -62,6 +62,12 @@ To run integration tests:
 flutter test integration_test/app_test.dart
 ```
 
+### Pull request validation
+
+Pull requests always run change detection and a Trunk code check. Shared Dart, package, example, and integration-test changes select both platform suites; Android- or iOS-only changes select only that platform. Documentation and release-workflow changes use the quick Trunk path, while build configuration, validation workflow, renamed, empty, and unknown paths fail closed to both platforms.
+
+An always-running `PR Gate` fails when selected validation fails or is cancelled. The existing `Trunk code check`, `Build & Test Android / test_android`, and `Build & Test iOS / test_ios` contexts remain available during branch-protection migration. After `PR Gate` exists on the default branch, repository administrators can replace those required contexts with `PR Gate`.
+
 ## Implementation Guide
 
 ### Adding SDK to Your App

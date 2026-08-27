@@ -8,56 +8,206 @@ permissions:
   contents: read
   pull-requests: read
   checks: write
-  id-token: write
 
 jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      docs: ${{ steps.classify.outputs.docs }}
+      android: ${{ steps.classify.outputs.android }}
+      ios: ${{ steps.classify.outputs.ios }}
+      flutter: ${{ steps.classify.outputs.flutter }}
+      full: ${{ steps.classify.outputs.full }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Classify changed paths
+        id: classify
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            git diff --name-status --diff-filter=ACDMRTUXB "$PR_BASE_SHA" "$PR_HEAD_SHA" \
+              | .github/scripts/classify-pr-changes.sh \
+              | tee -a "$GITHUB_OUTPUT"
+          else
+            .github/scripts/classify-pr-changes.sh --full "manual validation run" \
+              | tee -a "$GITHUB_OUTPUT"
+          fi
+
+      - name: Test change classifier
+        run: .github/scripts/test-classify-pr-changes.sh
+
   trunk-check:
     name: Trunk code check
+    needs: detect-changes
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       checks: write
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
+          fetch-depth: 0
       - name: Setup Flutter
+        if: needs.detect-changes.outputs.flutter == 'true'
         uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 #2.23.0
         with:
           flutter-version: ${{ vars.FLUTTER_VERSION }}
           channel: stable
           cache: true
       - name: Get Flutter packages (root)
+        if: needs.detect-changes.outputs.flutter == 'true'
         run: flutter pub get
       - name: Get Flutter packages (example)
+        if: needs.detect-changes.outputs.flutter == 'true'
         working-directory: example
         run: flutter pub get
       - name: Trunk Check
         uses: trunk-io/trunk-action@75699af9e26881e564e9d832ef7dc3af25ec031b # v1.2.4
         with:
-          check-mode: all
+          check-mode: ${{ needs.detect-changes.outputs.flutter == 'true' && 'all' || 'changes' }}
 
-  build-test-ios:
-    name: Build & Test iOS
-    needs: trunk-check
+  ios-validation:
+    name: iOS validation
+    needs: [detect-changes, trunk-check]
+    if: needs.detect-changes.outputs.ios == 'true'
     uses: ./.github/workflows/test-ios.yml
     with:
       flutter-version: ${{ vars.FLUTTER_VERSION }}
       ruby-version: ${{ vars.RUBY_VERSION }}
       xcode-version: "26.3"
 
-  build-test-android:
-    name: Build & Test Android
-    needs: trunk-check
+  android-validation:
+    name: Android validation
+    needs: [detect-changes, trunk-check]
+    if: needs.detect-changes.outputs.android == 'true'
     uses: ./.github/workflows/test-android.yml
     with:
       flutter-version: ${{ vars.FLUTTER_VERSION }}
 
+  ios-status:
+    name: Build & Test iOS / test_ios
+    needs: [detect-changes, ios-validation]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check selected iOS validation
+        env:
+          DETECT_RESULT: ${{ needs.detect-changes.result }}
+          SELECTED: ${{ needs.detect-changes.outputs.ios }}
+          VALIDATION_RESULT: ${{ needs.ios-validation.result }}
+        run: |
+          set -euo pipefail
+
+          if [[ "$DETECT_RESULT" != "success" ]]; then
+            echo "::error::Change detection did not complete successfully ($DETECT_RESULT)."
+            exit 1
+          fi
+
+          if [[ "$SELECTED" == "true" && "$VALIDATION_RESULT" != "success" ]]; then
+            echo "::error::Selected iOS validation finished with $VALIDATION_RESULT."
+            exit 1
+          fi
+
+          if [[ "$SELECTED" != "true" && "$VALIDATION_RESULT" != "skipped" ]]; then
+            echo "::error::iOS validation ran unexpectedly ($VALIDATION_RESULT)."
+            exit 1
+          fi
+
+          echo "iOS validation result is appropriate for selected=$SELECTED."
+
+  android-status:
+    name: Build & Test Android / test_android
+    needs: [detect-changes, android-validation]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check selected Android validation
+        env:
+          DETECT_RESULT: ${{ needs.detect-changes.result }}
+          SELECTED: ${{ needs.detect-changes.outputs.android }}
+          VALIDATION_RESULT: ${{ needs.android-validation.result }}
+        run: |
+          set -euo pipefail
+
+          if [[ "$DETECT_RESULT" != "success" ]]; then
+            echo "::error::Change detection did not complete successfully ($DETECT_RESULT)."
+            exit 1
+          fi
+
+          if [[ "$SELECTED" == "true" && "$VALIDATION_RESULT" != "success" ]]; then
+            echo "::error::Selected Android validation finished with $VALIDATION_RESULT."
+            exit 1
+          fi
+
+          if [[ "$SELECTED" != "true" && "$VALIDATION_RESULT" != "skipped" ]]; then
+            echo "::error::Android validation ran unexpectedly ($VALIDATION_RESULT)."
+            exit 1
+          fi
+
+          echo "Android validation result is appropriate for selected=$SELECTED."
+
+  pr-gate:
+    name: PR Gate
+    needs: [detect-changes, trunk-check, ios-status, android-status]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify selected jobs
+        env:
+          DETECT_RESULT: ${{ needs.detect-changes.result }}
+          TRUNK_RESULT: ${{ needs.trunk-check.result }}
+          IOS_STATUS_RESULT: ${{ needs.ios-status.result }}
+          ANDROID_STATUS_RESULT: ${{ needs.android-status.result }}
+        run: |
+          set -euo pipefail
+
+          failed=false
+          for result in \
+            "Change detection:$DETECT_RESULT" \
+            "Trunk code check:$TRUNK_RESULT" \
+            "iOS compatibility status:$IOS_STATUS_RESULT" \
+            "Android compatibility status:$ANDROID_STATUS_RESULT"; do
+            name=${result%%:*}
+            conclusion=${result#*:}
+            if [[ "$conclusion" != "success" ]]; then
+              echo "::error::$name finished with $conclusion."
+              failed=true
+            else
+              echo "$name succeeded."
+            fi
+          done
+
+          if [[ "$failed" == "true" ]]; then
+            exit 1
+          fi
+
   pr-notify:
     if: >
       github.event_name == 'pull_request' &&
-      github.event.pull_request.draft == false
-    needs: [build-test-ios, build-test-android]
+      github.event.pull_request.draft == false &&
+      github.actor != 'dependabot[bot]' &&
+      needs.pr-gate.result == 'success'
+    needs: pr-gate
     name: Notify GChat
-    uses: ROKT/rokt-workflows/.github/workflows/oss_pr_opened_notification.yml@1859338d7c2c2b873233505c751acbf09fb218d5 # main
-    secrets:
-      gchat_webhook: ${{ secrets.GCHAT_PRS_WEBHOOK }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Google Chat notification
+        continue-on-error: true
+        uses: SimonScholz/google-chat-action@3b3519e5102dba8aa5046fd711c4b553586409bb # v1.1.0
+        with:
+          webhookUrl: ${{ secrets.GCHAT_PRS_WEBHOOK }}
+          title: PR Created - ${{ github.event.pull_request.title }}
+          imageUrl: ${{ github.event.pull_request.user.avatar_url }}
+          threadKey: ${{ github.repository }}-${{ github.event.pull_request.number }}
