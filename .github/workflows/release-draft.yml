@@ -54,15 +54,6 @@ jobs:
         run: |
           sed -i "s|^version: .*|version: ${NEW_VERSION}|" pubspec.yaml
 
-      # Without this the podspec never gets bumped and silently drifts from
-      # pubspec.yaml, as it did between 5.0.0 and 5.1.1.
-      - name: Update ios/rokt_sdk.podspec
-        env:
-          NEW_VERSION: ${{ steps.bump-version.outputs.new_version }}
-        run: |
-          sed -i -E "s|^([[:space:]]*s\.version[[:space:]]*=[[:space:]]*).*|\1'${NEW_VERSION}'|" ios/rokt_sdk.podspec
-          grep -n "s.version" ios/rokt_sdk.podspec
-
       - name: Setup Flutter
         uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 #2.23.0
         with:
@@ -95,7 +86,6 @@ jobs:
           body: |
             Preparing for release ${{ steps.bump-version.outputs.new_version }}
             - Updated pubspec.yaml to new version
-            - Updated ios/rokt_sdk.podspec to new version
             - Updated CHANGELOG.md
             - Updated VERSION file
             - Ran a dry-run publish

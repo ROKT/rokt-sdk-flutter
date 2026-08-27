@@ -15,14 +15,6 @@ on:
         required: false
         type: string
         default: "26.3"
-      spm-flutter-version:
-        description: >-
-          Flutter version used for the Swift Package Manager job. Must be 3.41
-          or newer: that is when Flutter began generating the FlutterFramework
-          Swift package that ios/rokt_sdk/Package.swift depends on.
-        required: false
-        type: string
-        default: 3.47.2
 
 permissions:
   contents: read
@@ -90,73 +82,3 @@ jobs:
         env:
           SIMULATOR: ${{ steps.simulator.outputs.udid }}
         run: bundle exec flutter test integration_test/app_test.dart -d "$SIMULATOR" --dart-define=CI=true
-
-  # Guards against ios/rokt_sdk/Package.swift regressing in ways CocoaPods
-  # cannot detect. Swift Package Manager rejects targets that mix Swift with
-  # Objective-C/C sources, which broke all SPM consumers in 5.1.0 and 5.1.1
-  # (see https://github.com/ROKT/rokt-sdk-flutter/issues/200).
-  test_ios_spm:
-    name: Swift Package Manager
-    runs-on: macos-15
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-        with:
-          persist-credentials: false
-
-      - name: Setup ruby
-        uses: ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71 #v1.268.0
-        with:
-          ruby-version: ${{ inputs.ruby-version }}
-          bundler-cache: true
-          rubygems: latest
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 #2.23.0
-        with:
-          flutter-version: ${{ inputs.spm-flutter-version }}
-          channel: stable
-          cache: true
-
-      - name: Set up Xcode
-        uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 #v1.7.0
-        with:
-          xcode-version: ${{ inputs.xcode-version }}
-
-      - name: Enable Swift Package Manager
-        run: flutter config --enable-swift-package-manager
-
-      - name: Get all packages Flutter
-        working-directory: example
-        run: |
-          flutter pub get
-          flutter precache --ios
-
-      # The example app still needs CocoaPods for RoktPaymentExtension, which
-      # has no Swift package. Flutter runs both dependency systems together, so
-      # this job covers the SPM and CocoaPods integration paths at once.
-      - name: Install iOS Dependencies
-        working-directory: example
-        run: |
-          bundle config set --local path 'vendor/bundle'
-          bundle install
-          cd ios
-          bundle install
-          bundle exec pod install --repo-update
-
-      - name: Build for simulator with Swift Package Manager
-        working-directory: example
-        run: bundle exec flutter build ios --simulator --debug
-
-      - name: Assert the Swift package actually resolved
-        working-directory: example
-        run: |
-          if [ ! -d ios/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage ]; then
-            echo "::error::Flutter did not generate the plugin Swift package; SPM integration was skipped rather than exercised."
-            exit 1
-          fi
-          if ! grep -q 'name: "rokt_sdk"' ios/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Package.swift; then
-            echo "::error::rokt_sdk is missing from the generated Swift package; the build did not exercise SPM for this plugin."
-            exit 1
-          fi
-          echo "rokt_sdk resolved via Swift Package Manager."

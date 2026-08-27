@@ -9,22 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-
-- Swift Package Manager can resolve the iOS plugin again. In 5.1.0 and 5.1.1 the `rokt_sdk` target mixed Swift and Objective-C sources, which SPM does not support, so resolution failed with `contains mixed language source files; feature not supported`. Because Xcode resolves every plugin package together, this blocked the entire app's dependency graph, not just Rokt. ([#200](https://github.com/ROKT/rokt-sdk-flutter/issues/200))
-- The release workflow now bumps the version in `ios/rokt_sdk.podspec` alongside `pubspec.yaml`. The podspec had drifted, staying pinned at `5.0.0` through the 5.1.0 and 5.1.1 releases.
-
-### Removed
-
-- The Objective-C `RoktSdkPlugin` shim (`RoktSdkPlugin.h` / `RoktSdkPlugin.m`). It only forwarded registration to the Swift plugin, and Flutter's generated registrant falls back to `@import rokt_sdk;` automatically, so CocoaPods and Swift integrations are unaffected and require no changes.
-
-  This only matters if your app registers the plugin from **hand-written Objective-C**:
-
-  - Replace `#import <rokt_sdk/RoktSdkPlugin.h>` with `@import rokt_sdk;`. The `RoktSdkPlugin` class and `+registerWithRegistrar:` are unchanged.
-  - Objective-C code referring to `SwiftRoktSdkPlugin` should use `RoktSdkPlugin` instead. The Swift name `SwiftRoktSdkPlugin` is unchanged for Swift callers, including `SwiftRoktSdkPlugin.paymentExtensionFactory`.
-
-  If you upgrade in place and Xcode reports `'RoktSdkPlugin' has different definitions in different modules`, it is a stale precompiled module. Clean the build folder (Product > Clean Build Folder, or `flutter clean`) and rebuild.
-
 ## [5.1.1] - 2026-08-19
 
 ### Changed
