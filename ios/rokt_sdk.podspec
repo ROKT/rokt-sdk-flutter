@@ -13,8 +13,7 @@ Rokt Mobile SDK to integrate ROKT Api into Flutter application.
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'ROKT DEV' => 'nativeappsdev@rokt.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'rokt_sdk/Sources/rokt_sdk/**/*.{h,m,swift}'
-  s.public_header_files = 'rokt_sdk/Sources/rokt_sdk/include/**/*.h'
+  s.source_files = 'rokt_sdk/Sources/rokt_sdk/**/*.swift'
   s.dependency 'Flutter'
   s.dependency 'Rokt-Widget', '~> 5.3.4'
   s.platform = :ios, '15.0'
