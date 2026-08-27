@@ -15,10 +15,6 @@ import Flutter
 import UIKit
 import Rokt_Widget
 
-/// Exposed to Objective-C as `RoktSdkPlugin` so Flutter's generated plugin
-/// registrant resolves `[RoktSdkPlugin registerWithRegistrar:]` without a
-/// separate Objective-C shim, which Swift Package Manager cannot build
-/// alongside Swift sources in one target.
 @objc(RoktSdkPlugin)
 public class SwiftRoktSdkPlugin: NSObject, FlutterPlugin {
     /// Host apps set this closure in AppDelegate to provide payment extension instances.
