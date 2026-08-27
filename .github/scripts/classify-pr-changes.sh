@@ -75,17 +75,22 @@ else
 		[[ -z ${status} ]] && continue
 		path_count=$((path_count + 1))
 
-		if [[ -z ${path-} ]]; then
-			path="${status}"
-			status=M
-		fi
-
-		if [[ ${status} == R* || ${status} == C* || -n ${extra_path-} ]]; then
-			set_full "rename or copy detected"
+		if [[ -z ${path-} || -n ${extra_path-} ]]; then
+			set_full "malformed changed-path record"
 			continue
 		fi
 
-		classify_path "${path}"
+		case "${status}" in
+		A | M | D)
+			classify_path "${path}"
+			;;
+		R* | C*)
+			set_full "rename or copy detected"
+			;;
+		*)
+			set_full "unsupported change status detected: ${status}"
+			;;
+		esac
 	done
 
 	if [[ ${path_count} -eq 0 ]]; then

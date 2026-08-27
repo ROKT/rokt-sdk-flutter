@@ -6,8 +6,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: read
-  checks: write
 
 jobs:
   detect-changes:
@@ -36,13 +34,29 @@ jobs:
           set -euo pipefail
 
           if [[ "$EVENT_NAME" == "pull_request" ]]; then
-            git diff --name-status --diff-filter=ACDMRTUXB "$PR_BASE_SHA" "$PR_HEAD_SHA" \
+            git diff --name-status --diff-filter=ACDMRTUXB "$PR_BASE_SHA...$PR_HEAD_SHA" \
               | .github/scripts/classify-pr-changes.sh \
               | tee -a "$GITHUB_OUTPUT"
           else
             .github/scripts/classify-pr-changes.sh --full "manual validation run" \
               | tee -a "$GITHUB_OUTPUT"
           fi
+
+      - name: Validate classifier outputs
+        env:
+          ANDROID: ${{ steps.classify.outputs.android }}
+          DOCS: ${{ steps.classify.outputs.docs }}
+          FLUTTER: ${{ steps.classify.outputs.flutter }}
+          FULL: ${{ steps.classify.outputs.full }}
+          IOS: ${{ steps.classify.outputs.ios }}
+        run: |
+          set -euo pipefail
+          for selection in "$DOCS" "$ANDROID" "$IOS" "$FLUTTER" "$FULL"; do
+            if [[ "$selection" != "true" && "$selection" != "false" ]]; then
+              echo "::error::Classifier emitted an invalid boolean: '$selection'."
+              exit 1
+            fi
+          done
 
       - name: Test change classifier
         run: .github/scripts/test-classify-pr-changes.sh
@@ -115,15 +129,24 @@ jobs:
             exit 1
           fi
 
-          if [[ "$SELECTED" == "true" && "$VALIDATION_RESULT" != "success" ]]; then
-            echo "::error::Selected iOS validation finished with $VALIDATION_RESULT."
-            exit 1
-          fi
-
-          if [[ "$SELECTED" != "true" && "$VALIDATION_RESULT" != "skipped" ]]; then
-            echo "::error::iOS validation ran unexpectedly ($VALIDATION_RESULT)."
-            exit 1
-          fi
+          case "$SELECTED" in
+            true)
+              if [[ "$VALIDATION_RESULT" != "success" ]]; then
+                echo "::error::Selected iOS validation finished with $VALIDATION_RESULT."
+                exit 1
+              fi
+              ;;
+            false)
+              if [[ "$VALIDATION_RESULT" != "skipped" ]]; then
+                echo "::error::Unselected iOS validation finished with $VALIDATION_RESULT instead of skipped."
+                exit 1
+              fi
+              ;;
+            *)
+              echo "::error::iOS selector is not a boolean: '$SELECTED'."
+              exit 1
+              ;;
+          esac
 
           echo "iOS validation result is appropriate for selected=$SELECTED."
 
@@ -146,15 +169,24 @@ jobs:
             exit 1
           fi
 
-          if [[ "$SELECTED" == "true" && "$VALIDATION_RESULT" != "success" ]]; then
-            echo "::error::Selected Android validation finished with $VALIDATION_RESULT."
-            exit 1
-          fi
-
-          if [[ "$SELECTED" != "true" && "$VALIDATION_RESULT" != "skipped" ]]; then
-            echo "::error::Android validation ran unexpectedly ($VALIDATION_RESULT)."
-            exit 1
-          fi
+          case "$SELECTED" in
+            true)
+              if [[ "$VALIDATION_RESULT" != "success" ]]; then
+                echo "::error::Selected Android validation finished with $VALIDATION_RESULT."
+                exit 1
+              fi
+              ;;
+            false)
+              if [[ "$VALIDATION_RESULT" != "skipped" ]]; then
+                echo "::error::Unselected Android validation finished with $VALIDATION_RESULT instead of skipped."
+                exit 1
+              fi
+              ;;
+            *)
+              echo "::error::Android selector is not a boolean: '$SELECTED'."
+              exit 1
+              ;;
+          esac
 
           echo "Android validation result is appropriate for selected=$SELECTED."
 
@@ -202,6 +234,8 @@ jobs:
     needs: pr-gate
     name: Notify GChat
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Send Google Chat notification
         continue-on-error: true
