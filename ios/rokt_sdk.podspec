@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'rokt_sdk'
-  s.version          = '5.0.0'
+  s.version          = '5.1.2'
   s.summary          = 'Rokt Mobile SDK to integrate ROKT Api into Flutter application'
   s.description      = <<-DESC
 Rokt Mobile SDK to integrate ROKT Api into Flutter application.
