@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [5.1.2] - 2026-08-28
 
+### Fixed
+
+- Remove Objective-C shim so Swift Package Manager can resolve the plugin ([#201](https://github.com/ROKT/rokt-sdk-flutter/pull/201))
+
+### Changed
+
+- Bump ios/rokt_sdk.podspec version during release draft ([#202](https://github.com/ROKT/rokt-sdk-flutter/pull/202))
+
 ## [5.1.1] - 2026-08-19
 
 ### Changed
