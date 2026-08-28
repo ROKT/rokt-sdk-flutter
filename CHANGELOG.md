@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [5.1.2] - 2026-08-28
 
+### Fixed
+
+- Swift Package Manager can resolve the iOS plugin again. In 5.1.0 and 5.1.1 the `rokt_sdk` target mixed Swift and Objective-C sources, which SPM does not support, so resolution failed with `contains mixed language source files; feature not supported` and blocked the app's entire package graph, not just Rokt. ([#200](https://github.com/ROKT/rokt-sdk-flutter/issues/200))
+
+### Removed
+
+- The Objective-C `RoktSdkPlugin` shim. Flutter's generated registrant falls back to `@import rokt_sdk;` on its own, so Swift and CocoaPods integrations need no changes. If your app registers the plugin from hand-written Objective-C, replace `#import <rokt_sdk/RoktSdkPlugin.h>` with `@import rokt_sdk;` and refer to `RoktSdkPlugin` rather than `SwiftRoktSdkPlugin`. The Swift name is unchanged, including `SwiftRoktSdkPlugin.paymentExtensionFactory`.
+
 ## [5.1.1] - 2026-08-19
 
 ### Changed
