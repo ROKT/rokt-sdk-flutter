@@ -43,10 +43,14 @@ jobs:
           NEW_VERSION: ${{ steps.bump-version.outputs.new_version }}
         run: |
           printf '%s\n' "$NEW_VERSION" > VERSION
-      - name: Update changelog
-        uses: thomaseizinger/keep-a-changelog-new-release@f62c3c390716df5af712ba5d94f4f4a8efc1306d # v3.1.0
+      - name: Generate changelog from git history
+        id: changelog
+        uses: ROKT/rokt-workflows/actions/generate-changelog@1859338d7c2c2b873233505c751acbf09fb218d5 # main
+        env:
+          GH_TOKEN: ${{ github.token }}
         with:
-          tag: ${{ steps.bump-version.outputs.new_version }}
+          version: ${{ steps.bump-version.outputs.new_version }}
+          changelog-path: CHANGELOG.md
 
       - name: Update pubspec.yaml
         env:
@@ -97,5 +101,8 @@ jobs:
             - Updated CHANGELOG.md
             - Updated VERSION file
             - Ran a dry-run publish
+
+            ## Changelog
+            ${{ steps.changelog.outputs.release-notes }}
           labels: |
             release
