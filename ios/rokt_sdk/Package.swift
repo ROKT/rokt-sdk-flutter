@@ -24,9 +24,6 @@ let package = Package(
             ],
             resources: [
                 .process("PrivacyInfo.xcprivacy"),
-            ],
-            cSettings: [
-                .headerSearchPath("include/rokt_sdk"),
             ]
         ),
     ]

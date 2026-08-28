@@ -15,6 +15,7 @@ import Flutter
 import UIKit
 import Rokt_Widget
 
+@objc(RoktSdkPlugin)
 public class SwiftRoktSdkPlugin: NSObject, FlutterPlugin {
     /// Host apps set this closure in AppDelegate to provide payment extension instances.
     /// The factory receives the extension type (e.g. "stripe") and a config dictionary,
