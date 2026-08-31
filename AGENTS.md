@@ -32,12 +32,12 @@ Gemfiles (`example/Gemfile` and `example/ios/Gemfile`) before `pod install`; see
 1. **`trunk` before `flutter pub get` is actively misleading, not merely incomplete.** With no
    `.dart_tool/package_config.json`, `dart analyze` reports every `package:` import as
    `uri_does_not_exist` plus a cascade of undefined names, and `dart format` falls back to the
-   newest language version, whose "tall" style rewrites every Dart file in the repo. After
+   newest language version, whose "tall" style reformats most of the Dart files in the repo. After
    `pub get`, the language version comes from the `environment: sdk:` lower bound in
    `pubspec.yaml`, which is old enough to keep the previous short style, and the committed code
    is already correct. `.github/workflows/pull_request.yml` runs both `pub get`s before Trunk
-   Check for exactly this reason. Raising that lower bound past Dart 3.7 reformats the entire
-   repo.
+   Check for exactly this reason. Raising that lower bound past Dart 3.7 reformats most of the Dart
+   source.
 2. **CI never runs the root `flutter test`.** Both platform jobs change into `example/` first
    (`.github/workflows/test-ios.yml`, `.github/workflows/test-android.yml`), so
    `test/rokt_sdk_test.dart` — the suite that pins the arguments sent over the `rokt_sdk` method
