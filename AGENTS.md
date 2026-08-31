@@ -105,4 +105,12 @@ Flutter tool generates, so it is not buildable on its own with `swift build`.
 - Base branch is `main`. `master` and `develop` still exist and are stale; ignore them.
 - Checks include organisation-level apps not defined in this repo (Cortex catalog lint, security
   and paved-roads bots, Graphite mergeability). All checks are expected to pass on every PR here,
-  so a red one is a real failure rather than background noise.
+  so a red one is a real failure rather than background noise. Only Trunk Check and the two
+  Build & Test jobs are required by branch protection, though, and both Build & Test jobs declare
+  `needs: trunk-check` — so a Trunk failure reports them as skipped, not failed, and the PR still
+  cannot merge.
+- `main` requires an approving review from the `CODEOWNERS` team and dismisses stale approvals on
+  every push, so land the approval last: a follow-up commit silently un-approves the PR. It does
+  not require the branch to be current with `main`, so you never have to rebase to merge. Branch
+  protection is not in the tree — read it with
+  `gh api repos/ROKT/rokt-sdk-flutter/branches/main/protection` if you need to re-check this.
