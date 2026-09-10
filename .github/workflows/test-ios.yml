@@ -20,9 +20,35 @@ permissions:
   contents: read
 
 jobs:
+  # Host-side Dart tests: both method channels are mocked, so no Ruby, Xcode,
+  # CocoaPods or simulator is involved.
+  test_ios_unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 #2.23.0
+        with:
+          flutter-version: ${{ inputs.flutter-version }}
+          channel: stable
+          cache: true
+
+      - name: Get all packages Flutter
+        working-directory: example
+        run: flutter pub get
+
+      - name: Run Flutter Tests (iOS)
+        working-directory: example
+        run: flutter test
+
+  # Timeout covers three integration attempts; see the retry step below.
   test_ios:
     runs-on: macos-15
-    timeout-minutes: 30
+    timeout-minutes: 60
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/example/Gemfile
     steps:
@@ -71,12 +97,56 @@ jobs:
           wait_for_boot: true
           erase_before_boot: false
 
-      - name: Run Flutter Tests (iOS)
-        working-directory: example
-        run: bundle exec flutter test
-
+      # CoreSimulator can wedge on the first app launch: the build succeeds and the
+      # app installs, but integration_test never reaches main() and nothing is logged
+      # until the 12-minute suite-load timeout. Poll each attempt, cap it, then erase
+      # and re-boot the device before retrying.
       - name: Run Flutter Integration Tests (iOS)
         working-directory: example
+        shell: bash
         env:
           SIMULATOR: ${{ steps.simulator.outputs.udid }}
-        run: bundle exec flutter test integration_test/app_test.dart -d "$SIMULATOR" --dart-define=CI=true
+          MAX_ATTEMPTS: "3"
+          ATTEMPT_TIMEOUT_SECONDS: "900"
+          POLL_SECONDS: "15"
+        run: |
+          set -muo pipefail
+
+          for ((attempt = 1; attempt <= MAX_ATTEMPTS; attempt++)); do
+            echo "::group::Integration test attempt ${attempt}/${MAX_ATTEMPTS}"
+            bundle exec flutter test integration_test/app_test.dart \
+              -d "$SIMULATOR" --dart-define=CI=true &
+            pid=$!
+
+            waited=0
+            while ((waited < ATTEMPT_TIMEOUT_SECONDS)) && kill -0 "$pid" 2>/dev/null; do
+              sleep "$POLL_SECONDS"
+              ((waited += POLL_SECONDS))
+            done
+
+            if kill -0 "$pid" 2>/dev/null; then
+              echo "No result after ${ATTEMPT_TIMEOUT_SECONDS}s; the simulator is wedged."
+              kill -9 -"$pid" 2>/dev/null || kill -9 "$pid" 2>/dev/null || true
+              wait "$pid" 2>/dev/null || true
+              status=124
+            else
+              status=0
+              wait "$pid" || status=$?
+            fi
+            echo "::endgroup::"
+
+            if [[ $status -eq 0 ]]; then
+              echo "Integration tests passed on attempt ${attempt}."
+              exit 0
+            fi
+            if [[ $attempt -eq $MAX_ATTEMPTS ]]; then
+              echo "Integration tests failed after ${MAX_ATTEMPTS} attempts."
+              exit 1
+            fi
+
+            echo "Attempt ${attempt} failed (exit ${status}); erasing and re-booting the simulator."
+            xcrun simctl shutdown "$SIMULATOR" || true
+            xcrun simctl erase "$SIMULATOR"
+            xcrun simctl boot "$SIMULATOR"
+            xcrun simctl bootstatus "$SIMULATOR"
+          done
