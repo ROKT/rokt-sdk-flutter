@@ -1,0 +1,69 @@
+name: Check platform validation status
+description: >
+  Pass when selected platform validation succeeded, or when unselected
+  validation was skipped. Keeps required check names independent of a
+  shared shell script.
+
+inputs:
+  platform:
+    description: Human-readable platform name (iOS or Android)
+    required: true
+  detect-result:
+    description: Result of the detect-changes job
+    required: true
+  selected:
+    description: Whether this platform's validation was selected (true or false)
+    required: true
+  validation-result:
+    description: Result of the platform validation job
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Fail if change detection did not succeed
+      if: ${{ inputs.detect-result != 'success' }}
+      shell: bash
+      env:
+        DETECT_RESULT: ${{ inputs.detect-result }}
+      run: |
+        echo "::error::Change detection did not complete successfully ($DETECT_RESULT)."
+        exit 1
+
+    - name: Fail if selected validation did not succeed
+      if: ${{ inputs.detect-result == 'success' && inputs.selected == 'true' && inputs.validation-result != 'success' }}
+      shell: bash
+      env:
+        PLATFORM: ${{ inputs.platform }}
+        VALIDATION_RESULT: ${{ inputs.validation-result }}
+      run: |
+        echo "::error::Selected $PLATFORM validation finished with $VALIDATION_RESULT."
+        exit 1
+
+    - name: Fail if unselected validation was not skipped
+      if: ${{ inputs.detect-result == 'success' && inputs.selected == 'false' && inputs.validation-result != 'skipped' }}
+      shell: bash
+      env:
+        PLATFORM: ${{ inputs.platform }}
+        VALIDATION_RESULT: ${{ inputs.validation-result }}
+      run: |
+        echo "::error::Unselected $PLATFORM validation finished with $VALIDATION_RESULT instead of skipped."
+        exit 1
+
+    - name: Fail if selector is not a boolean
+      if: ${{ inputs.detect-result == 'success' && inputs.selected != 'true' && inputs.selected != 'false' }}
+      shell: bash
+      env:
+        PLATFORM: ${{ inputs.platform }}
+        SELECTED: ${{ inputs.selected }}
+      run: |
+        echo "::error::$PLATFORM selector is not a boolean: '$SELECTED'."
+        exit 1
+
+    - name: Confirm validation status
+      if: ${{ inputs.detect-result == 'success' && ((inputs.selected == 'true' && inputs.validation-result == 'success') || (inputs.selected == 'false' && inputs.validation-result == 'skipped')) }}
+      shell: bash
+      env:
+        PLATFORM: ${{ inputs.platform }}
+        SELECTED: ${{ inputs.selected }}
+      run: echo "$PLATFORM validation result is appropriate for selected=$SELECTED."

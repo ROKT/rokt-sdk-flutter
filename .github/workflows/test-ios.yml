@@ -23,6 +23,8 @@ jobs:
   test_ios:
     runs-on: macos-15
     timeout-minutes: 30
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/example/Gemfile
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -34,6 +36,7 @@ jobs:
           ruby-version: ${{ inputs.ruby-version }}
           bundler-cache: true
           rubygems: latest
+          working-directory: example
 
       - name: Setup Flutter
         uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 #2.23.0
@@ -57,13 +60,8 @@ jobs:
           flutter precache --ios
 
       - name: Install iOS Dependencies
-        working-directory: example
-        run: |
-          bundle config set --local path 'vendor/bundle'
-          bundle install
-          cd ios
-          bundle install
-          bundle exec pod install --verbose --repo-update
+        working-directory: example/ios
+        run: bundle exec pod install --verbose
 
       - uses: futureware-tech/simulator-action@e89aa8f93d3aec35083ff49d2854d07f7186f7f5 #v5
         id: simulator
