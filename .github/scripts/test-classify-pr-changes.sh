@@ -53,3 +53,23 @@ assert_selection "type change is conservative" "docs,android,ios,flutter,full" $
 assert_selection "unknown status is conservative" "docs,android,ios,flutter,full" $'X\tREADME.md'
 assert_selection "malformed record is conservative" "docs,android,ios,flutter,full" README.md
 assert_selection "empty diff is conservative" "docs,android,ios,flutter,full"
+
+assert_reason() {
+	local name="$1"
+	local expected_reason="$2"
+	shift 2
+
+	local stderr
+	stderr=$(printf '%s\n' "$@" | "${CLASSIFIER}" 2>&1 >/dev/null)
+	if [[ ${stderr} != *"${expected_reason}"* ]]; then
+		printf 'FAIL: %s expected reason containing "%s", got "%s"\n' \
+			"${name}" "${expected_reason}" "${stderr}" >&2
+		exit 1
+	fi
+	printf 'PASS: %s\n' "${name}"
+}
+
+assert_reason "rename reason" "rename or copy detected" $'R100\tlib/rokt_sdk.dart\tdocs/rokt_sdk.md'
+assert_reason "copy reason" "rename or copy detected" $'C100\tREADME.md\tdocs/README.md'
+assert_reason "malformed reason" "malformed changed-path record" README.md
+assert_reason "unknown status reason" "unsupported change status detected: X" $'X\tREADME.md'

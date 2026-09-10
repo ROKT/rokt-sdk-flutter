@@ -75,20 +75,23 @@ else
 		[[ -z ${status} ]] && continue
 		path_count=$((path_count + 1))
 
-		if [[ -z ${path-} || -n ${extra_path-} ]]; then
-			set_full "malformed changed-path record"
-			continue
-		fi
-
 		case "${status}" in
 		A | M | D)
+			if [[ -z ${path-} || -n ${extra_path-} ]]; then
+				set_full "malformed changed-path record"
+				continue
+			fi
 			classify_path "${path}"
 			;;
-		R* | C*)
+		R[0-9]* | C[0-9]*)
 			set_full "rename or copy detected"
 			;;
 		*)
-			set_full "unsupported change status detected: ${status}"
+			if [[ -z ${path-} ]]; then
+				set_full "malformed changed-path record"
+			else
+				set_full "unsupported change status detected: ${status}"
+			fi
 			;;
 		esac
 	done
