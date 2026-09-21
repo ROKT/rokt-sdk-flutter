@@ -38,6 +38,9 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 #v4.0.1
+        with:
+          # `tools` is deprecated and no longer available; install only supported packages.
+          packages: platform-tools
 
       - name: AVD Cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 #v6.1.0
