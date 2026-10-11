@@ -31,13 +31,13 @@ jobs:
           flutter pub get
 
       - name: Setup JDK
-        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c #v6.0.0
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 #v6.0.1
         with:
           java-version: 17
           distribution: microsoft
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 #v4.0.1
+        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd #v4.0.4
         with:
           # `tools` is deprecated and no longer available; install only supported packages.
           packages: platform-tools
