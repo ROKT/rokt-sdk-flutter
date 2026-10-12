@@ -111,8 +111,7 @@ The native Rokt SDK version appears in several places, and they do not agree by 
   patch upgrades only.
 - `ios/rokt_sdk/Package.swift` — the same native SDK for Swift Package Manager consumers, via
   `.upToNextMajor`, which permits any minor within the major.
-- `android/build.gradle` — `com.rokt:roktsdk`, served from Rokt's own Maven repo, not Maven
-  Central.
+- `android/build.gradle` — `com.rokt:roktsdk`, from Maven Central.
 - `example/ios/Podfile` — `RoktPaymentExtension`, pinned to a git tag. Only the example app pulls
   it; the plugin does not.
 
