@@ -14,8 +14,27 @@ permissions:
   id-token: write
 
 jobs:
+  verify-tag-on-main:
+    name: Verify tag is on main
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository with full history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Confirm the tagged commit is on main
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+        run: .github/scripts/verify-tag-on-main.sh "$TAG_NAME"
+
   build-test-ios:
     name: Build & Test iOS
+    needs: verify-tag-on-main
     uses: ./.github/workflows/test-ios.yml
     with:
       flutter-version: ${{ vars.FLUTTER_VERSION }}
@@ -24,13 +43,15 @@ jobs:
 
   build-test-android:
     name: Build & Test Android
+    needs: verify-tag-on-main
     uses: ./.github/workflows/test-android.yml
     with:
       flutter-version: ${{ vars.FLUTTER_VERSION }}
 
   publish-and-release:
-    needs: [build-test-ios, build-test-android]
+    needs: [verify-tag-on-main, build-test-ios, build-test-android]
     runs-on: ubuntu-latest
+    environment: pub-dev
     permissions:
       contents: write
       id-token: write
