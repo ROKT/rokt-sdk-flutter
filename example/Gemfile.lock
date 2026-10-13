@@ -18,7 +18,7 @@ GEM
       securerandom (>= 0.3)
       tzinfo (~> 2.0, >= 2.0.5)
     addressable (2.9.0)
-      public_suffix (< 8.0, >= 2.0.2)
+      public_suffix (>= 2.0.2, < 8.0)
     algoliasearch (1.27.5)
       httpclient (~> 2.8, >= 2.8.3)
       json (>= 1.5.1)
@@ -80,7 +80,7 @@ GEM
       mutex_m
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
-    json (2.19.9)
+    json (3.0.2)
     logger (1.7.0)
     minitest (5.25.5)
     molinillo (0.8.0)
