@@ -11,3 +11,13 @@
    - Update changelog - unreleased section moved to correct version number
    - Release made on Github with relevant build files
    - Commit tagged with version number
+
+## Checks before publishing
+
+The publish workflow runs on every pushed tag that starts with `v`. Its first job runs
+`.github/scripts/verify-tag-on-main.sh`, which stops the run before anything is built or
+published unless the tagged commit is on `main`. Tags created by the release flow above are
+always on `main`, so they pass.
+
+The publish job runs in the `pub-dev` GitHub environment. The workflow only runs for tags, so the
+environment's deployment rule must allow tags matching `v*`; a branch-only rule blocks every release.
