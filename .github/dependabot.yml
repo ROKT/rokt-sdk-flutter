@@ -16,3 +16,32 @@ updates:
           - patch
     labels:
       - dependabot
+  - package-ecosystem: pub
+    directories:
+      - /
+      - /example
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    labels:
+      - dependabot
+  - package-ecosystem: gradle
+    directories:
+      - /android
+      - /example/android
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    labels:
+      - dependabot
+  - package-ecosystem: bundler
+    directories:
+      - /example
+      - /example/ios
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    labels:
+      - dependabot
+  # NOT included — example/ios/Podfile exists but has no committed
+  # Podfile.lock, so cocoapods has nothing to resolve versions from.
