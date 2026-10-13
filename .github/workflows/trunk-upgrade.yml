@@ -6,14 +6,15 @@ on:
     - cron: 0 0 1 * *
   workflow_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: write
+permissions: {}
 
 jobs:
   trunk-upgrade:
     name: Run trunk upgrade
-    uses: ROKT/rokt-workflows/.github/workflows/trunk-upgrade.yml@1859338d7c2c2b873233505c751acbf09fb218d5 # main
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: ROKT/rokt-workflows/.github/workflows/trunk-upgrade.yml@da0c5fd5d38e9cf113a24ec9aaea079cc7d0bc40 # main
 
   trunk-check:
     name: Trunk code check
@@ -27,7 +28,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Setup Flutter
-        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 #2.23.0
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: ${{ vars.FLUTTER_VERSION }}
           channel: stable

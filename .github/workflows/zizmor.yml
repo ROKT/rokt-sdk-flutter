@@ -35,12 +35,11 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 1 # zizmor only needs the tree at HEAD
+      # A finding fails this job. The zizmor version is pinned so a new release of the tool
+      # cannot fail main on its own; bump it together with the fixes its new audits ask for.
       - name: Run zizmor
         uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
-        # Permanent advisory mode — zizmor is rolled out across Rokt repos as a
-        # reporter, not a gate. Findings surface as PR annotations so owners
-        # can triage incrementally without blocking unrelated changes.
-        continue-on-error: true
         with:
-          advanced-security: false # no SARIF upload (GHAS not enabled on private repo)
+          advanced-security: false # no SARIF upload; findings show as annotations instead
           annotations: true # inline PR annotations (GitHub caps at 10/run)
+          version: 1.30.1

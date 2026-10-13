@@ -78,9 +78,10 @@ Gemfiles (`example/Gemfile` and `example/ios/Gemfile`) before `pod install`; see
    so editing the defaults in `test-ios.yml` or `test-android.yml` changes nothing. The Flutter
    and Ruby versions come from repository-level Actions variables, so you cannot read the version
    CI actually uses out of this repository.
-6. **Zizmor is advisory only.** `.github/workflows/zizmor.yml` sets `continue-on-error: true`,
-   and it triggers only on changes under `.github/`. A green or absent workflow-security check
-   does not mean there were no findings.
+6. **Zizmor checks only some pull requests, and is not required.** `.github/workflows/zizmor.yml`
+   fails on any finding, but it triggers only on changes under `.github/workflows/` or
+   `.github/actions/`, so a change to `.github/dependabot.yml` alone gets no check even though
+   zizmor audits that file. Branch protection does not require it either.
 
 ## Lint conventions the toolchain would not lead you to expect
 
