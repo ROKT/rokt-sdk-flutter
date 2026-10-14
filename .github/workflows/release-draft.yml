@@ -47,7 +47,7 @@ jobs:
           printf '%s\n' "$NEW_VERSION" > VERSION
       - name: Generate changelog from git history
         id: changelog
-        uses: ROKT/rokt-workflows/actions/generate-changelog@1859338d7c2c2b873233505c751acbf09fb218d5 # main
+        uses: ROKT/rokt-workflows/actions/generate-changelog@da0c5fd5d38e9cf113a24ec9aaea079cc7d0bc40 # main
         env:
           GH_TOKEN: ${{ github.token }}
         with:
@@ -68,7 +68,7 @@ jobs:
           grep -n "s.version" ios/rokt_sdk.podspec
 
       - name: Setup Flutter
-        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 #2.23.0
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: ${{ vars.FLUTTER_VERSION }}
           channel: stable
@@ -87,6 +87,8 @@ jobs:
           owner: ${{ github.repository_owner }}
           repositories: |
             rokt-sdk-flutter
+          permission-contents: write
+          permission-pull-requests: write
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@84ae59a2cdc2258d6fa0732dd66352dddae2a412 # v7.0.9

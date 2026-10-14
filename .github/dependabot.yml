@@ -6,6 +6,8 @@ updates:
       - /.github/actions/*
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 2
     groups:
       github-actions-minor-patch:
@@ -22,6 +24,8 @@ updates:
       - /example
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 5
     labels:
       - dependabot
@@ -31,6 +35,8 @@ updates:
       - /example/android
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 5
     labels:
       - dependabot
@@ -40,6 +46,8 @@ updates:
       - /example/ios
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 3
     labels:
       - dependabot

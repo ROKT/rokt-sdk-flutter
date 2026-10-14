@@ -75,7 +75,7 @@ jobs:
           fetch-depth: 0
       - name: Setup Flutter
         if: needs.detect-changes.outputs.flutter == 'true'
-        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 #2.23.0
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: ${{ vars.FLUTTER_VERSION }}
           channel: stable
@@ -96,7 +96,7 @@ jobs:
     name: iOS validation
     needs: [detect-changes, trunk-check]
     if: needs.detect-changes.outputs.ios == 'true'
-    uses: ./.github/workflows/test-ios.yml
+    uses: $/.github/workflows/test-ios.yml
     with:
       flutter-version: ${{ vars.FLUTTER_VERSION }}
       ruby-version: ${{ vars.RUBY_VERSION }}
@@ -106,7 +106,7 @@ jobs:
     name: Android validation
     needs: [detect-changes, trunk-check]
     if: needs.detect-changes.outputs.android == 'true'
-    uses: ./.github/workflows/test-android.yml
+    uses: $/.github/workflows/test-android.yml
     with:
       flutter-version: ${{ vars.FLUTTER_VERSION }}
 
@@ -116,12 +116,8 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
       - name: Check selected iOS validation
-        uses: ./.github/actions/check-platform-status
+        uses: $/.github/actions/check-platform-status
         with:
           platform: iOS
           detect-result: ${{ needs.detect-changes.result }}
@@ -134,12 +130,8 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
       - name: Check selected Android validation
-        uses: ./.github/actions/check-platform-status
+        uses: $/.github/actions/check-platform-status
         with:
           platform: Android
           detect-result: ${{ needs.detect-changes.result }}

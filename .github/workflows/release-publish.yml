@@ -9,9 +9,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  contents: write
-  id-token: write
+permissions: {}
 
 jobs:
   verify-tag-on-main:
@@ -35,7 +33,9 @@ jobs:
   build-test-ios:
     name: Build & Test iOS
     needs: verify-tag-on-main
-    uses: ./.github/workflows/test-ios.yml
+    permissions:
+      contents: read
+    uses: $/.github/workflows/test-ios.yml
     with:
       flutter-version: ${{ vars.FLUTTER_VERSION }}
       ruby-version: ${{ vars.RUBY_VERSION }}
@@ -44,7 +44,9 @@ jobs:
   build-test-android:
     name: Build & Test Android
     needs: verify-tag-on-main
-    uses: ./.github/workflows/test-android.yml
+    permissions:
+      contents: read
+    uses: $/.github/workflows/test-android.yml
     with:
       flutter-version: ${{ vars.FLUTTER_VERSION }}
 
@@ -65,7 +67,7 @@ jobs:
         uses: dart-lang/setup-dart@6afc89df92d6eb3834022f73cd65adc8cdfcb92d # v1.8.1
 
       - name: Setup Flutter
-        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 #2.23.0
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: ${{ vars.FLUTTER_VERSION }}
           channel: stable
@@ -90,18 +92,20 @@ jobs:
           path: ${{ github.ref_name }}.md
 
       - name: Create Github release
-        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
-        with:
-          makeLatest: true
-          tag: ${{ github.ref_name }}
-          body: |
-            ## Release notes:
-            ${{ steps.extract-release-notes.outputs.release_notes }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_NOTES: ${{ steps.extract-release-notes.outputs.release_notes }}
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          printf '## Release notes:\n%s\n' "$RELEASE_NOTES" > release-body.md
+          gh release create "$TAG_NAME" --verify-tag --latest --title "$TAG_NAME" --notes-file release-body.md
 
   upload-release-notes:
     needs: [publish-and-release]
     runs-on: ubuntu-latest
     environment: release
+    permissions: {}
     steps:
       - name: Generate a token
         id: generate-token
@@ -112,6 +116,8 @@ jobs:
           owner: ${{ github.repository_owner }}
           repositories: |
             rokt-docs
+          permission-contents: write
+          permission-pull-requests: write
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

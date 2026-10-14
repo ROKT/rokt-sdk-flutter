@@ -1,0 +1,7 @@
+# actionlint 1.7.12 does not know GitHub's $/ self-repository syntax for local actions and
+# reusable workflows, which zizmor requires (rhysd/actionlint#711). Drop this once it does.
+paths:
+  .github/workflows/**/*.{yml,yaml}:
+    ignore:
+      - specifying action "\$/.+" in invalid format
+      - reusable workflow call "\$/.+" at "uses" is not following the format
