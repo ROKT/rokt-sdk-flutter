@@ -101,6 +101,7 @@ jobs:
   upload-release-notes:
     needs: [publish-and-release]
     runs-on: ubuntu-latest
+    environment: release
     steps:
       - name: Generate a token
         id: generate-token

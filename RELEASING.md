@@ -19,5 +19,12 @@ The publish workflow runs on every pushed tag that starts with `v`. Its first jo
 published unless the tagged commit is on `main`. Tags created by the release flow above are
 always on `main`, so they pass.
 
-The publish job runs in the `pub-dev` GitHub environment. The workflow only runs for tags, so the
-environment's deployment rule must allow tags matching `v*`; a branch-only rule blocks every release.
+## Environments
+
+Release jobs run in two GitHub environments, configured in the repository settings:
+
+- `pub-dev`: the job that publishes to pub.dev. It runs only for tags, so the environment's
+  deployment rule must allow tags matching `v*`; a branch-only rule blocks every release.
+- `release`: the jobs that use the release GitHub App, which open the release pull request, tag
+  the release and open the release notes pull request. The App's credentials belong in this
+  environment's secrets, and its deployment rule must allow the `main` branch and tags matching `v*`.
