@@ -51,5 +51,6 @@ updates:
     open-pull-requests-limit: 3
     labels:
       - dependabot
-  # NOT included — example/ios/Podfile exists but has no committed
-  # Podfile.lock, so cocoapods has nothing to resolve versions from.
+  # NOT included — swift: ios/rokt_sdk/Package.swift path-depends on the
+  # FlutterFramework package that the Flutter tool generates, so it cannot be
+  # resolved outside a Flutter build. The example has no Podfile.

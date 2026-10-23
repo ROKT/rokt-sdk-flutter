@@ -3,10 +3,6 @@ name: Test iOS
 on:
   workflow_call:
     inputs:
-      flutter-version:
-        required: false
-        type: string
-        default: 3.19.0
       ruby-version:
         required: false
         type: string
@@ -18,6 +14,12 @@ on:
 
 permissions:
   contents: read
+
+env:
+  # Set here rather than by callers: the plugin's Package.swift depends on the FlutterFramework
+  # package that Flutter generates from 3.41, and the example has no Podfile, so every job here
+  # needs a newer Flutter than the FLUTTER_VERSION that Android and Trunk use.
+  IOS_FLUTTER_VERSION: ${{ vars.SPM_FLUTTER_VERSION || '3.47.7' }}
 
 jobs:
   # Host-side Dart tests: both method channels are mocked, so no Ruby, Xcode,
@@ -33,7 +35,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
-          flutter-version: ${{ inputs.flutter-version }}
+          flutter-version: ${{ env.IOS_FLUTTER_VERSION }}
           channel: stable
           cache: true
 
@@ -45,29 +47,24 @@ jobs:
         working-directory: example
         run: flutter test
 
+  # Integration test with Swift Package Manager, which Flutter uses by default from 3.44.
   # Timeout covers three integration attempts; see the retry step below.
   test_ios:
     runs-on: macos-15
     timeout-minutes: 60
-    env:
-      BUNDLE_GEMFILE: ${{ github.workspace }}/example/Gemfile
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-
-      - name: Setup ruby
-        uses: ruby/setup-ruby@e81a8fa391b11a595c1b7ed84177cc0fe02faf83 #v1.328.0
-        with:
-          ruby-version: ${{ inputs.ruby-version }}
-          bundler-cache: true
-          rubygems: latest
-          working-directory: example
+          # The example depends on the plugin by path, and Swift Package Manager derives a path
+          # dependency's identity from the enclosing directory name. That name must equal the Dart
+          # package name or resolution fails. See https://github.com/flutter/flutter/issues/186881.
+          path: rokt_sdk
 
       - name: Setup Flutter
         uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
-          flutter-version: ${{ inputs.flutter-version }}
+          flutter-version: ${{ env.IOS_FLUTTER_VERSION }}
           channel: stable
           cache: true
 
@@ -79,15 +76,55 @@ jobs:
       - name: Warm up CoreSimulator
         run: xcrun simctl list devices available
 
+      - name: Remove the CocoaPods spec
+        # Without the podspec the plugin cannot fall back to CocoaPods unnoticed.
+        run: rm rokt_sdk/ios/rokt_sdk.podspec
+
       - name: Get all packages Flutter
-        working-directory: example
+        working-directory: rokt_sdk/example
         run: |
           flutter pub get
           flutter precache --ios
 
-      - name: Install iOS Dependencies
-        working-directory: example/ios
-        run: bundle exec pod install --verbose
+      - name: Generate iOS project with Swift Package Manager
+        working-directory: rokt_sdk/example
+        run: |
+          set -o pipefail
+          flutter build ios --config-only --no-codesign --debug | tee config.log
+          if grep -q 'Running pod install' config.log; then
+            echo "CocoaPods ran in the Swift Package Manager build"
+            exit 1
+          fi
+
+      - name: Verify plugin is resolved via Swift Package Manager
+        working-directory: rokt_sdk/example
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import pathlib
+          import sys
+
+          plugins = json.loads(pathlib.Path(".flutter-plugins-dependencies").read_text())
+          spm_ios = plugins.get("swift_package_manager_enabled", {}).get("ios")
+          if spm_ios is not True:
+              print("Swift Package Manager was not enabled for iOS:")
+              print(json.dumps(plugins.get("swift_package_manager_enabled"), indent=2))
+              sys.exit(1)
+
+          generated = pathlib.Path("ios/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Package.swift")
+          if not generated.is_file():
+              print(f"Missing generated Swift package at {generated}")
+              sys.exit(1)
+
+          text = generated.read_text()
+          if "rokt_sdk" not in text:
+              print("Generated FlutterGeneratedPluginSwiftPackage does not depend on rokt_sdk:")
+              print(text)
+              sys.exit(1)
+
+          print("Swift Package Manager is enabled and rokt_sdk is in FlutterGeneratedPluginSwiftPackage")
+          PY
 
       - uses: futureware-tech/simulator-action@c768f52966d5f70335ec77881f9806b24a52f80e #v6
         id: simulator
@@ -102,7 +139,7 @@ jobs:
       # until the 12-minute suite-load timeout. Poll each attempt, cap it, then erase
       # and re-boot the device before retrying.
       - name: Run Flutter Integration Tests (iOS)
-        working-directory: example
+        working-directory: rokt_sdk/example
         shell: bash
         env:
           SIMULATOR: ${{ steps.simulator.outputs.udid }}
@@ -114,7 +151,7 @@ jobs:
 
           for ((attempt = 1; attempt <= MAX_ATTEMPTS; attempt++)); do
             echo "::group::Integration test attempt ${attempt}/${MAX_ATTEMPTS}"
-            bundle exec flutter test integration_test/app_test.dart \
+            flutter test integration_test/app_test.dart \
               -d "$SIMULATOR" --dart-define=CI=true &
             pid=$!
 
@@ -150,3 +187,103 @@ jobs:
             xcrun simctl boot "$SIMULATOR"
             xcrun simctl bootstatus "$SIMULATOR"
           done
+
+      - name: Check the SDK is linked once
+        working-directory: rokt_sdk
+        run: .github/scripts/check-single-copy.sh example/build/ios/iphonesimulator/Runner.app
+
+  # CocoaPods is deprecated but still supported for apps that turn Swift Package Manager off, so
+  # build the example with it too. Build only: the integration test above covers behaviour.
+  build_ios_cocoapods:
+    runs-on: macos-15
+    timeout-minutes: 45
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/example/Gemfile
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup ruby
+        uses: ruby/setup-ruby@e81a8fa391b11a595c1b7ed84177cc0fe02faf83 #v1.328.0
+        with:
+          ruby-version: ${{ inputs.ruby-version }}
+          bundler-cache: true
+          rubygems: latest
+          working-directory: example
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: ${{ env.IOS_FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 #v1.7.0
+        with:
+          xcode-version: ${{ inputs.xcode-version }}
+
+      - name: Turn off Swift Package Manager
+        run: flutter config --no-enable-swift-package-manager
+
+      - name: Get all packages Flutter
+        working-directory: example
+        run: flutter pub get
+
+      - name: Switch example to CocoaPods
+        working-directory: example/ios
+        run: |
+          # The example gets RoktPaymentExtension from Swift Package Manager. Unlink it and add it as a
+          # pod instead, otherwise the app links a second copy of its dependencies. Also drop the
+          # reference to the plugin's own package, which Xcode would otherwise resolve even with SPM off.
+          bundle exec ruby -rxcodeproj -e '
+            project = Xcodeproj::Project.open("Runner.xcodeproj")
+            target = project.targets.find { |t| t.name == "Runner" }
+            target.package_product_dependencies.select { |d| d.package.is_a?(Xcodeproj::Project::Object::XCRemoteSwiftPackageReference) }.each do |dep|
+              target.frameworks_build_phase.files.select { |f| f.product_ref == dep }.each(&:remove_from_project)
+              project.root_object.package_references.delete(dep.package)
+              dep.remove_from_project
+            end
+            project.files.select { |f| f.path == "../../ios/rokt_sdk" }.each(&:remove_from_project)
+            project.save'
+          cat > Podfile <<'PODFILE'
+          platform :ios, '15.0'
+          ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+          project 'Runner', { 'Debug' => :debug, 'Profile' => :release, 'Release' => :release }
+
+          def flutter_root
+            generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+            File.foreach(generated_xcode_build_settings_path) do |line|
+              matches = line.match(/FLUTTER_ROOT\=(.*)/)
+              return matches[1].strip if matches
+            end
+          end
+
+          require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
+          flutter_ios_podfile_setup
+
+          target 'Runner' do
+            use_frameworks!
+            use_modular_headers!
+            pod 'RoktPaymentExtension'
+            flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+          end
+
+          post_install do |installer|
+            installer.pods_project.targets.each do |target|
+              flutter_additional_ios_build_settings(target)
+            end
+          end
+          PODFILE
+
+      - name: Build example iOS app
+        working-directory: example
+        run: |
+          bundle exec flutter build ios --config-only --no-codesign --release
+          test -f ios/Podfile.lock
+          cd ios
+          xcodebuild -workspace Runner.xcworkspace -scheme Runner -configuration Release -sdk iphoneos -derivedDataPath ../build/dd CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO -quiet
+
+      - name: Check the SDK is linked once
+        run: .github/scripts/check-single-copy.sh example/build/dd/Build/Products/Release-iphoneos/Runner.app

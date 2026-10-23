@@ -2,6 +2,20 @@
 
 This document provides guidance on migrating to newer versions of the Rokt Flutter SDK.
 
+## iOS: moving from CocoaPods to Swift Package Manager
+
+CocoaPods trunk becomes read-only on 2 December 2026, and Flutter uses Swift Package Manager by default from 3.44. The plugin supports both. With Swift Package Manager on, the plugin brings in the Rokt iOS SDK as a Swift package, so any Rokt pod left in `ios/Podfile` links a second copy of the SDK. That app builds, but misbehaves at runtime.
+
+1. Use Flutter 3.44 or later, or Flutter 3.41 or later with `flutter config --enable-swift-package-manager`.
+2. Remove every Rokt pod from `ios/Podfile`: `Rokt-Widget`, `RoktContracts`, `RoktUXHelper`, `DcuiSchema` and `RoktPaymentExtension`.
+   - If nothing else is left in the Podfile, run `pod deintegrate` in `ios/`, delete `Podfile` and `Podfile.lock`, and remove the `Pods-Runner` includes from `ios/Flutter/Debug.xcconfig` and `ios/Flutter/Release.xcconfig`.
+   - Otherwise, run `pod install`.
+3. If you use Shoppable Ads, add the payment extension as a Swift package to the Runner target, as described in the [README](README.md#shoppable-ads-ios-only).
+4. Run a Debug build once and check the console for `[Rokt] The Rokt SDK is loaded more than once`. If it appears, a pod still brings in the SDK.
+5. Commit the Xcode project change and `ios/Runner.xcworkspace/xcshareddata/swiftpm/Package.resolved`.
+
+To stay on CocoaPods for now, turn Swift Package Manager off for your app by adding `enable-swift-package-manager: false` under `flutter: config:` in your app's `pubspec.yaml`. Flutter plans to remove this option in a future release.
+
 ## Migrating from versions < 5.0.0
 
 ### API Method Changes

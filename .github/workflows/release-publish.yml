@@ -37,7 +37,6 @@ jobs:
       contents: read
     uses: $/.github/workflows/test-ios.yml
     with:
-      flutter-version: ${{ vars.FLUTTER_VERSION }}
       ruby-version: ${{ vars.RUBY_VERSION }}
       xcode-version: "26.3"
 

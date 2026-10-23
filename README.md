@@ -42,6 +42,7 @@ To develop with or contribute to this SDK, you'll need:
 - For iOS development:
   - iOS 15 or above
   - Xcode with required dependencies
+  - The example app uses Swift Package Manager, so it needs Flutter 3.44 or later, or 3.41 or later with `flutter config --enable-swift-package-manager`. Check the repository out into a directory named `rokt_sdk`: Swift Package Manager takes the plugin's package identity from that directory name, and resolution fails when it differs from the Dart package name ([flutter/flutter#186881](https://github.com/flutter/flutter/issues/186881)).
 
 ### Setup Steps
 
@@ -112,7 +113,32 @@ android {
 
 #### iOS
 
-Rokt iOS SDK supports iOS version 15 and above. No additional configuration is needed.
+Rokt iOS SDK supports iOS version 15 and above. The plugin brings in the Rokt iOS SDK (`Rokt-Widget`) with whichever dependency manager Flutter uses for your app, so you don't add it yourself.
+
+##### Swift Package Manager
+
+Flutter uses Swift Package Manager by default from 3.44, and you can turn it on from 3.41 with `flutter config --enable-swift-package-manager`. The plugin's Swift package brings in the Rokt iOS SDK, so don't add any Rokt pods to `ios/Podfile`: `Rokt-Widget`, `RoktContracts`, `RoktUXHelper`, `DcuiSchema` or `RoktPaymentExtension`. Commit the Xcode project change Flutter makes and `ios/Runner.xcworkspace/xcshareddata/swiftpm/Package.resolved`.
+
+> **Warning:** Get the Rokt SDK from only one dependency manager. If a pod and a Swift package both bring it in, the app still builds, but it contains two copies of the SDK. The plugin logs `[Rokt] The Rokt SDK is loaded more than once` at launch when this happens. See [Moving iOS from CocoaPods to Swift Package Manager](MIGRATING.md#ios-moving-from-cocoapods-to-swift-package-manager).
+
+Flutter versions before 3.41 can't build the plugin with Swift Package Manager. Keep it turned off there and use CocoaPods.
+
+##### CocoaPods (deprecated)
+
+CocoaPods trunk becomes read-only on 2 December 2026, so no new Rokt pod versions can be published after that date. With Swift Package Manager turned off, `pod install` brings in the Rokt iOS SDK through the plugin, with no Podfile change. To stay on CocoaPods for now, turn Swift Package Manager off for your app in its `pubspec.yaml`:
+
+```yaml
+flutter:
+  config:
+    enable-swift-package-manager: false
+```
+
+Flutter plans to remove this option in a future release.
+
+##### Troubleshooting
+
+- `[Rokt] The Rokt SDK is loaded more than once`: the SDK comes from both CocoaPods and Swift Package Manager. Remove the Rokt pods from `ios/Podfile`.
+- Package resolution fails, for example `no versions of '…' match the requirement`, or the build uses an old minimum iOS version: run `flutter clean`, then in Xcode choose **File > Packages > Reset Package Caches**.
 
 ### SDK Initialization
 
@@ -126,10 +152,9 @@ RoktSdk.initialize('222', appVersion: '1.0.0');
 ### Updating the SDK
 
 - Run `flutter clean`
-- Delete /ios/Pods
-- Delete /ios/Podfile.lock
 - Run `flutter pub get`
-- From inside ios folder, run `pod install`
+- With Swift Package Manager, build the app and commit the updated `Package.resolved`. If Xcode keeps an old native SDK version, choose **File > Packages > Reset Package Caches**.
+- With CocoaPods, delete `ios/Pods` and `ios/Podfile.lock`, then run `pod install` from inside the `ios` folder.
 
 ### Implementation Types
 
@@ -165,10 +190,10 @@ const RoktWidget(placeholderName: "RoktEmbedded1", onWidgetCreated: () { showWid
 
 Shoppable Ads allow users to make instant purchases directly from ad placements. This feature requires a payment extension to be registered before displaying shoppable ads.
 
-1. Add the native payment extension to your iOS project (e.g. in your `Podfile`):
+1. Add the native payment extension to your iOS app. With Swift Package Manager, open `ios/Runner.xcworkspace` in Xcode, choose **File > Add Package Dependencies…**, enter `https://github.com/ROKT/rokt-payment-extension-ios`, and add the `RoktPaymentExtension` product to the **Runner** target. With CocoaPods, add it to your `Podfile` instead:
 
 ```ruby
-pod 'RoktPaymentExtension', :git => 'https://github.com/ROKT/rokt-payment-extension-ios.git', :tag => '2.0.3'
+pod 'RoktPaymentExtension'
 ```
 
 2. Set the payment extension factory in your `AppDelegate.swift`:
@@ -239,8 +264,7 @@ roktEventChannel.receiveBroadcastStream().listen((dynamic event) {
 This Flutter plugin bundles native Rokt SDKs. Current versions are defined in the platform manifests:
 
 - Android: `android/build.gradle` (`com.rokt:roktsdk`)
-- iOS CocoaPods: `ios/rokt_sdk.podspec` (`Rokt-Widget`)
-- iOS Swift Package Manager: `ios/rokt_sdk/Package.swift` (`Rokt-Widget`)
+- iOS: `ios/rokt_sdk/Package.swift` (`Rokt-Widget`). `ios/rokt_sdk.podspec` reads the version from there, so CocoaPods and Swift Package Manager resolve the same range.
 
 ### Dependencies
 
@@ -250,12 +274,12 @@ This Flutter plugin bundles native Rokt SDKs. Current versions are defined in th
   - Requires minSdk 23 and Kotlin 2.1.20+ when building the plugin locally
 
 - **iOS**:
-  - Uses `Rokt-Widget` from CocoaPods (`ios/rokt_sdk.podspec`) or Swift Package Manager (`ios/rokt_sdk/Package.swift`)
+  - Uses `Rokt-Widget` from Swift Package Manager (`ios/rokt_sdk/Package.swift`) or, deprecated, CocoaPods (`ios/rokt_sdk.podspec`)
   - Requires iOS 15.0+
 
 #### Updating Native SDKs
 
-To update the iOS SDK, change the `Rokt-Widget` constraint in `ios/rokt_sdk.podspec` and `ios/rokt_sdk/Package.swift`.
+To update the iOS SDK, change the `rokt-sdk-ios` version in `ios/rokt_sdk/Package.swift`. The podspec reads it from there.
 
 For Android, change the `com.rokt:roktsdk` version in `android/build.gradle`.
 
@@ -267,7 +291,7 @@ See `CHANGELOG.md` for release notes when bumping native SDK versions.
 - Android apps must target API level 23+ to use this plugin (required by Rokt Android SDK 6.x)
 - For embedded placements, ensure the view is in the visible area of the screen before calling `selectPlacements`
 - To run in sandbox mode, add `"sandbox": "true"` to your attributes
-- When upgrading the native SDKs, update `android/build.gradle`, `ios/rokt_sdk.podspec`, and `ios/rokt_sdk/Package.swift`, then document changes in `CHANGELOG.md`
+- When upgrading the native SDKs, update `android/build.gradle` and `ios/rokt_sdk/Package.swift`, then document changes in `CHANGELOG.md`
 - Shoppable Ads (`selectShoppableAds`, `registerPaymentExtension`) are iOS-only; Android calls are no-ops
 
 ## Making Changes and Deployment

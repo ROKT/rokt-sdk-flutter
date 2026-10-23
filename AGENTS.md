@@ -47,9 +47,12 @@ There is no app at the repo root, so `flutter build` and `flutter run` work only
 which path-depends on `../`. The example app is the only way to exercise the plugin end to end,
 and it is what CI builds.
 
-Running the iOS integration test locally also needs CocoaPods via Bundler, from **two** separate
-Gemfiles (`example/Gemfile` and `example/ios/Gemfile`) before `pod install`; see
-`.github/workflows/test-ios.yml`.
+The example app gets its iOS dependencies from Swift Package Manager, so building it for iOS needs
+Flutter 3.44 or later (or 3.41 or later with `flutter config --enable-swift-package-manager`) and
+no CocoaPods (trap 7). CocoaPods is still supported for apps that turn
+Swift Package Manager off; the `build_ios_cocoapods` job in `.github/workflows/test-ios.yml` checks
+that path by rewriting the example to use a Podfile, with CocoaPods from `example/Gemfile` via
+Bundler.
 
 ### Command traps
 
@@ -74,14 +77,24 @@ Gemfiles (`example/Gemfile` and `example/ios/Gemfile`) before `pod install`; see
    `dev_dependencies`, so nothing installs it and none of those metrics or rules are enforced
    anywhere.
 5. **The reusable workflows' `default:` input values are dead code for PR CI.**
-   `.github/workflows/pull_request.yml` passes the Flutter, Ruby and Xcode versions explicitly,
-   so editing the defaults in `test-ios.yml` or `test-android.yml` changes nothing. The Flutter
-   and Ruby versions come from repository-level Actions variables, so you cannot read the version
-   CI actually uses out of this repository.
+   `.github/workflows/pull_request.yml` passes the Ruby and Xcode versions to `test-ios.yml`, and
+   the Flutter version to `test-android.yml`, explicitly, so editing those defaults changes
+   nothing. The Flutter and Ruby versions come from repository-level Actions variables, so you
+   cannot read the version CI actually uses out of this repository. `test-ios.yml` takes no Flutter
+   version from its callers: it reads its own variable, `SPM_FLUTTER_VERSION`, and falls back to
+   the version written in that file, because the example needs a Flutter with Swift Package
+   Manager. Android and Trunk use `FLUTTER_VERSION`.
 6. **Zizmor checks only some pull requests, and is not required.** `.github/workflows/zizmor.yml`
    fails on any finding, but it triggers only on changes under `.github/workflows/` or
    `.github/actions/`, so a change to `.github/dependabot.yml` alone gets no check even though
    zizmor audits that file. Branch protection does not require it either.
+7. **The example's iOS build fails unless the checkout directory is named `rokt_sdk`.** Swift
+   Package Manager takes the path-dependent plugin's package identity from the enclosing directory
+   name, and when it differs, resolution stops with "unable to override package 'rokt_sdk' because
+   its identity … doesn't match"
+   ([flutter/flutter#186881](https://github.com/flutter/flutter/issues/186881)). A symlink does not
+   help, because the real path is used. CI checks out into `rokt_sdk/` for this reason; locally,
+   use a clone or a copy with that name.
 
 ## Lint conventions the toolchain would not lead you to expect
 
@@ -106,19 +119,21 @@ fails. A clean analyze here means more than it usually does.
 
 ## Native SDK pins
 
-The native Rokt SDK version appears in several places, and they do not agree by construction:
+The native Rokt SDK version appears in these places:
 
-- `ios/rokt_sdk.podspec` — `Rokt-Widget`, for CocoaPods consumers. The `~> x.y.z` form permits
-  patch upgrades only.
-- `ios/rokt_sdk/Package.swift` — the same native SDK for Swift Package Manager consumers, via
-  `.upToNextMajor`, which permits any minor within the major.
+- `ios/rokt_sdk/Package.swift` — `Rokt-Widget` from `https://github.com/ROKT/rokt-sdk-ios`, via
+  `.upToNextMajor`, which permits any minor within the major. This is the one iOS pin:
+  `ios/rokt_sdk.podspec` parses the version out of this line at `pod install` time and declares
+  the same range, so keep the URL and the `.upToNextMajor(from:)` form. The URL matches the one the
+  mParticle Rokt kit uses, so an app with both resolves one copy of the SDK.
 - `android/build.gradle` — `com.rokt:roktsdk`, from Maven Central.
-- `example/ios/Podfile` — `RoktPaymentExtension`, pinned to a git tag. Only the example app pulls
-  it; the plugin does not.
+- `example/ios/Runner.xcodeproj/project.pbxproj` — `RoktPaymentExtension`, as a Swift package with
+  an up-to-next-major requirement. Only the example app pulls it; the plugin does not.
+  `Package.resolved` is ignored, so CI builds the newest versions a new app would get.
 
-So bump the iOS native version in **both** `ios/rokt_sdk.podspec` and `ios/rokt_sdk/Package.swift`,
-and note the two ranges are not equivalent: narrowing the podspec to exclude a bad native release
-does not stop SPM consumers resolving it. iOS and Android are on different major version lines and
+So bump the iOS native version in `ios/rokt_sdk/Package.swift` only. Raising the minimum there
+raises it for both dependency managers; to keep apps off a bad native release, raise the minimum
+past it. iOS and Android are on different major version lines and
 have been for several releases — do not try to make the two numbers match.
 
 `ios/rokt_sdk/Package.swift` also path-depends on a sibling `FlutterFramework` package that the
