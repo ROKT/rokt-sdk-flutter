@@ -15,7 +15,12 @@ Rokt Mobile SDK to integrate ROKT Api into Flutter application.
   s.source           = { :path => '.' }
   s.source_files = 'rokt_sdk/Sources/rokt_sdk/**/*.swift'
   s.dependency 'Flutter'
-  s.dependency 'Rokt-Widget', '~> 5.3.4'
+  # CocoaPods support is deprecated: Flutter builds the plugin with Swift Package Manager by default.
+  # The Swift package manifest holds the one copy of the native SDK version; read it so the two cannot drift.
+  manifest = File.read(File.join(__dir__, 'rokt_sdk', 'Package.swift'))
+  sdk_version = manifest[/rokt-sdk-ios",\s*\.upToNextMajor\(from: "([^"]+)"\)/, 1] or
+    raise 'rokt_sdk.podspec: rokt-sdk-ios version not found in Package.swift'
+  s.dependency 'Rokt-Widget', ">= #{sdk_version}", "< #{sdk_version.to_i + 1}.0"
   s.platform = :ios, '15.0'
   s.resource_bundles = { "Rokt-Widget" => ["rokt_sdk/Sources/rokt_sdk/PrivacyInfo.xcprivacy"] }
 

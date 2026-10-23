@@ -46,6 +46,7 @@ public class SwiftRoktSdkPlugin: NSObject, FlutterPlugin {
     }
     
     public static func register(with registrar: FlutterPluginRegistrar) {
+        _ = warnIfSDKLoadedTwice
         let channel = FlutterMethodChannel(name: CHANNEL_NAME, binaryMessenger: registrar.messenger())
         let factory = RoktWidgetFactory(messenger: registrar.messenger())
         let handler = RoktMethodCallHandler(channel: channel, factory: factory, registrar: registrar)
@@ -53,7 +54,40 @@ public class SwiftRoktSdkPlugin: NSObject, FlutterPlugin {
         registrar.addMethodCallDelegate(instance, channel: channel)
         registrar.register(factory, withId: VIEW_CALL_DELEGATE)
     }
-    
+
+    // Getting the Rokt SDK from both CocoaPods and Swift Package Manager links a second copy. That
+    // builds cleanly, then misbehaves at runtime. Rokt is a Swift class with no Objective-C name of its
+    // own, so the runtime reports it by its demangled name. Runs once.
+    private static let warnIfSDKLoadedTwice: Void = {
+        let duplicates = imageCounts(forClassNames: ["Rokt_Widget.Rokt", "RoktEmbeddedView"])
+            .filter { $0.value > 1 }
+            .map { "\($0.key) x\($0.value)" }
+            .sorted()
+        if !duplicates.isEmpty {
+            NSLog("[Rokt] The Rokt SDK is loaded more than once (%@). This happens when it comes from both CocoaPods and Swift Package Manager: remove the Rokt pods from your Podfile. See the iOS section of the rokt_sdk README.", duplicates.joined(separator: ", "))
+        }
+    }()
+
+    // Counts, per class name, the loaded images inside the app bundle that define it. System images
+    // are skipped: scanning them all takes seconds, the bundle takes milliseconds.
+    private static func imageCounts(forClassNames names: [String]) -> [String: Int] {
+        var counts = Dictionary(uniqueKeysWithValues: names.map { ($0, 0) })
+        let bundlePath = Bundle.main.bundlePath
+        var imageCount: UInt32 = 0
+        let images = objc_copyImageNames(&imageCount)
+        defer { free(images) }
+        for i in 0..<Int(imageCount) where String(cString: images[i]).hasPrefix(bundlePath) {
+            var classCount: UInt32 = 0
+            guard let classes = objc_copyClassNamesForImage(images[i], &classCount) else { continue }
+            defer { free(classes) }
+            for j in 0..<Int(classCount) {
+                let name = String(cString: classes[j])
+                if let count = counts[name] { counts[name] = count + 1 }
+            }
+        }
+        return counts
+    }
+
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         if call.method == INIT_METHOD {
             handler.initialize(call, result: result)

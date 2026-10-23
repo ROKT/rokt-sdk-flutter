@@ -13,14 +13,16 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "FlutterFramework", path: "../FlutterFramework"),
-        .package(name: "Rokt-Widget", url: "https://github.com/ROKT/rokt-sdk-ios.git", .upToNextMajor(from: "5.3.4")),
+        // rokt_sdk.podspec reads this version: keep the URL and the upToNextMajor(from:) form. The URL
+        // matches the one the mParticle Rokt kit uses, so an app with both resolves one copy of the SDK.
+        .package(url: "https://github.com/ROKT/rokt-sdk-ios", .upToNextMajor(from: "5.3.4")),
     ],
     targets: [
         .target(
             name: "rokt_sdk",
             dependencies: [
                 .product(name: "FlutterFramework", package: "FlutterFramework"),
-                .product(name: "Rokt-Widget", package: "Rokt-Widget"),
+                .product(name: "Rokt-Widget", package: "rokt-sdk-ios"),
             ],
             resources: [
                 .process("PrivacyInfo.xcprivacy"),
