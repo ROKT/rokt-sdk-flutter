@@ -9,6 +9,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.2.0] - 2026-10-27
+
+### Added
+
+- Support moving from CocoaPods to Swift Package Manager ([#251](https://github.com/ROKT/rokt-sdk-flutter/pull/251))
+
+### Fixed
+
+- Stop adding Maven repositories to every project in the host app ([#222](https://github.com/ROKT/rokt-sdk-flutter/pull/222))
+
+### Changed
+
+- Bump peter-evans/create-pull-request from 7.0.9 to 8.1.1 ([#244](https://github.com/ROKT/rokt-sdk-flutter/pull/244))
+- Bump the github-actions-minor-patch group across 1 directory with 4 updates ([#253](https://github.com/ROKT/rokt-sdk-flutter/pull/253))
+- Bump json from 3.0.2 to 3.1.0 in /example/ios ([#249](https://github.com/ROKT/rokt-sdk-flutter/pull/249))
+- Bump json from 3.0.2 to 3.1.0 in /example ([#248](https://github.com/ROKT/rokt-sdk-flutter/pull/248))
+- Fix zizmor findings and fail the scan on new ones ([#242](https://github.com/ROKT/rokt-sdk-flutter/pull/242))
+- Run jobs that use the release App in a release environment ([#241](https://github.com/ROKT/rokt-sdk-flutter/pull/241))
+- Bump cocoapods from 1.15.2 to 1.17.0 in /example/ios ([#230](https://github.com/ROKT/rokt-sdk-flutter/pull/230))
+- Bump cocoapods from 1.15.2 to 1.17.0 in /example ([#227](https://github.com/ROKT/rokt-sdk-flutter/pull/227))
+- Bump the github-actions-minor-patch group across 1 directory with 3 updates ([#234](https://github.com/ROKT/rokt-sdk-flutter/pull/234))
+- Bump futureware-tech/simulator-action from 5 to 6 ([#235](https://github.com/ROKT/rokt-sdk-flutter/pull/235))
+- Bump com.rokt:roktsdk from 6.0.1 to 6.2.1 in /android ([#237](https://github.com/ROKT/rokt-sdk-flutter/pull/237))
+- Bump concurrent-ruby from 1.3.7 to 1.3.8 in /example/ios ([#228](https://github.com/ROKT/rokt-sdk-flutter/pull/228))
+- Bump concurrent-ruby from 1.3.7 to 1.3.8 in /example ([#226](https://github.com/ROKT/rokt-sdk-flutter/pull/226))
+- Bump json from 2.19.9 to 3.0.2 in /example/ios ([#229](https://github.com/ROKT/rokt-sdk-flutter/pull/229))
+- Bump json from 2.19.9 to 3.0.2 in /example ([#225](https://github.com/ROKT/rokt-sdk-flutter/pull/225))
+- Add pub, gradle, and bundler ecosystems to Dependabot config ([#218](https://github.com/ROKT/rokt-sdk-flutter/pull/218))
+- Check release tags are on main before publishing ([#224](https://github.com/ROKT/rokt-sdk-flutter/pull/224))
+- Pin the Trunk plugin source to a commit SHA ([#223](https://github.com/ROKT/rokt-sdk-flutter/pull/223))
+- Bump trunk-io/trunk-action from 1.2.4 to 2.0.0 ([#216](https://github.com/ROKT/rokt-sdk-flutter/pull/216))
+- Bump the github-actions-minor-patch group across 1 directory with 4 updates ([#219](https://github.com/ROKT/rokt-sdk-flutter/pull/219))
+- Upgrade trunk ([#220](https://github.com/ROKT/rokt-sdk-flutter/pull/220))
+- Add public repository confidentiality rules for agents ([#221](https://github.com/ROKT/rokt-sdk-flutter/pull/221))
+- Inherit org default PR template ([#217](https://github.com/ROKT/rokt-sdk-flutter/pull/217))
+- Split the iOS jobs and retry a wedged simulator ([#208](https://github.com/ROKT/rokt-sdk-flutter/pull/208))
+- Bump actions/cache from 5.0.5 to 6.1.0 ([#214](https://github.com/ROKT/rokt-sdk-flutter/pull/214))
+- Bump the github-actions-minor-patch group across 1 directory with 3 updates ([#213](https://github.com/ROKT/rokt-sdk-flutter/pull/213))
+- Bump actions/setup-java from 5.2.0 to 6.0.0 ([#211](https://github.com/ROKT/rokt-sdk-flutter/pull/211))
+- Add verified toolchain traps to AGENTS.md and add CLAUDE.md bridge ([#207](https://github.com/ROKT/rokt-sdk-flutter/pull/207))
+- Split Flutter platform validation ([#199](https://github.com/ROKT/rokt-sdk-flutter/pull/199))
+- Bump dart-lang/setup-dart from 1.7.2 to 1.8.1 ([#198](https://github.com/ROKT/rokt-sdk-flutter/pull/198))
+- Bump actions/checkout from 5.0.0 to 7.0.1 ([#197](https://github.com/ROKT/rokt-sdk-flutter/pull/197))
+- Upgrade trunk ([#210](https://github.com/ROKT/rokt-sdk-flutter/pull/210))
+
 ## [5.1.2] - 2026-08-28
 
 ### Fixed
@@ -410,7 +455,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Introducing Rokt flutter SDK
 
-[unreleased]: https://github.com/ROKT/rokt-sdk-flutter/compare/5.1.2...HEAD
+[unreleased]: https://github.com/ROKT/rokt-sdk-flutter/compare/5.2.0...HEAD
+[5.2.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v5.1.2...5.2.0
 [5.1.2]: https://github.com/ROKT/rokt-sdk-flutter/compare/5.1.1...5.1.2
 [5.1.1]: https://github.com/ROKT/rokt-sdk-flutter/compare/5.1.0...5.1.1
 [5.1.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/5.0.0...5.1.0
