@@ -433,7 +433,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Flutter SDK 3.0 supported
 
-## [3.6.3-alpha.1]
+## 3.6.3-alpha.1
 
 ### Added
 
@@ -455,15 +455,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Introducing Rokt flutter SDK
 
-[unreleased]: https://github.com/ROKT/rokt-sdk-flutter/compare/5.2.0...HEAD
-[5.2.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v5.1.2...5.2.0
-[5.1.2]: https://github.com/ROKT/rokt-sdk-flutter/compare/5.1.1...5.1.2
-[5.1.1]: https://github.com/ROKT/rokt-sdk-flutter/compare/5.1.0...5.1.1
-[5.1.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/5.0.0...5.1.0
-[5.0.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.11.0...5.0.0
+[unreleased]: https://github.com/ROKT/rokt-sdk-flutter/compare/v5.2.0...HEAD
+[5.2.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v5.1.2...v5.2.0
+[5.1.2]: https://github.com/ROKT/rokt-sdk-flutter/compare/v5.1.1...v5.1.2
+[5.1.1]: https://github.com/ROKT/rokt-sdk-flutter/compare/v5.1.0...v5.1.1
+[5.1.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v5.0.0...v5.1.0
+[5.0.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.11.0...v5.0.0
 [4.11.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.10.0...4.11.0
-[4.10.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/4.9.0...4.10.0
-[4.9.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v4.8.1...4.9.0
+[4.10.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v4.9.0...4.10.0
+[4.9.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v4.8.1...v4.9.0
 [4.8.1]: https://github.com/ROKT/rokt-sdk-flutter/compare/v4.8.0...v4.8.1
 [4.8.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v4.7.0...v4.8.0
 [4.7.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v4.6.1...v4.7.0
@@ -478,27 +478,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [4.2.2]: https://github.com/ROKT/rokt-sdk-flutter/compare/v4.2.1...v4.2.2
 [4.2.1]: https://github.com/ROKT/rokt-sdk-flutter/compare/v4.2.0...v4.2.1
 [4.2.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v4.1.0...v4.2.0
-[4.1.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v4.0.11-alpha.100...v4.1.0
-[4.0.0-alpha.3]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.15.0...v4.0.0-alpha.3
-[3.15.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.14.2...v3.15.0
-[3.14.2]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.14.1...v3.14.2
-[3.14.1]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.14.0...v3.14.1
-[3.14.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.13.0...v3.14.0
-[3.13.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.12.1...v3.13.0
-[3.12.1-alpha.2]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.12.1...v3.12.1-alpha.2
-[3.12.1-alpha.1]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.12.1...v3.12.1-alpha.1
+[4.1.0]: https://github.com/ROKT/rokt-sdk-flutter/commit/bb38d7a975d05f5d5a976b4f2a7e16ad7f143356
+[4.0.0-alpha.3]: https://github.com/ROKT/rokt-sdk-flutter/compare/295bf14a01638c1772600e26ec7edb9bb8262417...a63f32ccd0c6ba5eb7a0fad9cb83f4aa2e11922f
+[3.15.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/1662c0b6e05e6444887c38a836d60c692b64075a...295bf14a01638c1772600e26ec7edb9bb8262417
+[3.14.2]: https://github.com/ROKT/rokt-sdk-flutter/compare/b2c251b244e65001913919621bbad49d6905f95b...1662c0b6e05e6444887c38a836d60c692b64075a
+[3.14.1]: https://github.com/ROKT/rokt-sdk-flutter/compare/4f3f2794143d6ec0b06146b5b4ec916e41d31842...b2c251b244e65001913919621bbad49d6905f95b
+[3.14.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/eef53b0c844082573fca0cd1e4a88df5fc7b40c5...4f3f2794143d6ec0b06146b5b4ec916e41d31842
+[3.13.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.12.1...eef53b0c844082573fca0cd1e4a88df5fc7b40c5
+[3.12.1-alpha.2]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.12.1...6f689838d077a3225aa5ed5d6e02bcb3cd861599
+[3.12.1-alpha.1]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.12.1...290e1c75664fb0c3c947aa10ef68340b01f66712
 [3.12.1]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.12.0...v3.12.1
-[3.12.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.11.0...v3.12.0
-[3.11.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.10.0...v3.11.0
-[3.10.1-alpha.2]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.10.0...v3.10.1-alpha.2
-[3.10.1-alpha.1]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.10.0...v3.10.1-alpha.1
-[3.10.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.9.1...v3.10.0
+[3.12.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/ae7936c24441c85bf3c53385905322b901b52916...v3.12.0
+[3.11.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/515e9c1358d05d0ba57c828014efa85b9e3b7161...ae7936c24441c85bf3c53385905322b901b52916
+[3.10.1-alpha.2]: https://github.com/ROKT/rokt-sdk-flutter/compare/515e9c1358d05d0ba57c828014efa85b9e3b7161...eeab740c1c03be591ffed7a83c81d19ec4055eaf
+[3.10.1-alpha.1]: https://github.com/ROKT/rokt-sdk-flutter/compare/515e9c1358d05d0ba57c828014efa85b9e3b7161...c3a98e0b4c9e3b31faa224dfe4eba48a402f4db8
+[3.10.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.9.1...515e9c1358d05d0ba57c828014efa85b9e3b7161
 [3.9.1]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.9.0...v3.9.1
-[3.9.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.8.0...v3.9.0
-[3.8.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.7.0...v3.8.0
+[3.9.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/d2a838769e7154f16f22c7d3304140730de2ed7d...v3.9.0
+[3.8.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.7.0...d2a838769e7154f16f22c7d3304140730de2ed7d
 [3.7.0]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.6.3...v3.7.0
 [3.6.3]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.6.2...v3.6.3
-[3.6.3-alpha.1]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.6.2...v3.6.3-alpha.1
 [3.6.2]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.6.1...v3.6.2
 [3.6.1]: https://github.com/ROKT/rokt-sdk-flutter/compare/v3.6.0...v3.6.1
 [3.6.0]: https://github.com/ROKT/rokt-sdk-flutter/releases/tag/v3.6.0

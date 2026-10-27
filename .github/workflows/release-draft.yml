@@ -45,13 +45,14 @@ jobs:
           NEW_VERSION: ${{ steps.bump-version.outputs.new_version }}
         run: |
           printf '%s\n' "$NEW_VERSION" > VERSION
-      - name: Generate changelog from git history
+      - name: Generate changelog from merged PR titles
         id: changelog
         uses: ROKT/rokt-workflows/actions/generate-changelog@da0c5fd5d38e9cf113a24ec9aaea079cc7d0bc40 # main
         env:
           GH_TOKEN: ${{ github.token }}
         with:
           version: ${{ steps.bump-version.outputs.new_version }}
+          tag-prefix: v
           changelog-path: CHANGELOG.md
 
       - name: Update pubspec.yaml
