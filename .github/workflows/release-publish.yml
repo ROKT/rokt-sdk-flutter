@@ -76,7 +76,7 @@ jobs:
         id: extract-release-notes
         with:
           changelog_file: CHANGELOG.md
-          release_notes_file: ${{ github.ref_name }}.md
+          release_notes_file: ${{ runner.temp }}/${{ github.ref_name }}.md
       - name: Print release notes (debug)
         env:
           RELEASE_NOTES: ${{ steps.extract-release-notes.outputs.release_notes }}
@@ -89,7 +89,7 @@ jobs:
         run: |
           version="${TAG_NAME#v}"
           comparison_url=$(awk -v reference="[${version}]:" '$1 == reference { print $2; exit }' CHANGELOG.md)
-          printf '## Release notes:\n%s\n\n**Full Changelog**: %s\n' "$RELEASE_NOTES" "$comparison_url" > release-body.md
+          printf '## Release notes:\n%s\n\n**Full Changelog**: %s\n' "$RELEASE_NOTES" "$comparison_url" > "$RUNNER_TEMP/release-body.md"
 
       - name: Publish Package
         run: flutter pub publish --force
@@ -98,7 +98,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 #v7.0.2
         with:
           name: release-notes
-          path: ${{ github.ref_name }}.md
+          path: ${{ runner.temp }}/${{ github.ref_name }}.md
 
       - name: Create Github release
         env:
@@ -106,7 +106,7 @@ jobs:
           GH_REPO: ${{ github.repository }}
           TAG_NAME: ${{ github.ref_name }}
         run: |
-          gh release create "$TAG_NAME" --verify-tag --latest --title "$TAG_NAME" --notes-file release-body.md
+          gh release create "$TAG_NAME" --verify-tag --latest --title "$TAG_NAME" --notes-file "$RUNNER_TEMP/release-body.md"
 
   upload-release-notes:
     needs: [publish-and-release]
