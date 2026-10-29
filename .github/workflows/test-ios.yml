@@ -277,10 +277,16 @@ jobs:
           end
           PODFILE
 
+      - name: Check the plugin podspec
+        # Evaluating the podspec needs no trunk access, so a broken podspec fails here rather than
+        # inside the resolve step below, which is allowed to fail.
+        run: bundle exec pod ipc spec ios/rokt_sdk.podspec > /dev/null
+
       - name: Resolve CocoaPods dependencies
         id: cocoapods-resolve
         # CocoaPods trunk is going read-only, so pod install can fail on a version that only Swift
-        # Package Manager has. Only resolution is allowed to fail; the build below still gates the code.
+        # Package Manager has. Only resolution may fail, and the report step below still fails the job
+        # while pubspec.yaml allows Flutter versions that need CocoaPods. The build still gates the code.
         continue-on-error: true
         working-directory: example
         run: bundle exec flutter build ios --config-only --no-codesign --release
@@ -297,9 +303,16 @@ jobs:
         if: steps.cocoapods-resolve.outcome == 'success'
         run: .github/scripts/check-single-copy.sh example/build/dd/Build/Products/Release-iphoneos/Runner.app
 
-      - name: Warn when CocoaPods could not resolve
+      - name: Report that CocoaPods could not resolve
         if: steps.cocoapods-resolve.outcome == 'failure'
         run: |
+          # Flutter before 3.41 can only build the plugin with CocoaPods (README.md), so while pubspec.yaml
+          # allows those versions, pub.dev would serve them a release that CocoaPods cannot install.
+          if ! ruby -ryaml -e 'floor = YAML.load_file("pubspec.yaml").dig("environment", "flutter").to_s[/(?:>=|\^)\s*([\d.]+)/, 1]
+            exit(!floor.nil? && Gem::Version.new(floor) >= Gem::Version.new("3.41.0"))'; then
+            echo "::error::CocoaPods could not resolve the example app's dependencies, and pubspec.yaml still allows Flutter versions that can only use CocoaPods. Keep the native SDK minimum on a version CocoaPods has, or raise the Flutter minimum in pubspec.yaml to 3.41.0. Check the log above for the cause."
+            exit 1
+          fi
           echo "::warning::CocoaPods could not resolve the example app's dependencies, so the CocoaPods build was skipped. Check the log above for the cause."
           {
             echo "### CocoaPods dependencies did not resolve"
