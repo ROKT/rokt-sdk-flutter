@@ -65,12 +65,12 @@ jobs:
       - name: Setup Dart SDK
         uses: dart-lang/setup-dart@6afc89df92d6eb3834022f73cd65adc8cdfcb92d # v1.8.1
 
+      # No cache in release jobs; see Environments in RELEASING.md.
       - name: Setup Flutter
         uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: ${{ vars.FLUTTER_VERSION }}
           channel: stable
-          cache: true
 
       - uses: ffurrer2/extract-release-notes@273da39a24fb7db106a35526c8162815faffd31d # v3.1.0
         id: extract-release-notes

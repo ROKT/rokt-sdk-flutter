@@ -45,3 +45,9 @@ Release jobs run in two GitHub environments, configured in the repository settin
 - `release`: the jobs that use the release GitHub App, which open the release pull request, tag
   the release and open the release notes pull request. The App's credentials belong in this
   environment's secrets, and its deployment rule must allow the `main` branch and tags matching `v*`.
+
+Jobs in these environments download the Flutter SDK rather than restore it from the Actions cache,
+which other jobs can write. For the same reason the draft workflow bumps the version, generates the
+changelog and runs the dry-run publish in a job with no environment, then a separate job in
+`release` copies the four release files and opens the pull request. Keep both when editing these
+workflows.
