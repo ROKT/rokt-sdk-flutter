@@ -22,6 +22,9 @@ jobs:
   # Builds and checks the release files without the release App's credentials. The job that
   # opens the pull request copies these files and runs none of this job's tools.
   prepare-release:
+    # Drafts start from main only, since the release environment also admits tags matching v*;
+    # open-release-pr is skipped with this job.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: read

@@ -62,9 +62,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup Dart SDK
-        uses: dart-lang/setup-dart@6afc89df92d6eb3834022f73cd65adc8cdfcb92d # v1.8.1
-
       # No cache in release jobs; see Environments in RELEASING.md.
       - name: Setup Flutter
         uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
@@ -90,6 +87,10 @@ jobs:
           version="${TAG_NAME#v}"
           comparison_url=$(awk -v reference="[${version}]:" '$1 == reference { print $2; exit }' CHANGELOG.md)
           printf '## Release notes:\n%s\n\n**Full Changelog**: %s\n' "$RELEASE_NOTES" "$comparison_url" > "$RUNNER_TEMP/release-body.md"
+
+      # Setup Dart creates the short-lived pub.dev token, so it runs right before publishing.
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@6afc89df92d6eb3834022f73cd65adc8cdfcb92d # v1.8.1
 
       - name: Publish Package
         run: flutter pub publish --force

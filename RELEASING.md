@@ -51,3 +51,10 @@ which other jobs can write. For the same reason the draft workflow bumps the ver
 changelog and runs the dry-run publish in a job with no environment, then a separate job in
 `release` copies the four release files and opens the pull request. Keep both when editing these
 workflows.
+
+Deployment rules match only the ref name, so anyone able to push a `v*` tag could start a run in
+either environment. A tag ruleset on `v*` therefore blocks creating, updating and deleting those
+tags for everyone except the release GitHub App, which `release-tag.yml` uses to tag releases; a
+tag pushed by hand needs the ruleset edited first. `pub-dev` also requires a reviewer, who cannot
+approve a run they started, administrators cannot bypass it, and pub.dev's automated publishing
+accepts only runs in the `pub-dev` environment.
