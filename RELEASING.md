@@ -45,3 +45,16 @@ Release jobs run in two GitHub environments, configured in the repository settin
 - `release`: the jobs that use the release GitHub App, which open the release pull request, tag
   the release and open the release notes pull request. The App's credentials belong in this
   environment's secrets, and its deployment rule must allow the `main` branch and tags matching `v*`.
+
+Jobs in these environments download the Flutter SDK rather than restore it from the Actions cache,
+which other jobs can write. For the same reason the draft workflow bumps the version, generates the
+changelog and runs the dry-run publish in a job with no environment, then a separate job in
+`release` copies the four release files and opens the pull request. Keep both when editing these
+workflows.
+
+Deployment rules match only the ref name, so anyone able to push a `v*` tag could start a run in
+either environment. A tag ruleset on `v*` therefore blocks creating, updating and deleting those
+tags for everyone except the release GitHub App, which `release-tag.yml` uses to tag releases; a
+tag pushed by hand needs the ruleset edited first. `pub-dev` also requires a reviewer, who cannot
+approve a run they started, administrators cannot bypass it, and pub.dev's automated publishing
+accepts only runs in the `pub-dev` environment.
